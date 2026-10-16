@@ -271,9 +271,6 @@
             "title": "Connetti GitHub",
             "reconnect": "Riconnetti GitHub",
             "description": "Connetti GitHub per continuare. Il lavoro attuale verrà conservato.",
-            "browserDescription": "Continua nel browser per autorizzare l'accesso, quindi torna qui.",
-            "continueInBrowser": "Continua nel browser",
-            "waiting": "Completa la connessione nel browser, poi torna qui.",
             "refreshRepositories": "Aggiorna repository",
             "accessDescription": "Gestisci l’accesso ai repository su GitHub o aggiungi un altro account, quindi aggiorna l’elenco dei repository."
         },
@@ -330,12 +327,7 @@
             "title": "Disconnettere {{connection}}?",
             "description": "Rimuove la connessione da Eldritch Launcher. Non disinstalla l'app GitHub e non modifica i remoti dei progetti.",
             "finalDescription": "Rimuove la connessione da questo dispositivo. Non disinstalla l'app GitHub e non modifica l'accesso ai repository o i remoti dei progetti.",
-            "revokeAllDevices": "Revoca anche questa autorizzazione GitHub su tutti i dispositivi con Godot Launcher.",
-            "revokeDetail": "Gli altri dispositivi con Godot Launcher collegati a questo account GitHub dovranno riconnettersi.",
-            "localOnlyWarning": "L'accesso a GitHub rimane attivo sugli altri dispositivi e i token copiati restano validi finché non scadono o vengono revocati.",
-            "failureDetail": "Non è stato possibile rimuovere la connessione. La credenziale locale è stata conservata. Riprova.",
-            "revokeAction": "Revoca e disconnetti",
-            "localOnlyAction": "Disconnetti questo dispositivo"
+            "failureDetail": "Non è stato possibile rimuovere la connessione. La credenziale locale è stata conservata. Riprova."
         },
         "credentialStorage": {
             "configure": "Configura archiviazione",

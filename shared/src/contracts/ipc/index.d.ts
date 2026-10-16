@@ -1,4 +1,5 @@
 import type { AppUpdateMessage } from '../app/index.js';
+import type { AppIntegrationSummary } from '../app-integrations/index.js';
 import type { CodeEditorIntegrationSettings } from '../codeEditorIntegration/index.js';
 import type { ProjectGitStatus } from '../project-git-status/index.js';
 import type { ProjectTagsSnapshot } from '../project-tags/index.js';
@@ -28,4 +29,5 @@ export type AppEventMap = {
     };
     'releases-updated': InstalledRelease[];
     'release-install-progress': ReleaseInstallProgress;
+    'app-integration-updated': AppIntegrationSummary;
 };

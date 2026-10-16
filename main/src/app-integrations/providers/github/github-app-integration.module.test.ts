@@ -38,6 +38,8 @@ vi.mock('electron', () => ({
                         disableDevMenu: false,
                         startHidden: false,
                         e2eFixtures: false,
+                        githubClientId: '',
+                        githubAppSlug: '',
                         paths: {
                             dataDir: '/data',
                             configDir: '/config',
@@ -76,6 +78,8 @@ describe('GitHubAppIntegrationModule', () => {
                 connectionStage: null,
                 connections: [],
                 connectionOptions: [],
+                configurationIssue: 'client-id-missing',
+                deviceAuthorization: null,
             },
         ]);
 

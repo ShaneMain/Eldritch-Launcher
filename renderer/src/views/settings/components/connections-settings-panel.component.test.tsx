@@ -13,6 +13,8 @@ const github: AppIntegrationSummary = {
     connectionStage: null,
     connections: [],
     connectionOptions: [],
+    configurationIssue: null,
+    deviceAuthorization: null,
 };
 
 const connectedGithub: AppIntegrationSummary = {
@@ -96,6 +98,22 @@ describe('ConnectionsSettingsPanel', () => {
         expect(html).toContain('connections.actions.connect: GitHub');
     });
 
+    it('disables Connect and explains a missing GitHub App client ID', () => {
+        const html = renderPanel({
+            integrations: [
+                { ...github, configurationIssue: 'client-id-missing' },
+            ],
+        });
+
+        expect(html).toContain('githubAuth:configuration.clientIdMissing');
+        expect(html).toMatch(
+            /<button[^>]*disabled=""[^>]*>connections\.actions\.connect: GitHub<\/button>/u,
+        );
+        expect(renderPanel()).not.toMatch(
+            /<button[^>]*disabled=""[^>]*>connections\.actions\.connect: GitHub<\/button>/u,
+        );
+    });
+
     it('presents aggregate counts and compact connected actions', () => {
         const html = renderPanel({ integrations: [connectedGithub] });
 
@@ -141,6 +159,8 @@ describe('ConnectionsSettingsPanel', () => {
                     connectionStage: null,
                     connections: [],
                     connectionOptions: [],
+                    configurationIssue: null,
+                    deviceAuthorization: null,
                 },
             ],
         });

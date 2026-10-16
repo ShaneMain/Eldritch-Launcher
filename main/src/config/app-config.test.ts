@@ -1,5 +1,9 @@
 import * as path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import {
+    GITHUB_APP_CLIENT_ID,
+    GITHUB_APP_SLUG,
+} from '../app-integrations/providers/github/github-app-integration.constants.js';
 import { APP_INTERNAL_NAME } from '../constants.js';
 import { configuration, resolveAppPaths } from './app-config.js';
 
@@ -35,27 +39,34 @@ describe('configuration', () => {
                 disableDevMenu: true,
                 startHidden: true,
                 e2eFixtures: true,
-                useLocalGitHubBroker: false,
+                githubClientId: GITHUB_APP_CLIENT_ID,
+                githubAppSlug: GITHUB_APP_SLUG,
             }),
         );
     });
 
-    it('allows the fixed local GitHub broker only in development', () => {
-        const development = configuration({
-            args: argv(),
-            env: { GODOT_LAUNCHER_USE_LOCAL_GITHUB_BROKER: '1' },
-            isPackaged: false,
-            appPath: '/workspace/launcher',
-        });
+    it('overrides the build-time GitHub App identity from env in any runtime', () => {
         const packaged = configuration({
             args: argv(),
-            env: { GODOT_LAUNCHER_USE_LOCAL_GITHUB_BROKER: '1' },
+            env: {
+                ELDRITCH_LAUNCHER_GITHUB_CLIENT_ID: ' Iv23liExampleClient ',
+                ELDRITCH_LAUNCHER_GITHUB_APP_SLUG: 'eldritch-launcher',
+            },
             isPackaged: true,
             appPath: '/opt/launcher/app.asar',
         });
+        const invalid = configuration({
+            args: argv(),
+            env: {
+                ELDRITCH_LAUNCHER_GITHUB_CLIENT_ID: 'bad id with spaces',
+                ELDRITCH_LAUNCHER_GITHUB_APP_SLUG: 'Not A Slug',
+            },
+        });
 
-        expect(development.useLocalGitHubBroker).toBe(true);
-        expect(packaged.useLocalGitHubBroker).toBe(false);
+        expect(packaged.githubClientId).toBe('Iv23liExampleClient');
+        expect(packaged.githubAppSlug).toBe('eldritch-launcher');
+        expect(invalid.githubClientId).toBe(GITHUB_APP_CLIENT_ID);
+        expect(invalid.githubAppSlug).toBe(GITHUB_APP_SLUG);
     });
 
     it('ignores E2E fixtures in a packaged runtime', () => {

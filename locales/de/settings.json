@@ -271,9 +271,6 @@
             "title": "GitHub verbinden",
             "reconnect": "GitHub erneut verbinden",
             "description": "Verbinden Sie GitHub, um fortzufahren. Ihre aktuelle Arbeit bleibt erhalten.",
-            "browserDescription": "Fahren Sie in Ihrem Browser fort, um den Zugriff zu autorisieren, und kehren Sie dann hierher zurück.",
-            "continueInBrowser": "Im Browser fortfahren",
-            "waiting": "Schließen Sie die Verbindung im Browser ab und kehren Sie dann hierher zurück.",
             "refreshRepositories": "Repositorys aktualisieren",
             "accessDescription": "Verwalte den Repositoryzugriff auf GitHub oder füge ein weiteres Konto hinzu und aktualisiere dann die Repositoryliste."
         },
@@ -330,12 +327,7 @@
             "title": "{{connection}} trennen?",
             "description": "Dadurch wird die Verbindung aus Eldritch Launcher entfernt. Die GitHub App wird nicht deinstalliert und Projekt-Remotes werden nicht geändert.",
             "finalDescription": "Dadurch wird die Verbindung von diesem Gerät entfernt. Die GitHub App wird nicht deinstalliert, der Repository-Zugriff und Projekt-Remotes werden nicht geändert.",
-            "revokeAllDevices": "Diese GitHub-Autorisierung auch auf allen Godot Launcher-Geräten widerrufen.",
-            "revokeDetail": "Andere Godot Launcher-Geräte, die mit diesem GitHub-Konto verbunden sind, müssen erneut verbunden werden.",
-            "localOnlyWarning": "Der GitHub-Zugriff bleibt auf anderen Geräten aktiv und kopierte Tokens bleiben gültig, bis sie ablaufen oder widerrufen werden.",
-            "failureDetail": "Die Verbindung konnte nicht entfernt werden. Die lokale Anmeldeinformation wurde beibehalten. Versuche es erneut.",
-            "revokeAction": "Widerrufen und trennen",
-            "localOnlyAction": "Nur dieses Gerät trennen"
+            "failureDetail": "Die Verbindung konnte nicht entfernt werden. Die lokale Anmeldeinformation wurde beibehalten. Versuche es erneut."
         },
         "credentialStorage": {
             "configure": "Speicher konfigurieren",

@@ -1,12 +1,29 @@
-export const LOCAL_BROKER_ORIGIN = 'http://127.0.0.1:8787';
-export const PRODUCTION_BROKER_ORIGIN = 'https://auth.godotlauncher.org';
-export const BROKER_REQUEST_TIMEOUT_MS = 10_000;
-export const BROKER_RESPONSE_MAX_BYTES = 64 * 1024;
+/**
+ * Build-time GitHub App identity. Neither value is secret: device flow and
+ * token refresh for GitHub App user tokens need only the public client ID.
+ * Override at runtime with `ELDRITCH_LAUNCHER_GITHUB_CLIENT_ID` and
+ * `ELDRITCH_LAUNCHER_GITHUB_APP_SLUG`.
+ */
+export const GITHUB_APP_CLIENT_ID = '';
+export const GITHUB_APP_SLUG = '';
 
-export const COMPLETION_PATH_PREFIX = '/oauth/github/callback/';
-export const COMPLETION_TICKET_PATTERN = /^[A-Za-z0-9_-]{38,8192}$/u;
-export const LOCAL_BROKER_COMPLETION_URL = `${LOCAL_BROKER_ORIGIN}/v1/oauth/github/complete`;
-export const PRODUCTION_BROKER_COMPLETION_URL = `${PRODUCTION_BROKER_ORIGIN}/v1/oauth/github/complete`;
+export const GITHUB_USER_AGENT = 'Eldritch-Launcher';
+
+export const GITHUB_DEVICE_CODE_URL = 'https://github.com/login/device/code';
+export const GITHUB_ACCESS_TOKEN_URL =
+    'https://github.com/login/oauth/access_token';
+export const GITHUB_DEVICE_GRANT_TYPE =
+    'urn:ietf:params:oauth:grant-type:device_code';
+export const GITHUB_REFRESH_GRANT_TYPE = 'refresh_token';
+/** RFC 8628 default polling interval when GitHub omits `interval`. */
+export const GITHUB_DEVICE_DEFAULT_INTERVAL_SECONDS = 5;
+/** Extra delay GitHub requires after each `slow_down` response. */
+export const GITHUB_DEVICE_SLOW_DOWN_SECONDS = 5;
+export const GITHUB_OAUTH_REQUEST_TIMEOUT_MS = 10_000;
+export const GITHUB_OAUTH_RESPONSE_MAX_BYTES = 64 * 1024;
+export const GITHUB_AUTHORISATIONS_SETTINGS_URL =
+    'https://github.com/settings/apps/authorizations';
+export const GITHUB_INSTALLATION_POLL_INTERVAL_MS = 5_000;
 
 export const GITHUB_USER_URL = 'https://api.github.com/user';
 export const GITHUB_INSTALLATIONS_URL =
@@ -21,3 +38,8 @@ export const GITHUB_REPOSITORY_PAGE_MAX_BYTES = 2 * 1024 * 1024;
 export const GITHUB_REPOSITORY_RESPONSE_MAX_BYTES = 256 * 1024;
 export const GITHUB_REPOSITORY_CREATION_RESPONSE_MAX_BYTES = 256 * 1024;
 export const GITHUB_MAX_RENAME_REDIRECTS = 3;
+
+/** Builds the public GitHub App installation entry for one app slug. */
+export function githubAppInstallationUrl(slug: string): string {
+    return `https://github.com/apps/${encodeURIComponent(slug)}/installations/new`;
+}

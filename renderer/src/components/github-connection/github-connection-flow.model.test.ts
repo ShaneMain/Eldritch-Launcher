@@ -4,8 +4,10 @@ import type {
 } from '@shared/contracts';
 import { describe, expect, it } from 'vitest';
 import {
+    formatDeviceCodeRemaining,
     GitHubConnectionFlowSessionGuard,
     getGitHubConnectionFlowState,
+    gitHubConfigurationIssueKey,
     hasUsableGitHubConnection,
 } from './github-connection-flow.model';
 
@@ -16,6 +18,8 @@ const disconnected: AppIntegrationSummary = {
     connectionStage: null,
     connections: [],
     connectionOptions: [],
+    configurationIssue: null,
+    deviceAuthorization: null,
 };
 
 const usable: AppIntegrationSummary = {
@@ -111,5 +115,23 @@ describe('GitHub connection flow state', () => {
                 },
             }),
         ).toBe('error');
+    });
+});
+
+describe('GitHub device-flow presentation', () => {
+    it('formats the device-code countdown as minutes and padded seconds', () => {
+        expect(formatDeviceCodeRemaining(15 * 60 * 1_000)).toBe('15:00');
+        expect(formatDeviceCodeRemaining(65_000)).toBe('1:05');
+        expect(formatDeviceCodeRemaining(400)).toBe('0:01');
+        expect(formatDeviceCodeRemaining(-5_000)).toBe('0:00');
+    });
+
+    it('explains each missing GitHub App setting', () => {
+        expect(gitHubConfigurationIssueKey('client-id-missing')).toBe(
+            'githubAuth:configuration.clientIdMissing',
+        );
+        expect(gitHubConfigurationIssueKey('app-slug-missing')).toBe(
+            'githubAuth:configuration.appSlugMissing',
+        );
     });
 });

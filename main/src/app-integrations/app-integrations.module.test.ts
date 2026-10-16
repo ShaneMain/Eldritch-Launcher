@@ -33,11 +33,11 @@ class LaterProvider implements AppIntegrationProvider {
         order: 20,
     };
 
+    getConfigurationIssue = vi.fn(() => null);
     connect = vi.fn();
     isCredentialValid = vi.fn(() => true);
     refresh = vi.fn();
-    prepareCredentialRevocation = vi.fn();
-    revokeCredential = vi.fn();
+    openAuthorisationSettings = vi.fn();
     openManageAccess = vi.fn();
 }
 
@@ -49,11 +49,11 @@ class EarlierProvider implements AppIntegrationProvider {
         order: 10,
     };
 
+    getConfigurationIssue = vi.fn(() => null);
     connect = vi.fn();
     isCredentialValid = vi.fn(() => true);
     refresh = vi.fn();
-    prepareCredentialRevocation = vi.fn();
-    revokeCredential = vi.fn();
+    openAuthorisationSettings = vi.fn();
     openManageAccess = vi.fn();
 }
 
@@ -99,11 +99,11 @@ class DuplicateProvider implements AppIntegrationProvider {
         order: 30,
     };
 
+    getConfigurationIssue = vi.fn(() => null);
     connect = vi.fn();
     isCredentialValid = vi.fn(() => true);
     refresh = vi.fn();
-    prepareCredentialRevocation = vi.fn();
-    revokeCredential = vi.fn();
+    openAuthorisationSettings = vi.fn();
     openManageAccess = vi.fn();
 }
 
@@ -145,6 +145,8 @@ describe('AppIntegrationsModule', () => {
                 connectionStage: null,
                 connections: [],
                 connectionOptions: [],
+                configurationIssue: null,
+                deviceAuthorization: null,
             },
             {
                 id: 'later',
@@ -153,6 +155,8 @@ describe('AppIntegrationsModule', () => {
                 connectionStage: null,
                 connections: [],
                 connectionOptions: [],
+                configurationIssue: null,
+                deviceAuthorization: null,
             },
         ]);
         expect(

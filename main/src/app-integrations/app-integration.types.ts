@@ -1,3 +1,8 @@
+import type {
+    AppIntegrationConfigurationIssue,
+    AppIntegrationDeviceAuthorization,
+} from '@shared/contracts';
+
 export type AppIntegrationProviderMetadata = {
     id: string;
     displayName: string;
@@ -55,6 +60,10 @@ export type AppIntegrationConnectionIntent = 'connect' | 'reconnect';
 export type AppIntegrationConnectionRequest = {
     intent: AppIntegrationConnectionIntent;
     expectedAccountId: string | null;
+    /** Publishes the code the user must confirm on the provider's site. */
+    onDeviceAuthorization: (
+        authorization: AppIntegrationDeviceAuthorization,
+    ) => void;
 };
 
 export type AppIntegrationConnectionRecord = {
@@ -85,12 +94,6 @@ export type AppIntegrationRefreshContext = {
     trigger: AppIntegrationRefreshTrigger;
 };
 
-export type AppIntegrationPreparedCredential = {
-    credential: string;
-    accessTokenExpiresAt: string | null;
-    refreshTokenExpiresAt: string | null;
-};
-
 export type AppIntegrationStoreFile = {
     schemaVersion: 3;
     connections: Record<string, AppIntegrationConnectionRecord>;
@@ -105,9 +108,11 @@ export type AppIntegrationProviderFailureReason =
     | 'account-mismatch'
     | 'cancelled'
     | 'denied'
+    | 'device-flow-disabled'
     | 'installation-required'
     | 'invalid-response'
     | 'network-error'
+    | 'not-configured'
     | 'provider-unavailable'
     | 'timed-out';
 
@@ -128,6 +133,9 @@ export class AppIntegrationProviderError extends Error {
  */
 export interface AppIntegrationProvider {
     readonly metadata: AppIntegrationProviderMetadata;
+
+    /** Reports build or runtime configuration that prevents connecting. */
+    getConfigurationIssue(): AppIntegrationConfigurationIssue | null;
 
     /**
      * Connects one provider account through its native authentication flow.
@@ -159,23 +167,10 @@ export interface AppIntegrationProvider {
     ): Promise<AppIntegrationProviderRefreshResult>;
 
     /**
-     * Prepares a current credential for remote revocation.
-     *
-     * @param signal - Revocation cancellation signal.
-     * @param credential - Decrypted provider credential.
+     * Opens the provider-owned page where the user can revoke the complete
+     * authorisation, for providers without a client-side revocation endpoint.
      */
-    prepareCredentialRevocation(
-        signal: AbortSignal,
-        credential: string,
-    ): Promise<AppIntegrationPreparedCredential>;
-
-    /**
-     * Revokes the complete provider authorisation represented by a credential.
-     *
-     * @param signal - Revocation cancellation signal.
-     * @param credential - Prepared decrypted provider credential.
-     */
-    revokeCredential(signal: AbortSignal, credential: string): Promise<void>;
+    openAuthorisationSettings(): Promise<void>;
 
     /**
      * Opens the provider-owned repository access settings.

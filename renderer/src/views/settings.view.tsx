@@ -236,19 +236,19 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                             close={close}
                             copy={{
                                 checkbox: t(
-                                    'connections.disconnectConfirm.revokeAllDevices',
+                                    'githubAuth:disconnect.openRevocation',
                                 ),
                                 checkedDetail: t(
-                                    'connections.disconnectConfirm.revokeDetail',
+                                    'githubAuth:disconnect.openRevocationDetail',
                                 ),
                                 checkedAction: t(
-                                    'connections.disconnectConfirm.revokeAction',
+                                    'githubAuth:disconnect.openRevocationAction',
                                 ),
                                 uncheckedDetail: t(
-                                    'connections.disconnectConfirm.localOnlyWarning',
+                                    'githubAuth:disconnect.localOnlyDetail',
                                 ),
                                 uncheckedAction: t(
-                                    'connections.disconnectConfirm.localOnlyAction',
+                                    'githubAuth:disconnect.localOnlyAction',
                                 ),
                                 failureDetail: t(
                                     'connections.disconnectConfirm.failureDetail',

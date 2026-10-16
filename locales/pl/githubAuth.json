@@ -1,3 +1,32 @@
 {
-    "title": "GitHub account"
+    "title": "GitHub account",
+    "intro": "Eldritch Launcher shows a one-time code. Enter it on GitHub to authorise access, then return here.",
+    "getCode": "Get sign-in code",
+    "requestingCode": "Requesting a sign-in code from GitHub...",
+    "enterCode": "Enter this code on GitHub to authorise Eldritch Launcher:",
+    "userCodeLabel": "GitHub sign-in code",
+    "openGitHub": "Open GitHub",
+    "openFailed": "Could not open your browser. Visit {{url}} and enter the code.",
+    "waiting": "Waiting for you to authorise on GitHub. The code expires in {{time}}.",
+    "codeExpired": "This code has expired. Cancel and start again to get a new code.",
+    "installing": "Finish installing the GitHub App in your browser. Eldritch Launcher detects the new installation automatically.",
+    "configuration": {
+        "clientIdMissing": "GitHub App client ID not configured",
+        "appSlugMissing": "GitHub App slug not configured"
+    },
+    "errors": {
+        "denied": "Authorisation was denied on GitHub.",
+        "expired": "The sign-in request expired before it was confirmed. Start again to get a new code.",
+        "deviceFlowDisabled": "Device sign-in is disabled for this GitHub App. Enable Device Flow in the GitHub App settings.",
+        "network": "Could not reach GitHub. Check your connection and try again.",
+        "unavailable": "GitHub is temporarily unavailable. Try again shortly.",
+        "notConfigured": "This build has no GitHub App configured."
+    },
+    "disconnect": {
+        "openRevocation": "Also open GitHub to revoke Eldritch Launcher's authorisation.",
+        "openRevocationDetail": "GitHub opens its authorised GitHub Apps page. Revoke Eldritch Launcher there to sign out every device.",
+        "openRevocationAction": "Disconnect and open GitHub",
+        "localOnlyDetail": "Only this device is signed out. The GitHub authorisation stays active on other devices until you revoke it on GitHub.",
+        "localOnlyAction": "Disconnect this device"
+    }
 }

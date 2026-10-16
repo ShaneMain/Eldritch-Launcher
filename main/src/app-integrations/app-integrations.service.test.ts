@@ -13,10 +13,19 @@ import type { AppIntegrationSecureStorageAdapter } from './app-integration-secur
 import { AppIntegrationsService } from './app-integrations.service.js';
 import type { AppIntegrationsStore } from './app-integrations.store.js';
 
+const eventMocks = vi.hoisted(() => ({
+    webContents: { isDestroyed: () => false },
+    send: vi.fn(),
+}));
+
 vi.mock('electron', () => ({ safeStorage: {} }));
 vi.mock('electron-log/main.js', () => ({
     default: { debug: vi.fn(), warn: vi.fn() },
 }));
+vi.mock('../mainWindow.js', () => ({
+    getMainWindow: () => ({ webContents: eventMocks.webContents }),
+}));
+vi.mock('../utils.js', () => ({ ipcWebContentsSend: eventMocks.send }));
 
 /**
  * Creates one provider connection result for a test account.
@@ -90,22 +99,19 @@ describe('AppIntegrationsService', () => {
     let service: AppIntegrationsService;
 
     beforeEach(() => {
+        vi.clearAllMocks();
         records = new Map();
         ciphertexts = new Map();
         provider = {
             metadata: { id: 'github', displayName: 'GitHub', order: 10 },
+            getConfigurationIssue: vi.fn(() => null),
             connect: vi.fn(async () =>
                 connectionAttempt(connectionResult('1', 'octocat')),
             ),
             refresh: vi.fn(async () => ({
                 status: 'temporarily-unavailable' as const,
             })),
-            prepareCredentialRevocation: vi.fn(async (_signal, credential) => ({
-                credential,
-                accessTokenExpiresAt: null,
-                refreshTokenExpiresAt: null,
-            })),
-            revokeCredential: vi.fn(),
+            openAuthorisationSettings: vi.fn(),
             isCredentialValid: vi.fn(() => true),
             openManageAccess: vi.fn(),
         };
@@ -229,6 +235,7 @@ describe('AppIntegrationsService', () => {
         expect(provider.connect).toHaveBeenCalledWith(expect.any(AbortSignal), {
             intent: 'connect',
             expectedAccountId: null,
+            onDeviceAuthorization: expect.any(Function),
         });
         expect(attempt.installation?.close).toHaveBeenCalledOnce();
         expect(attempt.installation?.install).not.toHaveBeenCalled();
@@ -599,7 +606,7 @@ describe('AppIntegrationsService', () => {
 
         expect(records.get(record.id)?.accessTargets).toHaveLength(1);
         expect(ciphertexts.has(record.id)).toBe(true);
-        expect(provider.revokeCredential).not.toHaveBeenCalled();
+        expect(provider.openAuthorisationSettings).not.toHaveBeenCalled();
     });
 
     it('targets reconnect, management, and disconnect actions', async () => {
@@ -646,17 +653,17 @@ describe('AppIntegrationsService', () => {
         expect(result.integration.connections).toHaveLength(1);
         expect(records.has(octocat.id)).toBe(false);
         expect(ciphertexts.has(octocat.id)).toBe(false);
-        expect(provider.revokeCredential).not.toHaveBeenCalled();
+        expect(provider.openAuthorisationSettings).not.toHaveBeenCalled();
     });
 
-    it('revokes the final authorisation before deleting local state', async () => {
+    it('opens provider revocation settings before deleting the final connection', async () => {
         await connectFirstOption();
         const record = [...records.values()][0];
         const target = record?.accessTargets[0];
         if (!record || !target) {
             throw new Error('Test connection was not persisted');
         }
-        vi.mocked(provider.revokeCredential).mockImplementationOnce(
+        vi.mocked(provider.openAuthorisationSettings).mockImplementationOnce(
             async () => {
                 expect(records.has(record.id)).toBe(true);
                 expect(ciphertexts.has(record.id)).toBe(true);
@@ -671,26 +678,19 @@ describe('AppIntegrationsService', () => {
         );
 
         expect(result.ok).toBe(true);
-        expect(provider.prepareCredentialRevocation).toHaveBeenCalledWith(
-            expect.any(AbortSignal),
-            '{"token":"secret-1"}',
-        );
-        expect(provider.revokeCredential).toHaveBeenCalledWith(
-            expect.any(AbortSignal),
-            '{"token":"secret-1"}',
-        );
+        expect(provider.openAuthorisationSettings).toHaveBeenCalledOnce();
         expect(records.has(record.id)).toBe(false);
         expect(ciphertexts.has(record.id)).toBe(false);
     });
 
-    it('preserves local state when selected revocation fails', async () => {
+    it('preserves local state when opening revocation settings fails', async () => {
         await connectFirstOption();
         const record = [...records.values()][0];
         const target = record?.accessTargets[0];
         if (!record || !target) {
             throw new Error('Test connection was not persisted');
         }
-        vi.mocked(provider.revokeCredential).mockRejectedValueOnce(
+        vi.mocked(provider.openAuthorisationSettings).mockRejectedValueOnce(
             new AppIntegrationProviderError('provider-unavailable'),
         );
 
@@ -725,7 +725,7 @@ describe('AppIntegrationsService', () => {
         );
 
         expect(result).toMatchObject({ ok: false, reason: 'unknown' });
-        expect(provider.revokeCredential).not.toHaveBeenCalled();
+        expect(provider.openAuthorisationSettings).not.toHaveBeenCalled();
         expect(records.has(record.id)).toBe(true);
         expect(ciphertexts.has(record.id)).toBe(true);
     });
@@ -760,14 +760,14 @@ describe('AppIntegrationsService', () => {
             ok: false,
             reason: 'already-connecting',
         });
-        expect(provider.revokeCredential).not.toHaveBeenCalled();
+        expect(provider.openAuthorisationSettings).not.toHaveBeenCalled();
         expect(records.has(record.id)).toBe(true);
         expect(ciphertexts.has(record.id)).toBe(true);
         finishRefresh?.({ status: 'temporarily-unavailable' });
         await refreshing;
     });
 
-    it('does not refresh while provider credential revocation is active', async () => {
+    it('does not refresh while opening revocation settings for a final disconnect', async () => {
         await connectFirstOption();
         const record = [...records.values()][0];
         const target = record?.accessTargets[0];
@@ -775,7 +775,7 @@ describe('AppIntegrationsService', () => {
             throw new Error('Test connection was not persisted');
         }
         let finishRevocation: (() => void) | undefined;
-        vi.mocked(provider.revokeCredential).mockImplementationOnce(
+        vi.mocked(provider.openAuthorisationSettings).mockImplementationOnce(
             () =>
                 new Promise<void>((resolve) => {
                     finishRevocation = resolve;
@@ -788,7 +788,7 @@ describe('AppIntegrationsService', () => {
             { revokeAuthorisation: true },
         );
         await vi.waitFor(() =>
-            expect(provider.revokeCredential).toHaveBeenCalledOnce(),
+            expect(provider.openAuthorisationSettings).toHaveBeenCalledOnce(),
         );
 
         await expect(service.refresh('github')).resolves.toMatchObject({
@@ -800,39 +800,6 @@ describe('AppIntegrationsService', () => {
 
         finishRevocation?.();
         await expect(disconnecting).resolves.toMatchObject({ ok: true });
-    });
-
-    it('retains a rotated credential when revocation fails', async () => {
-        await connectFirstOption();
-        const record = [...records.values()][0];
-        const target = record?.accessTargets[0];
-        if (!record || !target) {
-            throw new Error('Test connection was not persisted');
-        }
-        vi.mocked(provider.prepareCredentialRevocation).mockResolvedValueOnce({
-            credential: '{"token":"rotated-secret"}',
-            accessTokenExpiresAt: '2026-08-22T00:00:00.000Z',
-            refreshTokenExpiresAt: '2027-02-21T00:00:00.000Z',
-        });
-        vi.mocked(provider.revokeCredential).mockRejectedValueOnce(
-            new AppIntegrationProviderError('network-error'),
-        );
-
-        const result = await service.disconnect(
-            'github',
-            record.id,
-            target.id,
-            { revokeAuthorisation: true },
-        );
-
-        expect(result).toMatchObject({ ok: false, reason: 'network-error' });
-        expect(ciphertexts.get(record.id)).toBe(
-            'encrypted:{"token":"rotated-secret"}',
-        );
-        expect(records.get(record.id)).toMatchObject({
-            accessTokenExpiresAt: '2026-08-22T00:00:00.000Z',
-            refreshTokenExpiresAt: '2027-02-21T00:00:00.000Z',
-        });
     });
 
     it('rejects a different account before replacing a targeted connection', async () => {
@@ -926,6 +893,63 @@ describe('AppIntegrationsService', () => {
         await expect(connecting).resolves.toMatchObject({
             ok: false,
             reason: 'cancelled',
+        });
+    });
+
+    it('refuses to connect while the provider is not configured', async () => {
+        vi.mocked(provider.getConfigurationIssue).mockReturnValue(
+            'client-id-missing',
+        );
+
+        const result = await service.connect('github');
+
+        expect(result).toMatchObject({
+            ok: false,
+            reason: 'not-configured',
+            integration: {
+                state: 'not-connected',
+                configurationIssue: 'client-id-missing',
+            },
+        });
+        expect(provider.connect).not.toHaveBeenCalled();
+    });
+
+    it('exposes and publishes the device code only while authorising', async () => {
+        const authorization = {
+            userCode: 'WDJB-MJHT',
+            verificationUri: 'https://github.com/login/device',
+            expiresAt: '2026-10-16T12:15:00.000Z',
+        };
+        const approval = Promise.withResolvers<void>();
+        provider.connect = vi.fn(async (_signal, request) => {
+            request.onDeviceAuthorization(authorization);
+            await approval.promise;
+            return connectionAttempt(connectionResult('1', 'octocat'));
+        });
+
+        const connecting = service.connect('github');
+        await vi.waitFor(() =>
+            expect(eventMocks.send).toHaveBeenCalledWith(
+                'app-integration-updated',
+                eventMocks.webContents,
+                expect.objectContaining({
+                    id: 'github',
+                    connectionStage: 'authorising',
+                    deviceAuthorization: authorization,
+                }),
+            ),
+        );
+        await expect(service.list()).resolves.toMatchObject([
+            { deviceAuthorization: authorization },
+        ]);
+
+        approval.resolve();
+        await expect(connecting).resolves.toMatchObject({
+            ok: true,
+            integration: {
+                connectionStage: 'choosing',
+                deviceAuthorization: null,
+            },
         });
     });
 });

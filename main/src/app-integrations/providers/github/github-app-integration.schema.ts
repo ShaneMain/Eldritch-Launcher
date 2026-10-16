@@ -1,24 +1,5 @@
 import { z } from 'zod';
 
-export const GitHubAuthAttemptSchema = z.object({
-    attemptId: z.string().regex(/^[0-9a-f]{64}$/u),
-    attemptToken: z.string().regex(/^[A-Za-z0-9_-]{43}$/u),
-    browserUrl: z
-        .url()
-        .max(2048)
-        .refine((value) => {
-            const url = new URL(value);
-            return (
-                url.protocol === 'https:' &&
-                url.hostname === 'github.com' &&
-                url.username === '' &&
-                url.password === '' &&
-                url.hash === ''
-            );
-        }),
-    expiresAt: z.number().int().positive(),
-});
-
 export const GitHubTokenBundleSchema = z.object({
     accessToken: z.string().min(1).max(4096),
     expiresIn: z.number().int().positive().nullable(),
@@ -26,14 +7,6 @@ export const GitHubTokenBundleSchema = z.object({
     refreshTokenExpiresIn: z.number().int().positive().nullable(),
     scope: z.string().max(4096),
     tokenType: z.string().min(1).max(64),
-});
-
-export const GitHubOAuthRedemptionSchema = GitHubTokenBundleSchema.extend({
-    installationUrl: z.url().max(2048).nullable(),
-});
-
-export const GitHubSetupRedemptionSchema = z.object({
-    installationId: z.string().regex(/^[1-9][0-9]{0,19}$/u),
 });
 
 export const GitHubUserIdentitySchema = z.object({
@@ -202,9 +175,46 @@ export const GitHubStoredCredentialSchema = GitHubTokenBundleSchema.extend({
     createdAt: z.iso.datetime(),
 });
 
-export const GitHubBrokerErrorSchema = z.object({
-    error: z.object({
-        code: z.string().max(128),
-        message: z.string().max(512),
-    }),
+const GitHubDeviceVerificationUriSchema = z
+    .url()
+    .max(2048)
+    .refine((value) => {
+        const url = new URL(value);
+        return (
+            url.protocol === 'https:' &&
+            url.hostname === 'github.com' &&
+            url.port === '' &&
+            url.username === '' &&
+            url.password === '' &&
+            url.hash === ''
+        );
+    });
+
+/** GitHub `POST /login/device/code` success body. */
+export const GitHubDeviceCodeResponseSchema = z.object({
+    device_code: z.string().min(1).max(512),
+    user_code: z.string().regex(/^[A-Z0-9]{1,16}(?:-[A-Z0-9]{1,16})*$/u),
+    verification_uri: GitHubDeviceVerificationUriSchema,
+    expires_in: z
+        .number()
+        .int()
+        .positive()
+        .max(24 * 60 * 60),
+    interval: z.number().int().positive().max(600).optional(),
+});
+
+/** GitHub `POST /login/oauth/access_token` success body. */
+export const GitHubAccessTokenResponseSchema = z.object({
+    access_token: z.string().min(1).max(4096),
+    token_type: z.string().min(1).max(64),
+    scope: z.string().max(4096).default(''),
+    expires_in: z.number().int().positive().optional(),
+    refresh_token: z.string().min(1).max(4096).optional(),
+    refresh_token_expires_in: z.number().int().positive().optional(),
+});
+
+/** GitHub OAuth error body; GitHub returns these with HTTP 200 for polling. */
+export const GitHubOAuthErrorResponseSchema = z.object({
+    error: z.string().min(1).max(128),
+    interval: z.number().int().positive().max(600).optional(),
 });
