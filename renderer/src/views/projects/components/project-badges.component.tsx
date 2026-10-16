@@ -4,6 +4,7 @@ import gitIconColor from '../../../assets/icons/git-icon-color.svg';
 import { CodeEditorIntegrationIcon } from '../../../components/code-editor-integration-icon.component';
 import { StatusBadge } from '../../../components/ui/status-badge.component';
 import { Tooltip } from '../../../components/ui/tooltip.component';
+import { EngineStatusBadge } from './engine-status-badge.component';
 import type { ProjectListItemProps } from './project-list.types';
 import { ProjectStatusTooltip } from './project-status-tooltip.component';
 
@@ -122,6 +123,8 @@ export function ProjectBadges({
                     </ProjectBadge>
                 </ProjectStatusTooltip>
             )}
+
+            <EngineStatusBadge project={project} />
 
             {project.codeEditorId && (
                 <ProjectStatusTooltip

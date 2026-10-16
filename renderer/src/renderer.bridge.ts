@@ -14,6 +14,7 @@ export const appIntegrationsBridge = rendererBridge.appIntegrations;
 export const codeEditorIntegrationBridge = rendererBridge.codeEditorIntegration;
 export const editorCatalogBridge = rendererBridge.editorCatalog;
 export const editorInstallsBridge = rendererBridge.editorInstalls;
+export const engineSourcesBridge = rendererBridge.engineSources;
 export const gitBridge = rendererBridge.git;
 export const gitLfsBridge = rendererBridge.gitLfs;
 export const projectsBridge = rendererBridge.projects;

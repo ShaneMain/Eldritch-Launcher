@@ -203,6 +203,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
         installedReleases,
         availableReleases,
         availablePrereleases,
+        forkReleases,
         downloadingReleases,
         installRelease,
         isInstalledRelease,
@@ -268,6 +269,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
         projectsLocation: preferences?.projects_location,
         availableReleases,
         availablePrereleases,
+        forkReleases,
         addAlert,
         addCustomConfirm,
         setAddingProject,
@@ -682,6 +684,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                                         project,
                                         availableReleases,
                                         availablePrereleases,
+                                        forkReleases,
                                     )
                                 }
                                 onInstallRequiredProjectEditor={(

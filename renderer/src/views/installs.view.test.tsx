@@ -45,6 +45,8 @@ vi.mock('../hooks/release.hook', () => {
         useRelease: () => ({
             availableReleases: [],
             availablePrereleases: [],
+            forkReleases: [],
+            catalogProviders: [],
             installedReleases: releaseState.installedReleases,
             downloadingReleases: releaseState.downloadingReleases,
             releaseInstallProgress: [],

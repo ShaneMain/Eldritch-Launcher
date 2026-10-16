@@ -38,6 +38,8 @@ type InstalledReleaseListProps = {
     onRemove: (release: InstalledRelease) => void;
     onOpenInstalledFolder: (release: InstalledRelease) => void;
     onStartProjectManager: (release: InstalledRelease) => void;
+    /** Display names of fork engine sources keyed by source ID. */
+    forkSourceNames?: Record<string, string>;
     selectionEnabled?: boolean;
     selectedKeys?: Set<string>;
     selectableKeys?: Set<string>;
@@ -59,13 +61,38 @@ export const InstalledReleaseList: React.FC<InstalledReleaseListProps> = ({
     onRemove,
     onOpenInstalledFolder,
     onStartProjectManager,
+    forkSourceNames = {},
     selectionEnabled = false,
     selectedKeys,
     selectableKeys,
     onToggleEditor,
 }) => {
     const { cancelInstall, getReleaseInstallProgress } = useRelease();
-    const groups = groupEditorsByBaseVersion(rows);
+    const groups = groupEditorsByBaseVersion(
+        rows.filter((release) => !release.fork),
+    ).map((group) => ({
+        key: group.baseVersion ?? 'other',
+        title: group.baseVersion ?? t('groups.other'),
+        items: group.items,
+    }));
+    const forkGroups = new Map<
+        string,
+        { key: string; title: string; items: InstalledRelease[] }
+    >();
+    for (const release of rows) {
+        if (!release.fork) {
+            continue;
+        }
+        const { sourceId, source } = release.fork;
+        const group = forkGroups.get(sourceId) ?? {
+            key: sourceId,
+            title: forkSourceNames[sourceId] ?? source,
+            items: [],
+        };
+        group.items.push(release);
+        forkGroups.set(sourceId, group);
+    }
+    groups.push(...forkGroups.values());
 
     return (
         <div
@@ -74,8 +101,8 @@ export const InstalledReleaseList: React.FC<InstalledReleaseListProps> = ({
         >
             {groups.map((group) => (
                 <EditorVersionGroup
-                    key={group.baseVersion ?? 'other'}
-                    title={group.baseVersion ?? t('groups.other')}
+                    key={group.key}
+                    title={group.title}
                     count={group.items.length}
                     headingLevel="h2"
                 >
@@ -229,6 +256,22 @@ const InstalledReleaseRow: React.FC<InstalledReleaseRowProps> = ({
                     <span className="badge badge-sm badge-outline shrink-0">
                         {t('badges.dotNet')}
                     </span>
+                )}
+                {release.fork && (
+                    <Tooltip
+                        placement="top"
+                        tip={t('installs.revisionTooltip', {
+                            ns: 'engineSources',
+                            revision: release.fork.revision,
+                        })}
+                    >
+                        <span
+                            className="badge badge-sm badge-ghost shrink-0 font-mono"
+                            data-testid="forkRevision"
+                        >
+                            {release.fork.revision.slice(0, 7)}
+                        </span>
+                    </Tooltip>
                 )}
             </div>
 

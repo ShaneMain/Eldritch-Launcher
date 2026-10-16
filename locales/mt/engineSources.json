@@ -1,3 +1,69 @@
 {
-    "title": "Engine sources"
+    "title": "Engine sources",
+    "errors": {
+        "authRequired": "Sign in to GitHub in Settings → Connections to use builds from {{source}}.",
+        "sourceUnavailable": "Engine source {{source}} is not configured.",
+        "integrityUnavailable": "Build {{name}} has no SHA-256 digest; refusing to install."
+    },
+    "settings": {
+        "overview": "GitHub repositories that publish Godot editor builds. Add a fork to install its builds and pin projects to an exact engine revision.",
+        "loading": "Loading engine sources...",
+        "loadError": "Engine sources could not be loaded.",
+        "builtIn": "Built-in",
+        "requiresAuth": "GitHub sign-in",
+        "state": {
+            "ok": "Up to date",
+            "authRequired": "Sign-in required",
+            "error": "Refresh failed",
+            "pending": "Not refreshed yet"
+        },
+        "lastRefreshed": "Refreshed {{age}}",
+        "neverRefreshed": "Never refreshed",
+        "authRequiredHint": "Sign in to GitHub in Settings → Connections to list builds from this source.",
+        "refresh": "Refresh",
+        "removeConfirm": {
+            "title": "Remove {{name}}?",
+            "message": "Builds from {{source}} will no longer be listed. Installed editors and project pins are kept."
+        },
+        "add": {
+            "title": "Add a fork",
+            "owner": "Owner",
+            "repo": "Repository",
+            "displayName": "Display name",
+            "displayNamePlaceholder": "Optional",
+            "submit": "Add source",
+            "errors": {
+                "invalid": "Enter a valid GitHub owner and repository name.",
+                "duplicate": "This repository is already an engine source.",
+                "notFound": "The repository was not found. Check the owner and name, or sign in to GitHub if it is private.",
+                "authRequired": "This repository is private. Sign in to GitHub in Settings → Connections, then try again.",
+                "network": "GitHub could not be reached. Check your connection and try again."
+            }
+        }
+    },
+    "drawer": {
+        "authRequired": "This source requires a GitHub login. Sign in to GitHub in Settings → Connections to list its builds.",
+        "empty": "No builds found for this source.",
+        "noPlatformBuild": "No build for this platform"
+    },
+    "installs": {
+        "revisionTooltip": "Engine revision {{revision}}"
+    },
+    "badge": {
+        "behind_one": "Engine {{count}} commit behind {{branch}}",
+        "behind_other": "Engine {{count}} commits behind {{branch}}",
+        "ahead": "+{{count}} not on {{branch}}",
+        "upToDate": "Engine up to date",
+        "newerBuild": "Newer build: {{tag}}",
+        "installUpdate": "Install & update pin",
+        "installUpdateTooltip": "Install {{version}} and pin this project to it",
+        "newerBuildUnavailable": "The newer build is not in the editor list yet. Refresh the editor list and try again.",
+        "updateFailed": "Could not update the engine pin",
+        "authRequired": "Engine: auth required",
+        "authRequiredTooltip": "Sign in to GitHub in Settings → Connections to check {{source}}.",
+        "unavailable": "Engine status unavailable",
+        "errorTooltip": "Could not check {{source}}: {{message}}",
+        "unknownSourceTooltip": "Engine source {{source}} is not configured. Add it in Settings → Engine sources.",
+        "refresh": "Check engine status"
+    }
 }

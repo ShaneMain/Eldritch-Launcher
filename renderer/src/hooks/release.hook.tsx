@@ -1,4 +1,5 @@
 import type {
+    EditorCatalogProviderStatus,
     EditorCatalogRelease,
     EditorInstallOrigin,
     EditorRemovalSelection,
@@ -22,6 +23,10 @@ type ReleaseContext = {
     catalogueReleases: EditorCatalogRelease[];
     availableReleases: ReleaseSummary[];
     availablePrereleases: ReleaseSummary[];
+    /** Builds published by fork engine sources. */
+    forkReleases: ReleaseSummary[];
+    /** Latest refresh state of every catalog provider. */
+    catalogProviders: EditorCatalogProviderStatus[];
     installedReleases: InstalledRelease[];
     downloadingReleases: ReleaseInstallProgress[];
     releaseInstallProgress: ReleaseInstallProgress[];
@@ -29,6 +34,8 @@ type ReleaseContext = {
     initialized: boolean;
     hasError: string | undefined;
     refreshAvailableReleases: () => Promise<void>;
+    /** Reloads cached catalog data, e.g. after engine sources change. */
+    reloadReleases: () => Promise<void>;
     clearReleaseCache: () => Promise<void>;
     installRelease: (
         release: ReleaseSummary,
@@ -95,6 +102,12 @@ export const ReleaseProvider: React.FC<ReleaseProviderProps> = ({
     const [availablePrereleases, setAvailablePrereleases] = React.useState<
         ReleaseSummary[]
     >([]);
+    const [forkReleases, setForkReleases] = React.useState<ReleaseSummary[]>(
+        [],
+    );
+    const [catalogProviders, setCatalogProviders] = React.useState<
+        EditorCatalogProviderStatus[]
+    >([]);
     const [installedReleases, setInstalledReleases] = React.useState<
         InstalledRelease[]
     >([]);
@@ -125,6 +138,8 @@ export const ReleaseProvider: React.FC<ReleaseProviderProps> = ({
             setCatalogueReleases(catalogResult.releases);
             setAvailableReleases(catalog.availableReleases);
             setAvailablePrereleases(catalog.availablePrereleases);
+            setForkReleases(catalog.forkReleases);
+            setCatalogProviders(catalogResult.providers);
             setHasError(catalog.refreshError);
             setInstalledReleases(installed);
         } catch (error) {
@@ -192,6 +207,15 @@ export const ReleaseProvider: React.FC<ReleaseProviderProps> = ({
      */
     const refreshAvailableReleases = async (): Promise<void> => {
         await updateAllReleases(true);
+    };
+
+    /**
+     * Reloads cached catalog data and installed editor state.
+     *
+     * @returns A promise that ends when the reload finishes.
+     */
+    const reloadReleases = async (): Promise<void> => {
+        await updateAllReleases();
     };
 
     /**
@@ -390,6 +414,8 @@ export const ReleaseProvider: React.FC<ReleaseProviderProps> = ({
                 catalogueReleases,
                 availableReleases,
                 availablePrereleases,
+                forkReleases,
+                catalogProviders,
                 installedReleases,
                 downloadingReleases,
                 releaseInstallProgress,
@@ -397,6 +423,7 @@ export const ReleaseProvider: React.FC<ReleaseProviderProps> = ({
                 initialized,
                 hasError,
                 refreshAvailableReleases,
+                reloadReleases,
                 clearReleaseCache,
                 installRelease,
                 cancelInstall,

@@ -236,4 +236,150 @@ describe('project editor resolution model', () => {
             ),
         ).toBeUndefined();
     });
+
+    describe('fork pins', () => {
+        const pinnedRevision = 'b90e2049e'.padEnd(40, '1');
+        const pin = {
+            sourceId: 'fork:eldritch/engine',
+            source: 'Eldritch/Engine',
+            revision: pinnedRevision,
+        };
+        const forkVersion = '4.4.3.stable.mono.custom_build.b90e2049e';
+
+        /**
+         * Creates a fork build fixture.
+         *
+         * @param revision - Engine revision of the build.
+         * @param source - GitHub `owner/repo` that publishes the build.
+         * @returns A fork release fixture.
+         */
+        function createForkRelease(
+            revision: string,
+            source = 'eldritch/engine',
+        ): ReleaseSummary {
+            return {
+                ...createRelease(forkVersion),
+                tag: `native-import-${revision.slice(0, 7)}`,
+                fork: { sourceId: 'fork:eldritch/engine', source, revision },
+            };
+        }
+
+        /**
+         * Creates a stored project pinned to the fork build.
+         *
+         * @param mono - Whether the pin uses the .NET flavour.
+         * @returns A missing-editor project with a fork pin.
+         */
+        function createForkProject(mono = true): ProjectDetails {
+            const project = createMissingProject(forkVersion, mono);
+            project.release.fork = pin;
+            return project;
+        }
+
+        const forkResolution: AddProjectEditorResolution = {
+            requested: {
+                kind: 'exact',
+                channel: 'fork',
+                flavor: 'dotnet',
+                base_version: '4.4',
+                version: forkVersion,
+                fork: pin,
+            },
+            downloadable: {
+                match: 'exact',
+                version: forkVersion,
+                flavor: 'dotnet',
+                prerelease: false,
+                fork: pin,
+            },
+        };
+
+        it('matches the exact pinned revision and source case-insensitively', () => {
+            const exact = createForkRelease(pinnedRevision.toUpperCase());
+            const other = createForkRelease('c'.repeat(40));
+
+            expect(
+                findDownloadableMissingProjectEditor(
+                    createForkProject(),
+                    [],
+                    [],
+                    [other, exact],
+                ),
+            ).toBe(exact);
+            expect(
+                findDownloadableProjectEditor(
+                    forkResolution,
+                    [],
+                    [],
+                    [other, exact],
+                ),
+            ).toBe(exact);
+        });
+
+        it('refuses a different revision of the same source', () => {
+            const other = createForkRelease('c'.repeat(40));
+
+            expect(
+                findDownloadableMissingProjectEditor(
+                    createForkProject(),
+                    [],
+                    [],
+                    [other],
+                ),
+            ).toBeUndefined();
+            expect(
+                findDownloadableProjectEditor(forkResolution, [], [], [other]),
+            ).toBeUndefined();
+        });
+
+        it('refuses the same revision from another source', () => {
+            const otherSource = createForkRelease(
+                pinnedRevision,
+                'someone/engine',
+            );
+
+            expect(
+                findDownloadableMissingProjectEditor(
+                    createForkProject(),
+                    [],
+                    [],
+                    [otherSource],
+                ),
+            ).toBeUndefined();
+        });
+
+        it('refuses official releases with the same version or base version', () => {
+            const officials = [
+                createRelease(forkVersion),
+                createRelease('4.4.3-stable'),
+                createRelease('4.4-stable'),
+            ];
+
+            expect(
+                findDownloadableMissingProjectEditor(
+                    createForkProject(),
+                    officials,
+                    [createRelease('4.4.4-beta1', true)],
+                    [],
+                ),
+            ).toBeUndefined();
+            expect(
+                findDownloadableProjectEditor(forkResolution, officials, []),
+            ).toBeUndefined();
+        });
+
+        it('refuses the pinned build when the pinned flavour is missing', () => {
+            const exact = createForkRelease(pinnedRevision);
+            exact.assets = exact.assets.filter((asset) => !asset.mono);
+
+            expect(
+                findDownloadableMissingProjectEditor(
+                    createForkProject(true),
+                    [],
+                    [],
+                    [exact],
+                ),
+            ).toBeUndefined();
+        });
+    });
 });

@@ -26,6 +26,7 @@ import { AppearanceSettingsPanel } from './settings/components/appearance-settin
 import { BehaviorSettingsPanel } from './settings/components/behavior-settings-panel.component';
 import { CodeEditorSettingsPanel } from './settings/components/code-editor-settings-panel.component';
 import { ConnectionsSettingsPanel } from './settings/components/connections-settings-panel.component';
+import { EngineSourcesSettingsPanel } from './settings/components/engine-sources-settings-panel.component';
 import { InstallsSettingsPanel } from './settings/components/installs-settings-panel.component';
 import { ProjectsSettingsPanel } from './settings/components/projects-settings-panel.component';
 import { SettingsTabs } from './settings/components/settings-tabs.component';
@@ -760,6 +761,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                         />
                         <InstallsSettingsPanel
                             active={activeTab === 'installs'}
+                        />
+                        <EngineSourcesSettingsPanel
+                            active={activeTab === 'engineSources'}
                         />
                         <TemplateStorageSettingsPanel
                             active={activeTab === 'exportTemplates'}
