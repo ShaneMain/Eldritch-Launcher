@@ -128,6 +128,23 @@ export async function isRpmOstreeSystem(): Promise<boolean> {
     }
 }
 
+type ManualUpdateReason = 'unsigned-macos' | 'rpm-ostree';
+
+/** Explain why this system cannot install updates automatically.
+ * macOS builds are unsigned, and Squirrel.Mac only installs signed apps.
+ */
+export async function getManualUpdateReason(): Promise<ManualUpdateReason | null> {
+    if (process.platform === 'darwin') {
+        return 'unsigned-macos';
+    }
+    return (await isRpmOstreeSystem()) ? 'rpm-ostree' : null;
+}
+
+const MANUAL_UPDATE_DETAIL: Record<ManualUpdateReason, string> = {
+    'unsigned-macos': 'on this unsigned macOS build',
+    'rpm-ostree': 'on this rpm-ostree system',
+};
+
 /** Apply the selected release channel to the updater.
  * @param enabled Whether prerelease updates are enabled.
  */
@@ -404,7 +421,9 @@ async function reportCheckResult(
         isNewerVersion(newVersion, currentVersion);
     // Read the final skip policy after platform detection so a joining manual
     // check can promote the pending request without another provider call.
-    const manualUpdateSystem = hasNewVersion && (await isRpmOstreeSystem());
+    const manualUpdateReason = hasNewVersion
+        ? await getManualUpdateReason()
+        : null;
     const isSkippedVersion =
         hasNewVersion &&
         newVersion === options?.skippedVersion &&
@@ -425,7 +444,7 @@ async function reportCheckResult(
     }
 
     const requiresManualUpdate =
-        hasNewVersion && !isSkippedVersion && manualUpdateSystem;
+        hasNewVersion && !isSkippedVersion && manualUpdateReason !== null;
     const payload: AppUpdateMessage = {
         available: hasNewVersion && !isSkippedVersion,
         downloaded: false,
@@ -438,8 +457,8 @@ async function reportCheckResult(
         url: requiresManualUpdate ? LAUNCHER_DOWNLOAD_URL : undefined,
         message:
             hasNewVersion && !isSkippedVersion
-                ? requiresManualUpdate
-                    ? `Version ${newVersion} is available. Automatic installation is not supported on this rpm-ostree system.`
+                ? manualUpdateReason && requiresManualUpdate
+                    ? `Version ${newVersion} is available. Automatic installation is not supported ${MANUAL_UPDATE_DETAIL[manualUpdateReason]}.`
                     : `New version available: ${newVersion}`
                 : 'No updates available',
     };

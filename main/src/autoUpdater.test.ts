@@ -144,7 +144,8 @@ describe('autoUpdater', () => {
                 callback(null, '{}', '');
             },
         );
-        setPlatform(originalPlatform);
+        // Pin a platform with automatic installs; macOS is always manual.
+        setPlatform('linux');
         mocks.downloadUpdate.mockResolvedValue([]);
         await setupAutoUpdate({ webContents: {} } as BrowserWindow, false);
         mocks.on.mockClear();
@@ -258,8 +259,56 @@ describe('autoUpdater', () => {
         expect(payload.downloaded).toBe(false);
         expect(payload.type).toBe('manual');
         expect(payload.version).toBe('1.9.1');
-        expect(payload.url).toBe('https://godotlauncher.org/download/');
+        expect(payload.url).toBe(
+            'https://github.com/ShaneMain/Eldritch-Launcher/releases',
+        );
     });
+
+    it('reports manual update instructions on unsigned macOS builds', async () => {
+        setPlatform('darwin');
+        mocks.checkForUpdates.mockResolvedValue({
+            updateInfo: { version: '1.9.1' },
+        });
+
+        await checkForUpdates();
+        await downloadAppUpdate();
+
+        const payload = mocks.ipcWebContentsSend.mock.calls.at(-1)?.[2];
+        expect(payload).toMatchObject({
+            available: true,
+            downloaded: false,
+            type: 'manual',
+            version: '1.9.1',
+            url: 'https://github.com/ShaneMain/Eldritch-Launcher/releases',
+            message:
+                'Version 1.9.1 is available. Automatic installation is not supported on this unsigned macOS build.',
+        });
+        expect(mocks.downloadUpdate).not.toHaveBeenCalled();
+        expect(mocks.findExecutable).not.toHaveBeenCalled();
+    });
+
+    it.each(['win32', 'linux'] as const)(
+        'offers automatic updates on %s',
+        async (platform) => {
+            setPlatform(platform);
+            mocks.checkForUpdates.mockResolvedValue({
+                updateInfo: { version: '1.9.1' },
+            });
+
+            await checkForUpdates();
+            await downloadAppUpdate();
+
+            expect(mocks.ipcWebContentsSend).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.anything(),
+                expect.objectContaining({
+                    type: 'available',
+                    version: '1.9.1',
+                }),
+            );
+            expect(mocks.downloadUpdate).toHaveBeenCalledTimes(1);
+        },
+    );
 
     it('detects rpm-ostree systems when status succeeds', async () => {
         setPlatform('linux');
