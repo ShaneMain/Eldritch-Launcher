@@ -3,6 +3,7 @@ import {
     Download,
     Folder,
     FolderArchive,
+    GitFork,
     Palette,
     Plug,
     RefreshCw,
@@ -18,6 +19,7 @@ type Translate = (key: string) => string;
 const settingsTabTestIds: Record<SettingsTab, string> = {
     projects: 'tabProjects',
     installs: 'tabInstalls',
+    engineSources: 'tabEngineSources',
     exportTemplates: 'tabExportTemplates',
     appearance: 'tabAppearance',
     behavior: 'tabBehavior',
@@ -30,6 +32,7 @@ const settingsTabTestIds: Record<SettingsTab, string> = {
 const settingsTabIcons = {
     projects: Folder,
     installs: Download,
+    engineSources: GitFork,
     exportTemplates: FolderArchive,
     appearance: Palette,
     behavior: SlidersHorizontal,
@@ -60,7 +63,11 @@ export const SettingsTabs: React.FC<SettingsTabsProps> = ({
         onActiveTabChange={onActiveTabChange}
         items={settingsTabs.map((tab) => ({
             value: tab,
-            label: t(`tabs.${tab}`),
+            // The Engine sources label lives in its own namespace.
+            label:
+                tab === 'engineSources'
+                    ? t('engineSources:title')
+                    : t(`tabs.${tab}`),
             icon: settingsTabIcons[tab],
             id: `settings-tab-${tab}`,
             panelId: 'settings-panel',

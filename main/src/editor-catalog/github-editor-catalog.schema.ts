@@ -10,6 +10,7 @@ const githubReleaseSchema = z.object({
     assets: z.array(
         z.object({
             id: z.number().int(),
+            url: z.url().optional(),
             name: z.string(),
             browser_download_url: z.url(),
             digest: z.string().nullable().optional(),

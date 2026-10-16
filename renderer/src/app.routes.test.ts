@@ -11,6 +11,7 @@ describe('settings routes', () => {
         expect(settingsTabs).toEqual([
             'projects',
             'installs',
+            'engineSources',
             'exportTemplates',
             'appearance',
             'behavior',

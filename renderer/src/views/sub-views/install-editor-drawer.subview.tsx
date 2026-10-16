@@ -1,4 +1,4 @@
-import type { ReleaseSummary } from '@shared/contracts';
+import type { EngineSourceSummary, ReleaseSummary } from '@shared/contracts';
 import { TriangleAlert } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -7,8 +7,10 @@ import { ContentDivider } from '../../components/ui/content-divider.component';
 import { CopyBadge } from '../../components/ui/copy-badge.component.tsx';
 import { Drawer } from '../../components/ui/drawer/drawer.component.tsx';
 import { useAlerts } from '../../hooks/alerts.hook.tsx';
+import { useEngineSources } from '../../hooks/engine-sources.hook.ts';
 import { usePreferences } from '../../hooks/preferences.hook.tsx';
 import { useRelease } from '../../hooks/release.hook.tsx';
+import { appBridge } from '../../renderer.bridge.ts';
 import {
     getInstallEditorRefreshCooldownSeconds,
     getInstallEditorRows,
@@ -17,6 +19,10 @@ import {
 } from './install-editor/install-editor.model.ts';
 import { InstallEditorAll } from './install-editor/install-editor-all.component.tsx';
 import { InstallEditorFilters } from './install-editor/install-editor-filters.component.tsx';
+import {
+    InstallEditorFork,
+    type InstallEditorHostPlatform,
+} from './install-editor/install-editor-fork.component.tsx';
 import { InstallEditorLatest } from './install-editor/install-editor-latest.component.tsx';
 
 type InstallEditorDrawerProps = {
@@ -37,10 +43,15 @@ export const InstallEditorDrawer: React.FC<InstallEditorDrawerProps> = ({
     onOpenChange,
 }) => {
     const { t } = useTranslation(['installEditor', 'common', 'menus']);
+    const { t: tSources } = useTranslation('engineSources');
     const { preferences } = usePreferences();
     const { addAlert } = useAlerts();
+    const { listSources } = useEngineSources();
     const [show, setShow] = useState<InstallEditorShow>('latest');
     const [channel, setChannel] = useState<InstallEditorChannel>('stable');
+    const [forkSourceId, setForkSourceId] = useState<string | null>(null);
+    const [sources, setSources] = useState<EngineSourceSummary[]>([]);
+    const [host, setHost] = useState<InstallEditorHostPlatform | null>(null);
     const [search, setSearch] = useState('');
     const [refreshAvailableAt, setRefreshAvailableAt] = useState<number | null>(
         null,
@@ -50,6 +61,8 @@ export const InstallEditorDrawer: React.FC<InstallEditorDrawerProps> = ({
     const {
         availableReleases,
         availablePrereleases,
+        forkReleases,
+        catalogProviders,
         loading,
         hasError,
         refreshAvailableReleases,
@@ -65,8 +78,61 @@ export const InstallEditorDrawer: React.FC<InstallEditorDrawerProps> = ({
 
         setShow('latest');
         setChannel('stable');
+        setForkSourceId(null);
         setSearch('');
-    }, [open]);
+
+        let cancelled = false;
+        // Without source names, fork channels fall back to `owner/repo`.
+        listSources()
+            .then((nextSources) => !cancelled && setSources(nextSources))
+            .catch(() => undefined);
+        Promise.all([appBridge.getPlatform(), appBridge.getArch()])
+            .then(
+                ([platform, arch]) => !cancelled && setHost({ platform, arch }),
+            )
+            .catch(() => undefined);
+        return () => {
+            cancelled = true;
+        };
+    }, [open, listSources]);
+
+    const forkSources = useMemo(() => {
+        const labels = new Map<string, string>();
+        for (const source of sources) {
+            if (source.kind === 'fork') {
+                labels.set(
+                    source.id,
+                    source.displayName || `${source.owner}/${source.repo}`,
+                );
+            }
+        }
+        for (const release of forkReleases) {
+            if (release.fork && !labels.has(release.fork.sourceId)) {
+                labels.set(release.fork.sourceId, release.fork.source);
+            }
+        }
+        return [...labels].map(([id, label]) => ({ id, label }));
+    }, [sources, forkReleases]);
+    const selectedSource = sources.find((source) => source.id === forkSourceId);
+    const selectedProvider = catalogProviders.find(
+        (provider) => provider.id === forkSourceId,
+    );
+    const forkAuthRequired =
+        selectedSource?.state === 'auth-required' ||
+        selectedProvider?.state === 'auth-required';
+    const forkSourceError =
+        selectedSource?.state === 'error'
+            ? selectedSource.error
+            : selectedProvider?.state === 'error'
+              ? selectedProvider.refreshError
+              : undefined;
+    const forkRows = useMemo(
+        () =>
+            forkReleases.filter(
+                (release) => release.fork?.sourceId === forkSourceId,
+            ),
+        [forkReleases, forkSourceId],
+    );
 
     useEffect(() => {
         if (refreshAvailableAt === null) {
@@ -138,7 +204,10 @@ export const InstallEditorDrawer: React.FC<InstallEditorDrawerProps> = ({
     const handleCatalogRefresh = (): void => {
         setRefreshCooldownSeconds(catalogRefreshCooldownMs / 1000);
         setRefreshAvailableAt(Date.now() + catalogRefreshCooldownMs);
-        void refreshAvailableReleases();
+        void refreshAvailableReleases()
+            .then(listSources)
+            .then(setSources)
+            .catch(() => undefined);
     };
 
     /**
@@ -231,6 +300,8 @@ export const InstallEditorDrawer: React.FC<InstallEditorDrawerProps> = ({
                 <InstallEditorFilters
                     show={show}
                     channel={channel}
+                    forkSources={forkSources}
+                    forkSourceId={forkSourceId}
                     loading={loading}
                     refreshCooldownSeconds={refreshCooldownSeconds}
                     showLabel={t('filters.show')}
@@ -246,14 +317,35 @@ export const InstallEditorDrawer: React.FC<InstallEditorDrawerProps> = ({
                     })}
                     cooldownTooltip={t('catalog.cooldownTooltip')}
                     onShowChange={setShow}
-                    onChannelChange={setChannel}
+                    onChannelChange={(nextChannel) => {
+                        setForkSourceId(null);
+                        setChannel(nextChannel);
+                    }}
+                    onForkSourceChange={(sourceId) => {
+                        setSearch('');
+                        setForkSourceId(sourceId);
+                    }}
                     onRefresh={handleCatalogRefresh}
                 />
 
                 <ContentDivider />
 
                 <div className="min-h-0 flex-1">
-                    {loading && !hasCatalogData ? (
+                    {forkSourceId !== null ? (
+                        <InstallEditorFork
+                            sourceId={forkSourceId}
+                            releases={forkRows}
+                            host={host}
+                            authRequired={forkAuthRequired}
+                            sourceError={forkSourceError}
+                            search={search}
+                            searchPlaceholder={t('search.placeholder')}
+                            t={tSources}
+                            onSearchChange={setSearch}
+                            onInstall={handleInstall}
+                            onReinstall={handleReinstall}
+                        />
+                    ) : loading && !hasCatalogData ? (
                         <div
                             className="flex h-full items-center justify-center gap-2 text-base-content/75"
                             role="status"

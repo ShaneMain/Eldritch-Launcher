@@ -1,8 +1,10 @@
 import type {
     EditorCatalogProviderId,
     EditorCatalogRelease,
+    EngineSource,
 } from '@shared/contracts';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { OFFICIAL_ENGINE_SOURCES } from './editor-catalog.constants.js';
 import { createEmptyEditorCatalog } from './editor-catalog.schema.js';
 import { EditorCatalogService } from './editor-catalog.service.js';
 import type { EditorCatalogStore } from './editor-catalog.store.js';
@@ -11,6 +13,7 @@ import type {
     FetchedEditorCatalogProvider,
 } from './editor-catalog.types.js';
 import type { GithubEditorCatalogAdapter } from './github-editor-catalog.adapter.js';
+import { EngineSourceAuthError } from './github-source.errors.js';
 
 vi.mock('@mariodebono/di', () => ({ Injectable: () => () => undefined }));
 vi.mock('@mariodebono/di-config', () => ({ ConfigService: class {} }));
@@ -18,30 +21,53 @@ vi.mock('./editor-catalog.store.js', () => ({ EditorCatalogStore: class {} }));
 vi.mock('./github-editor-catalog.adapter.js', () => ({
     GithubEditorCatalogAdapter: class {},
 }));
-vi.mock('./editor-catalog.schema.js', () => ({
-    compareEditorReleases: vi.fn(() => 0),
-    createEmptyEditorCatalog: () => ({
-        schemaVersion: 1,
-        providers: Object.fromEntries(
-            ['official-stable', 'official-prerelease'].map((id) => [
-                id,
-                {
-                    integrityMetadataRefreshed: false,
-                    templateMetadataRefreshed: false,
-                    lastFetchedAt: null,
-                    lastPublishedAt: null,
-                    releases: [],
-                },
-            ]),
-        ),
-    }),
+vi.mock('./engine-sources.service.js', () => ({
+    EngineSourcesService: class {},
 }));
+vi.mock('./github-source-access.service.js', () => ({
+    GithubSourceAccessService: class {},
+}));
+vi.mock('./editor-catalog.schema.js', () => {
+    const createEmptyProviderState = () => ({
+        integrityMetadataRefreshed: false,
+        templateMetadataRefreshed: false,
+        lastFetchedAt: null,
+        lastPublishedAt: null,
+        releases: [],
+    });
+    return {
+        compareEditorReleases: vi.fn(() => 0),
+        createEmptyProviderState,
+        createEmptyEditorCatalog: () => ({
+            schemaVersion: 1,
+            providers: Object.fromEntries(
+                ['official-stable', 'official-prerelease'].map((id) => [
+                    id,
+                    createEmptyProviderState(),
+                ]),
+            ),
+        }),
+    };
+});
 
 vi.mock('electron-log', () => ({
     default: {
         error: vi.fn(),
     },
 }));
+
+const FORK_SOURCE: EngineSource = {
+    id: 'fork:eldritch-game-studio/eldritch-engine',
+    kind: 'fork',
+    owner: 'Eldritch-Game-Studio',
+    repo: 'Eldritch-Engine',
+    displayName: 'Eldritch Engine',
+    requiresAuth: true,
+    builtIn: false,
+};
+
+/** Matches the source argument passed to the adapter. */
+const source = (id: EditorCatalogProviderId) => expect.objectContaining({ id });
 
 describe('EditorCatalogService', () => {
     beforeEach(() => {
@@ -90,7 +116,8 @@ describe('EditorCatalogService', () => {
         await service.getCatalog();
 
         expect(githubAdapter.fetchProvider).toHaveBeenCalledWith(
-            'official-stable',
+            source('official-stable'),
+            null,
             null,
         );
 
@@ -127,7 +154,8 @@ describe('EditorCatalogService', () => {
             updated.templateAssets,
         );
         expect(githubAdapter.fetchProvider).toHaveBeenCalledExactlyOnceWith(
-            'official-stable',
+            source('official-stable'),
+            null,
             null,
         );
         expect((await store.read()).providers['official-stable']).toMatchObject(
@@ -150,8 +178,9 @@ describe('EditorCatalogService', () => {
 
         expect(githubAdapter.fetchProvider).toHaveBeenCalledOnce();
         expect(githubAdapter.fetchProvider).toHaveBeenCalledWith(
-            'official-stable',
+            source('official-stable'),
             cached.publishedAt,
+            null,
         );
     });
 
@@ -165,12 +194,14 @@ describe('EditorCatalogService', () => {
 
         expect(githubAdapter.fetchProvider).toHaveBeenCalledTimes(2);
         expect(githubAdapter.fetchProvider).toHaveBeenCalledWith(
-            'official-stable',
+            source('official-stable'),
             catalog.providers['official-stable'].lastPublishedAt,
+            null,
         );
         expect(githubAdapter.fetchProvider).toHaveBeenCalledWith(
-            'official-prerelease',
+            source('official-prerelease'),
             catalog.providers['official-prerelease'].lastPublishedAt,
+            null,
         );
     });
 
@@ -187,7 +218,8 @@ describe('EditorCatalogService', () => {
                 resolveStableRefresh = resolve;
             },
         );
-        githubAdapter.fetchProvider.mockImplementation(async (providerId) => {
+        githubAdapter.fetchProvider.mockImplementation(async ({ id }) => {
+            const providerId = id;
             if (providerId === 'official-stable') {
                 return stableRefresh;
             }
@@ -217,7 +249,8 @@ describe('EditorCatalogService', () => {
         expect(githubAdapter.fetchProvider).toHaveBeenCalledTimes(2);
         expect(githubAdapter.fetchProvider).toHaveBeenNthCalledWith(
             2,
-            'official-prerelease',
+            source('official-prerelease'),
+            null,
             null,
         );
         expect(explicitResult.releases).toHaveLength(2);
@@ -243,7 +276,8 @@ describe('EditorCatalogService', () => {
         catalog.providers['official-stable'].lastFetchedAt = null;
         catalog.providers['official-prerelease'].lastFetchedAt = null;
         const { service, githubAdapter } = createService(catalog);
-        githubAdapter.fetchProvider.mockImplementation(async (providerId) => {
+        githubAdapter.fetchProvider.mockImplementation(async ({ id }) => {
+            const providerId = id;
             if (providerId === 'official-prerelease') {
                 throw new Error('builds unavailable');
             }
@@ -331,8 +365,9 @@ describe('EditorCatalogService', () => {
             (await store.read()).providers['official-stable'].lastPublishedAt,
         ).toBe(newer.publishedAt);
         expect(githubAdapter.fetchProvider).toHaveBeenCalledExactlyOnceWith(
-            'official-stable',
+            source('official-stable'),
             newer.publishedAt,
+            null,
         );
     });
 
@@ -345,6 +380,101 @@ describe('EditorCatalogService', () => {
         expect(store.replace).toHaveBeenCalledOnce();
         expect(result.releases).toHaveLength(2);
     });
+
+    it('rebuilds a malformed catalog when it is first read', async () => {
+        const { service, store } = createService(createEmptyEditorCatalog());
+        store.read.mockRejectedValue(new Error('invalid catalog'));
+
+        const result = await service.getCatalog();
+
+        expect(store.replace).toHaveBeenCalledOnce();
+        expect(result.releases).toHaveLength(2);
+    });
+
+    it('reports a fork source as auth-required without a token and keeps the state', async () => {
+        const { service, githubAdapter } = createService(
+            createEmptyEditorCatalog(),
+            false,
+            { sources: [...OFFICIAL_ENGINE_SOURCES, FORK_SOURCE] },
+        );
+
+        const result = await service.refreshCatalog();
+
+        expect(githubAdapter.fetchProvider).not.toHaveBeenCalledWith(
+            source(FORK_SOURCE.id),
+            expect.anything(),
+            expect.anything(),
+        );
+        expect(
+            result.providers.find(({ id }) => id === FORK_SOURCE.id),
+        ).toMatchObject({ state: 'auth-required' });
+        expect(
+            (
+                await service.getCatalog({ refreshIfStale: false })
+            ).providers.find(({ id }) => id === FORK_SOURCE.id),
+        ).toMatchObject({ state: 'auth-required' });
+    });
+
+    it('fetches a fork source with the token and clears an earlier failure', async () => {
+        const catalog = createEmptyEditorCatalog();
+        catalog.providers[FORK_SOURCE.id] = {
+            lastFetchedAt: null,
+            lastPublishedAt: null,
+            lastFailure: { state: 'auth-required', message: 'sign in' },
+            releases: [],
+        };
+        const { service, githubAdapter } = createService(catalog, false, {
+            sources: [FORK_SOURCE],
+            token: 'ghu_token',
+        });
+
+        const result = await service.refreshProvider(FORK_SOURCE.id);
+
+        expect(githubAdapter.fetchProvider).toHaveBeenCalledExactlyOnceWith(
+            source(FORK_SOURCE.id),
+            null,
+            'ghu_token',
+        );
+        expect(result.providers).toEqual([
+            expect.objectContaining({ id: FORK_SOURCE.id, state: 'ok' }),
+        ]);
+        expect(result.providers[0].refreshError).toBeUndefined();
+    });
+
+    it('retries an official source anonymously when the token is refused', async () => {
+        const { service, githubAdapter } = createService(
+            createEmptyEditorCatalog(),
+            false,
+            { sources: [OFFICIAL_ENGINE_SOURCES[0]], token: 'expired' },
+        );
+        githubAdapter.fetchProvider.mockRejectedValueOnce(
+            new EngineSourceAuthError('godotengine/godot'),
+        );
+
+        const result = await service.refreshCatalog();
+
+        expect(githubAdapter.fetchProvider).toHaveBeenLastCalledWith(
+            source('official-stable'),
+            null,
+            null,
+        );
+        expect(result.providers[0].state).toBe('ok');
+        expect(result.releases).toHaveLength(1);
+    });
+
+    it('drops the cache of a removed provider', async () => {
+        const catalog = createEmptyEditorCatalog();
+        catalog.providers[FORK_SOURCE.id] = {
+            lastFetchedAt: 1,
+            lastPublishedAt: null,
+            releases: [],
+        };
+        const { service, store } = createService(catalog);
+
+        await service.removeProvider(FORK_SOURCE.id);
+
+        expect((await store.read()).providers[FORK_SOURCE.id]).toBeUndefined();
+    });
 });
 
 /**
@@ -354,7 +484,11 @@ describe('EditorCatalogService', () => {
  * @param e2eFixtures - Whether development fixture isolation is active.
  * @returns The service and its inspectable collaborators.
  */
-function createService(initialCatalog: EditorCatalogFile, e2eFixtures = false) {
+function createService(
+    initialCatalog: EditorCatalogFile,
+    e2eFixtures = false,
+    options: { sources?: EngineSource[]; token?: string | null } = {},
+) {
     let catalog = structuredClone(initialCatalog);
     const store = {
         read: vi.fn(async () => structuredClone(catalog)),
@@ -373,9 +507,9 @@ function createService(initialCatalog: EditorCatalogFile, e2eFixtures = false) {
     };
     const githubAdapter = {
         fetchProvider: vi.fn(
-            async (
-                providerId: EditorCatalogProviderId,
-            ): Promise<FetchedEditorCatalogProvider> => ({
+            async ({
+                id: providerId,
+            }: EngineSource): Promise<FetchedEditorCatalogProvider> => ({
                 providerId,
                 lastPublishedAt: '2026-01-02T00:00:00.000Z',
                 releases: [
@@ -392,12 +526,25 @@ function createService(initialCatalog: EditorCatalogFile, e2eFixtures = false) {
     const configService = {
         get: vi.fn(() => e2eFixtures),
     };
+    const sources = {
+        list: vi.fn(
+            async () => options.sources ?? [...OFFICIAL_ENGINE_SOURCES],
+        ),
+    };
+    const access = {
+        withToken: vi.fn(
+            <T>(operation: (token: string | null) => Promise<T>): Promise<T> =>
+                operation(options.token ?? null),
+        ),
+    };
 
     return {
         service: new EditorCatalogService(
             store as unknown as EditorCatalogStore,
             githubAdapter as unknown as GithubEditorCatalogAdapter,
             configService as never,
+            sources as never,
+            access as never,
         ),
         store,
         githubAdapter,

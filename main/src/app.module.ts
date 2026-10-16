@@ -19,6 +19,7 @@ import {
     APP_INTEGRATION_SECRETS_FILENAME,
     APP_INTEGRATIONS_FILENAME,
     EDITOR_CATALOG_FILENAME,
+    ENGINE_SOURCES_FILENAME,
     TOOL_INTEGRATIONS_FILENAME,
 } from './constants.js';
 import { EditorCatalogModule } from './editor-catalog/editor-catalog.module.js';
@@ -64,6 +65,7 @@ import { ToolIntegrationModule } from './tool-integration/tool-integration.modul
             useFactory: (configService: ConfigService<AppConfig>) => ({
                 directory: configService.getOrThrow('paths.configDir'),
                 fileName: EDITOR_CATALOG_FILENAME,
+                sourcesFileName: ENGINE_SOURCES_FILENAME,
             }),
         }),
         EditorInstallsModule,

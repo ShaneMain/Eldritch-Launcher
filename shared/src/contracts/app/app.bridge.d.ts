@@ -76,6 +76,8 @@ export type AppBridge = {
     ): Promise<CreateCustomEngineManifestResult>;
     clearReleaseCache(): Promise<void>;
     getPlatform(): Promise<string>;
+    /** Returns the Node.js process architecture (`process.arch`). */
+    getArch(): Promise<string>;
     getTrayAvailability(): Promise<boolean>;
     getAppVersion(): Promise<string>;
     relaunchApp(): Promise<void>;

@@ -24,6 +24,8 @@ vi.mock('../../hooks/release.hook.tsx', () => ({
     useRelease: () => ({
         availableReleases: stableReleases,
         availablePrereleases: [createRelease('4.7-beta1', true)],
+        forkReleases: [],
+        catalogProviders: [],
         loading: false,
         hasError: undefined,
         refreshAvailableReleases: vi.fn(async () => undefined),

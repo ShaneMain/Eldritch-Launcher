@@ -1,7 +1,10 @@
 import type { AppBridge } from './app/index.js';
 import type { AppIntegrationsBridge } from './app-integrations/index.js';
 import type { CodeEditorIntegrationBridge } from './codeEditorIntegration/index.js';
-import type { EditorCatalogBridge } from './editor-catalog/index.js';
+import type {
+    EditorCatalogBridge,
+    EngineSourcesBridge,
+} from './editor-catalog/index.js';
 import type { EditorInstallsBridge } from './editor-installs/index.js';
 import type { ExportTemplatesBridge } from './export-templates/index.js';
 import type { GitBridge } from './git/index.js';
@@ -22,6 +25,7 @@ export type BridgeNamespaces = {
     codeEditorIntegration: CodeEditorIntegrationBridge;
     editorCatalog: EditorCatalogBridge;
     editorInstalls: EditorInstallsBridge;
+    engineSources: EngineSourcesBridge;
     git: GitBridge;
     gitLfs: GitLfsBridge;
     projects: ProjectsBridge;

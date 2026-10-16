@@ -7,6 +7,8 @@ import type {
 export type EditorCatalogModuleOptions = {
     directory: string;
     fileName: string;
+    /** File holding user-configured engine sources. */
+    sourcesFileName: string;
 };
 
 /** GitHub asset fields used by the catalog mapper. */
@@ -14,6 +16,8 @@ export type GithubEditorAsset = {
     id: number;
     name: string;
     browserDownloadUrl: string;
+    /** GitHub API asset URL used for authenticated downloads. */
+    apiUrl?: string;
     digest: string | null;
     size?: number;
 };
@@ -29,12 +33,19 @@ export type GithubEditorRelease = {
     assets: GithubEditorAsset[];
 };
 
+/** Last refresh failure kept with cached provider data. */
+export type EditorCatalogRefreshFailure = {
+    state: 'auth-required' | 'error';
+    message: string;
+};
+
 /** Cached data for one catalog provider. */
 export type EditorCatalogProviderState = {
     integrityMetadataRefreshed?: boolean;
     templateMetadataRefreshed?: boolean;
     lastFetchedAt: number | null;
     lastPublishedAt: string | null;
+    lastFailure?: EditorCatalogRefreshFailure;
     releases: EditorCatalogRelease[];
 };
 
@@ -49,4 +60,18 @@ export type FetchedEditorCatalogProvider = {
     providerId: EditorCatalogProviderId;
     lastPublishedAt: string | null;
     releases: EditorCatalogRelease[];
+};
+
+/** One user-configured GitHub fork source as stored on disk. */
+export type StoredForkSource = {
+    owner: string;
+    repo: string;
+    displayName: string;
+    requiresAuth: boolean;
+};
+
+/** Engine source file stored in the config directory. */
+export type EngineSourcesFile = {
+    schemaVersion: 1;
+    forks: StoredForkSource[];
 };

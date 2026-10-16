@@ -3,10 +3,16 @@ import * as path from 'node:path';
 import extractZip from '@electron-internal/extract-zip';
 import { Injectable } from '@mariodebono/di';
 import { ArchiveError } from './archive.error.js';
-import type { CheckedZipOptions, ZipManifest } from './archives.types.js';
+import type {
+    CheckedZipOptions,
+    TarGzOptions,
+    TarManifest,
+    ZipManifest,
+} from './archives.types.js';
 import { extractCheckedZip } from './checked-zip.adapter.js';
+import { extractTarGz } from './tar-gz.adapter.js';
 
-/** Owns native and checked ZIP extraction; callers own staging and cleanup. */
+/** Owns native and checked ZIP and tar.gz extraction; callers own staging and cleanup. */
 @Injectable()
 export class ArchivesService {
     /** Extracts a trusted ZIP into an existing empty directory without cancellation.
@@ -56,5 +62,20 @@ export class ArchivesService {
         options: CheckedZipOptions,
     ): Promise<ZipManifest> {
         return extractCheckedZip(archivePath, destinationPath, options);
+    }
+
+    /** Streams a .tar.gz into an existing empty directory, rejecting the whole
+     * archive on unsafe entries (`unsafe`) or malformed data (`corrupt`).
+     * Cancellation rethrows the signal reason; partial output is caller-owned.
+     * @param archivePath - Absolute path to a regular .tar.gz file.
+     * @param destinationPath - Absolute path to an existing empty real directory.
+     * @param options - Optional cancellation.
+     */
+    extractTarGz(
+        archivePath: string,
+        destinationPath: string,
+        options?: TarGzOptions,
+    ): Promise<TarManifest> {
+        return extractTarGz(archivePath, destinationPath, options);
     }
 }

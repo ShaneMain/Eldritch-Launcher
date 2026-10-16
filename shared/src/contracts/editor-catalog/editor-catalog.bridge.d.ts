@@ -1,6 +1,9 @@
 import type { ExportTemplateAsset } from '../export-templates/index.js';
-/** Identifies a source of editor releases. */
-export type EditorCatalogProviderId = 'official-stable' | 'official-prerelease';
+/**
+ * Identifies a source of editor releases: `official-stable`,
+ * `official-prerelease`, or a configured fork source ID.
+ */
+export type EditorCatalogProviderId = string;
 
 /** Identifies the scripting support included in an editor build. */
 export type EditorCatalogFlavor = 'gdscript' | 'dotnet';
@@ -36,6 +39,17 @@ export type EditorCatalogVersionParts = {
     iteration: number;
 };
 
+/** Identifies the exact fork build described by a release manifest. */
+export type EditorCatalogForkBuild = {
+    sourceId: EditorCatalogProviderId;
+    /** GitHub `owner/repo` that publishes the build. */
+    source: string;
+    /** Full 40-hex engine commit the build was produced from. */
+    revision: string;
+    /** Full 40-hex upstream Godot commit the fork is based on. */
+    upstreamBase: string;
+};
+
 /** Describes one editor release in the catalog. */
 export type EditorCatalogRelease = {
     id: string;
@@ -50,13 +64,19 @@ export type EditorCatalogRelease = {
     versionParts: EditorCatalogVersionParts;
     variants: EditorCatalogVariant[];
     templateAssets?: ExportTemplateAsset[];
+    /** Present for releases of fork sources. */
+    fork?: EditorCatalogForkBuild;
 };
+
+/** Reports whether a provider's latest refresh succeeded. */
+export type EditorCatalogProviderHealth = 'ok' | 'auth-required' | 'error';
 
 /** Reports the cache state of one catalog provider. */
 export type EditorCatalogProviderStatus = {
     id: EditorCatalogProviderId;
     lastFetchedAt: number | null;
     isStale: boolean;
+    state: EditorCatalogProviderHealth;
     refreshError?: string;
 };
 

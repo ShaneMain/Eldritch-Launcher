@@ -105,6 +105,7 @@ describe('editor catalog release mapper', () => {
                     id: 'official-prerelease',
                     lastFetchedAt: 1,
                     isStale: true,
+                    state: 'error',
                     refreshError: 'Builds are unavailable',
                 },
             ],
@@ -116,7 +117,70 @@ describe('editor catalog release mapper', () => {
         expect(mapped.availablePrereleases).toHaveLength(1);
         expect(mapped.refreshError).toBe('Builds are unavailable');
     });
+
+    it('copies fork identity and keeps fork builds out of official lists', () => {
+        const forkRelease = createForkRelease();
+        const mapped = mapEditorCatalogResult({
+            releases: [createRelease('official-stable', false), forkRelease],
+            providers: [],
+        });
+
+        expect(
+            mapped.availableReleases.map((release) => release.version),
+        ).toEqual(['4.5-stable']);
+        expect(mapped.availablePrereleases).toEqual([]);
+        expect(mapped.forkReleases).toHaveLength(1);
+        expect(mapped.forkReleases[0]).toMatchObject({
+            tag: 'native-import-b90e204',
+            version: forkRelease.version,
+            fork: {
+                sourceId: 'fork:eldritch/engine',
+                source: 'Eldritch/Engine',
+                revision: 'b90e2049e'.padEnd(40, '0'),
+            },
+        });
+        expect(mapped.forkReleases[0]?.fork).not.toHaveProperty('upstreamBase');
+        expect(mapped.availableReleases[0]?.fork).toBeUndefined();
+    });
+
+    it('does not report auth-required fork sources as catalog failures', () => {
+        const mapped = mapEditorCatalogResult({
+            releases: [],
+            providers: [
+                {
+                    id: 'fork:eldritch/engine',
+                    lastFetchedAt: null,
+                    isStale: true,
+                    state: 'auth-required',
+                    refreshError: 'GitHub login required',
+                },
+            ],
+        });
+
+        expect(mapped.refreshError).toBeUndefined();
+    });
 });
+
+/**
+ * Creates a fork catalog release for mapper tests.
+ *
+ * @returns A stable-channel fork build with fork identity.
+ */
+function createForkRelease(): EditorCatalogRelease {
+    const base = createRelease('fork:eldritch/engine', false);
+    return {
+        ...base,
+        id: 'fork:eldritch/engine:1',
+        tag: 'native-import-b90e204',
+        version: '4.5.stable.mono.custom_build.b90e2049e',
+        fork: {
+            sourceId: 'fork:eldritch/engine',
+            source: 'Eldritch/Engine',
+            revision: 'b90e2049e'.padEnd(40, '0'),
+            upstreamBase: 'c'.repeat(40),
+        },
+    };
+}
 
 /**
  * Creates a catalog release for mapper tests.

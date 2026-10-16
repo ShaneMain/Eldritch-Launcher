@@ -1,5 +1,6 @@
 import type {
     AddProjectEditorResolution,
+    ForkBuildIdentity,
     ProjectDetails,
     ReleaseSummary,
 } from '@shared/contracts';
@@ -79,17 +80,45 @@ function hasEditorFlavor(
 }
 
 /**
+ * Finds the one fork build that exactly matches a pinned fork identity.
+ *
+ * Fork pins never fall back to another revision, source, or official build.
+ *
+ * @param fork - Pinned fork source and revision.
+ * @param mono - Whether the pin uses the .NET flavour.
+ * @param forkReleases - Available fork builds.
+ * @returns The exact fork build, when it publishes the pinned flavour.
+ */
+function findExactForkRelease(
+    fork: ForkBuildIdentity,
+    mono: boolean,
+    forkReleases: ReleaseSummary[],
+): ReleaseSummary | undefined {
+    const source = fork.source.toLowerCase();
+    const revision = fork.revision.toLowerCase();
+    return forkReleases.find(
+        (release) =>
+            release.fork !== undefined &&
+            release.fork.source.toLowerCase() === source &&
+            release.fork.revision.toLowerCase() === revision &&
+            release.assets.some((asset) => asset.mono === mono),
+    );
+}
+
+/**
  * Resolves a project editor request against the renderer's release catalogue.
  *
  * @param resolution - Missing-editor resolution returned by the main process.
  * @param availableReleases - Available stable releases.
  * @param availablePrereleases - Available prereleases.
+ * @param forkReleases - Available fork builds, used only for fork pins.
  * @returns The exact or newest matching stable release, when downloadable.
  */
 export function findDownloadableProjectEditor(
     resolution: AddProjectEditorResolution,
     availableReleases: ReleaseSummary[],
     availablePrereleases: ReleaseSummary[],
+    forkReleases: ReleaseSummary[] = [],
 ): ReleaseSummary | undefined {
     const downloadable = resolution.downloadable;
     if (resolution.choices !== undefined || !downloadable) {
@@ -97,6 +126,13 @@ export function findDownloadableProjectEditor(
     }
 
     if (downloadable.match === 'exact') {
+        if (downloadable.fork) {
+            return findExactForkRelease(
+                downloadable.fork,
+                downloadable.flavor === 'dotnet',
+                forkReleases,
+            );
+        }
         return [...availableReleases, ...availablePrereleases].find(
             (release) => release.version === downloadable.version,
         );
@@ -119,18 +155,28 @@ export function findDownloadableProjectEditor(
  * @param project - Project whose editor is missing.
  * @param availableReleases - Available stable releases.
  * @param availablePrereleases - Available prereleases.
+ * @param forkReleases - Available fork builds, used only for fork pins.
  * @returns The exact release, or latest compatible stable/prerelease for a bare branch.
  */
 export function findDownloadableMissingProjectEditor(
     project: ProjectDetails,
     availableReleases: ReleaseSummary[],
     availablePrereleases: ReleaseSummary[],
+    forkReleases: ReleaseSummary[] = [],
 ): ReleaseSummary | undefined {
     if (
         project.invalid_reason !== 'missing_editor' ||
         project.release.source === 'custom'
     ) {
         return undefined;
+    }
+
+    if (project.release.fork) {
+        return findExactForkRelease(
+            project.release.fork,
+            project.release.mono,
+            forkReleases,
+        );
     }
 
     const baseVersion = getReleaseBaseVersion(project.release.version);

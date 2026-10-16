@@ -27,6 +27,11 @@ export type ExportTemplateAsset = {
     sizeBytes: number;
     digest?: string;
     checksumManifestUrl?: string;
+    /**
+     * Godot template directory (`version.txt`) the package installs into,
+     * e.g. `4.7.2.stable.mono`. Set for fork packages whose tag is not a version.
+     */
+    templateIdentity?: string;
 };
 /** One directory in Godot's shared collection. */
 export type ExportTemplateSet = {

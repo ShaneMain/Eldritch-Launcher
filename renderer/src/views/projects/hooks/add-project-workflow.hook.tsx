@@ -42,6 +42,7 @@ type AddProjectWorkflowArgs = {
     projectsLocation?: string;
     availableReleases: ReleaseSummary[];
     availablePrereleases: ReleaseSummary[];
+    forkReleases: ReleaseSummary[];
     addAlert: (
         title: string,
         message: React.ReactNode,
@@ -78,6 +79,7 @@ export function useAddProjectWorkflow({
     projectsLocation,
     availableReleases,
     availablePrereleases,
+    forkReleases,
     addAlert,
     addCustomConfirm,
     setAddingProject,
@@ -236,6 +238,7 @@ export function useAddProjectWorkflow({
             resolution,
             availableReleases,
             availablePrereleases,
+            forkReleases,
         );
         const canDownload = Boolean(
             downloadableRelease &&

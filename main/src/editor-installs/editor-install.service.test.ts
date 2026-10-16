@@ -49,6 +49,11 @@ vi.mock('../utils/godot.utils.js', () => ({
     getProjectDefinition: () => ({ configVersion: 5 }),
 }));
 
+const locatorMocks = vi.hoisted(() => ({
+    findExtractedEditor: vi.fn(),
+}));
+vi.mock('../utils/extracted-editor-locator.util.js', () => locatorMocks);
+
 vi.mock('../i18n/index.js', () => ({ t: (key: string) => key }));
 
 describe('EditorInstallService', () => {
@@ -64,7 +69,11 @@ describe('EditorInstallService', () => {
         repairAfterReinstall: vi.fn(),
     };
     const progressService = { publish: vi.fn() };
-    const archives = { extractZip: vi.fn() };
+    const archives = { extractZip: vi.fn(), extractTarGz: vi.fn() };
+    const engineSources = {
+        listForks: vi.fn(),
+        resolveDownloadUrl: vi.fn(),
+    };
 
     beforeEach(() => {
         vi.clearAllMocks();
@@ -84,6 +93,81 @@ describe('EditorInstallService', () => {
         installedEditors.getInstalledEditors.mockResolvedValue([]);
         installedEditors.addInstalledEditor.mockResolvedValue([]);
         projectRepair.revalidateProjects.mockResolvedValue(undefined);
+        engineSources.listForks.mockResolvedValue([]);
+        engineSources.resolveDownloadUrl.mockImplementation(
+            async (url: string) => url,
+        );
+    });
+
+    it('installs a fork build from a signed URL and locates the editor from the archive', async () => {
+        const forkSource = {
+            id: 'fork:eldritch-game-studio/eldritch-engine',
+            kind: 'fork',
+            owner: 'Eldritch-Game-Studio',
+            repo: 'Eldritch-Engine',
+            displayName: 'Eldritch Engine',
+            requiresAuth: true,
+            builtIn: false,
+        };
+        engineSources.listForks.mockResolvedValue([forkSource]);
+        engineSources.resolveDownloadUrl.mockResolvedValue(
+            'https://release-assets.example/signed',
+        );
+        locatorMocks.findExtractedEditor.mockResolvedValue(
+            '/installs/4.7.2.stable.mono.custom_build.b90e2049e-mono/godot.linuxbsd.editor.x86_64.llvm.mono',
+        );
+
+        const result = await createService().installEditor(
+            createForkRelease(),
+            true,
+            'installs',
+        );
+
+        expect(result).toMatchObject({ success: true });
+        expect(integrityMocks.resolveArchiveIntegrity).toHaveBeenCalledWith(
+            expect.objectContaining({
+                download_url:
+                    'https://api.github.com/repos/Eldritch-Game-Studio/Eldritch-Engine/releases/assets/643149811',
+            }),
+            expect.objectContaining({ trustedForkRepositories: [forkSource] }),
+        );
+        expect(releasesMocks.downloadReleaseAsset).toHaveBeenCalledWith(
+            expect.anything(),
+            '/installs/tmp/4.7.2.stable.mono.custom_build.b90e2049e-mono/godot-native-attenuation-b90e2049efff97732d8dffa8af3f4ea48fb140d9-linux-x86_64-mono-editor.tar.gz',
+            expect.objectContaining({
+                url: 'https://release-assets.example/signed',
+            }),
+        );
+        expect(archives.extractTarGz).toHaveBeenCalledWith(
+            '/installs/tmp/4.7.2.stable.mono.custom_build.b90e2049e-mono/godot-native-attenuation-b90e2049efff97732d8dffa8af3f4ea48fb140d9-linux-x86_64-mono-editor.tar.gz',
+            '/installs/4.7.2.stable.mono.custom_build.b90e2049e-mono',
+        );
+        expect(archives.extractZip).not.toHaveBeenCalled();
+        expect(installedEditors.addInstalledEditor).toHaveBeenCalledWith(
+            expect.objectContaining({
+                version: '4.7.2.stable.mono.custom_build.b90e2049e',
+                install_path:
+                    '/installs/4.7.2.stable.mono.custom_build.b90e2049e-mono',
+                editor_path:
+                    '/installs/4.7.2.stable.mono.custom_build.b90e2049e-mono/godot.linuxbsd.editor.x86_64.llvm.mono',
+                mono: true,
+                fork: createForkRelease().fork,
+            }),
+        );
+    });
+
+    it('refuses a fork build whose source is not configured', async () => {
+        const result = await createService().installEditor(
+            createForkRelease(),
+            true,
+            'installs',
+        );
+
+        expect(result).toMatchObject({
+            success: false,
+            error: 'engineSources:errors.sourceUnavailable',
+        });
+        expect(releasesMocks.downloadReleaseAsset).not.toHaveBeenCalled();
     });
 
     it('runs distinct installs serially and continues after failure', async () => {
@@ -396,6 +480,7 @@ describe('EditorInstallService', () => {
             projectRepair as never,
             progressService as never,
             archives as never,
+            engineSources as never,
         );
     }
 
@@ -439,6 +524,34 @@ function createRelease(version: string): ReleaseSummary {
                 mono: false,
             },
         ],
+    };
+}
+
+/** Creates the real b90e204 Eldritch-Engine build as an install request. */
+function createForkRelease(): ReleaseSummary {
+    return {
+        tag: 'native-import-thread-safety-b90e204',
+        version: '4.7.2.stable.mono.custom_build.b90e2049e',
+        version_number: 4.7,
+        name: 'Import thread-safety ClassDB/ShaderFile — b90e204',
+        published_at: '2026-10-15T08:04:20.000Z',
+        draft: false,
+        prerelease: false,
+        assets: [
+            {
+                name: 'godot-native-attenuation-b90e2049efff97732d8dffa8af3f4ea48fb140d9-linux-x86_64-mono-editor.tar.gz',
+                download_url:
+                    'https://api.github.com/repos/Eldritch-Game-Studio/Eldritch-Engine/releases/assets/643149811',
+                digest: 'sha256:43da0be9ccd1d3fe69e01cbf63b8e3828e1fd9aaaa86efde96f3f5209c1d60e7',
+                platform_tags: ['linux', 'x64'],
+                mono: true,
+            },
+        ],
+        fork: {
+            sourceId: 'fork:eldritch-game-studio/eldritch-engine',
+            source: 'Eldritch-Game-Studio/Eldritch-Engine',
+            revision: 'b90e2049efff97732d8dffa8af3f4ea48fb140d9',
+        },
     };
 }
 

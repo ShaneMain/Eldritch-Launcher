@@ -9,6 +9,7 @@ import {
     BeforeMainWindowClose,
 } from '@mariodebono/di-electron';
 import type {
+    EditorCatalogRelease,
     ExportTemplateAsset,
     ExportTemplateInventory,
     ExportTemplateSet,
@@ -31,7 +32,10 @@ import logger from 'electron-log';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { EditorCatalogService } from '../editor-catalog/editor-catalog.service.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
+import { EngineSourcesService } from '../editor-catalog/engine-sources.service.js';
+// biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { ProjectsStore } from '../projects/projects.store.js';
+import { getReleaseTemplateIdentity } from '../utils/template-identity.util.js';
 import { ImportedTemplatesService } from './imported-templates.service.js';
 import {
     importedTemplateFiles,
@@ -168,6 +172,8 @@ export class ExportTemplatesService {
         string,
         {
             index?: TemplateRangeIndex;
+            /** Catalogue asset URL, resolved again before each range download. */
+            downloadUrl?: string;
             cacheKey: string;
             id: string;
             before: TemplateFile[];
@@ -175,14 +181,16 @@ export class ExportTemplatesService {
         }
     >();
     /** Creates the template service.
-     * @param catalog - Official release catalogue.
+     * @param catalog - Official and fork release catalogue.
      * @param projects - Current registered projects.
      * @param templateArchives - Godot template package validation and extraction.
+     * @param engineSources - Resolves fork asset URLs with the GitHub credential.
      */
     constructor(
         private readonly catalog: EditorCatalogService,
         private readonly projects: ProjectsStore,
         private readonly templateArchives: TemplateArchiveAdapter,
+        private readonly engineSources: EngineSourcesService,
     ) {}
 
     private importedService?: ImportedTemplatesService;
@@ -399,9 +407,7 @@ export class ExportTemplatesService {
             });
             for (const release of catalogue.releases) {
                 const asset = release.templateAssets?.find(
-                    (asset) =>
-                        `${release.tag.replace('-', '.')}${asset.flavor === 'dotnet' ? '.mono' : ''}` ===
-                        id,
+                    (asset) => templateAssetIdentity(release, asset) === id,
                 );
                 if (asset) return this.getPackage(release.id, asset.id);
             }
@@ -1438,7 +1444,7 @@ export class ExportTemplatesService {
         );
         if (!release || !asset)
             throw new Error('exportTemplates:errors.package');
-        const id = `${release.tag.replace('-', '.')}${asset.flavor === 'dotnet' ? '.mono' : ''}`;
+        const id = templateAssetIdentity(release, asset);
         if (!isTemplateIdentity(id))
             throw new Error('exportTemplates:errors.identity');
         const key = `${asset.downloadUrl}:${asset.sizeBytes}:${asset.digest ?? ''}`;
@@ -1448,13 +1454,15 @@ export class ExportTemplatesService {
                 this.packageIndexes.delete(
                     this.packageIndexes.keys().next().value ?? '',
                 );
-            pending = openTemplateRange(
-                asset.downloadUrl,
-                AbortSignal.timeout(60_000),
-            ).then(({ index, zip }) => {
-                zip.close();
-                return index;
-            });
+            pending = this.engineSources
+                .resolveDownloadUrl(asset.downloadUrl)
+                .then((url) =>
+                    openTemplateRange(url, AbortSignal.timeout(60_000)),
+                )
+                .then(({ index, zip }) => {
+                    zip.close();
+                    return index;
+                });
             this.packageIndexes.set(key, pending);
             void pending.catch(() => {
                 this.packageIndexes.delete(key);
@@ -1477,6 +1485,7 @@ export class ExportTemplatesService {
             );
         this.packageSnapshots.set(token, {
             index,
+            downloadUrl: asset.downloadUrl,
             cacheKey: key,
             id,
             before,
@@ -1519,9 +1528,15 @@ export class ExportTemplatesService {
         );
         if (!release || !asset)
             throw new Error('exportTemplates:errors.package');
-        const id = `${release.tag.replace('-', '.')}${asset.flavor === 'dotnet' ? '.mono' : ''}`;
+        const id = templateAssetIdentity(release, asset);
         if (!isTemplateIdentity(id))
             throw new Error('exportTemplates:errors.identity');
+        // Fork packages must carry GitHub's SHA-256 digest.
+        if (
+            !asset.digest &&
+            (await this.engineSources.findAssetSource(asset.downloadUrl))
+        )
+            throw new Error('exportTemplates:errors.package');
         const selectedAsset = { ...asset };
         return this.enqueue(
             [id],
@@ -1550,7 +1565,13 @@ export class ExportTemplatesService {
             });
             const archive = path.join(work.directory, 'package.tpz');
             await downloadTemplatePackage(
-                asset,
+                {
+                    ...asset,
+                    downloadUrl: await this.engineSources.resolveDownloadUrl(
+                        asset.downloadUrl,
+                        work.signal.signal,
+                    ),
+                },
                 archive,
                 work.signal.signal,
                 (receivedBytes, totalBytes) =>
@@ -1643,7 +1664,7 @@ export class ExportTemplatesService {
             selected.some((name) => typeof name !== 'string')
         )
             throw new Error('exportTemplates:errors.changed');
-        const { index, cacheKey, id } = snapshot;
+        const { index, cacheKey, id, downloadUrl } = snapshot;
         const before = snapshot.before;
         const local = new Set(before.map((file) => file.relative));
         const available = new Map(
@@ -1695,7 +1716,12 @@ export class ExportTemplatesService {
             if (added.length) {
                 if (!index) throw new Error('exportTemplates:errors.package');
                 const remote = await openTemplateRange(
-                    index.url,
+                    downloadUrl
+                        ? await this.engineSources.resolveDownloadUrl(
+                              downloadUrl,
+                              work.signal.signal,
+                          )
+                        : index.url,
                     work.signal.signal,
                 ).catch((error) => {
                     this.packageIndexes.delete(cacheKey);
@@ -2335,7 +2361,7 @@ export class ExportTemplatesService {
     private identity(project: ProjectDetails): string {
         return project.release.source === 'custom'
             ? ''
-            : `${project.release.version.replace('-', '.')}${project.release.mono ? '.mono' : ''}`;
+            : getReleaseTemplateIdentity(project.release);
     }
     /** Gets the hidden staging parent outside the template inventory.
      * @param root - Canonical shared root.
@@ -2382,4 +2408,19 @@ export class ExportTemplatesService {
                 force: true,
             });
     }
+}
+
+/** Names the Godot template directory a catalogue package installs into.
+ * Fork packages carry it explicitly; official tags map `4.4-stable` to `4.4.stable`.
+ * @param release - Catalogue release owning the package.
+ * @param asset - Template package.
+ */
+function templateAssetIdentity(
+    release: EditorCatalogRelease,
+    asset: ExportTemplateAsset,
+): string {
+    return (
+        asset.templateIdentity ??
+        `${release.tag.replace('-', '.')}${asset.flavor === 'dotnet' ? '.mono' : ''}`
+    );
 }

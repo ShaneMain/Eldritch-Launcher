@@ -7,6 +7,7 @@ import type { GitLfsTrackingPolicy } from '../git-lfs/index.js';
 import type {
     EditorChannel,
     EditorFlavor,
+    ForkBuildIdentity,
     InstalledRelease,
     ReleaseSummary,
 } from '../releases/index.js';
@@ -267,6 +268,8 @@ export type ProjectLauncherEditorRequest = {
     flavor: EditorFlavor;
     base_version: string;
     version: string;
+    /** Fork pins only: exact source and build revision. */
+    fork?: ForkBuildIdentity;
 };
 
 export type ProjectInferredEditorRequest = {
@@ -335,6 +338,8 @@ export type AddProjectEditorResolution = {
               version: string;
               flavor: EditorFlavor;
               prerelease: boolean;
+              /** Fork pins only: the exact build to install, never substituted. */
+              fork?: ForkBuildIdentity;
           }
         | {
               match: 'stable-base';

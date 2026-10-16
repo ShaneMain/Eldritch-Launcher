@@ -10,6 +10,10 @@ import type {
 type InstallEditorFiltersProps = {
     show: InstallEditorShow;
     channel: InstallEditorChannel;
+    /** Fork engine sources offered as extra channels. */
+    forkSources?: { id: string; label: string }[];
+    /** Selected fork source, or null for the official channel. */
+    forkSourceId?: string | null;
     loading: boolean;
     refreshCooldownSeconds: number;
     showLabel: string;
@@ -24,6 +28,7 @@ type InstallEditorFiltersProps = {
     cooldownTooltip: string;
     onShowChange: (show: InstallEditorShow) => void;
     onChannelChange: (channel: InstallEditorChannel) => void;
+    onForkSourceChange?: (sourceId: string) => void;
     onRefresh: () => void;
 };
 
@@ -36,6 +41,8 @@ type InstallEditorFiltersProps = {
 export const InstallEditorFilters: React.FC<InstallEditorFiltersProps> = ({
     show,
     channel,
+    forkSources = [],
+    forkSourceId = null,
     loading,
     refreshCooldownSeconds,
     showLabel,
@@ -50,38 +57,41 @@ export const InstallEditorFilters: React.FC<InstallEditorFiltersProps> = ({
     cooldownTooltip,
     onShowChange,
     onChannelChange,
+    onForkSourceChange,
     onRefresh,
 }) => (
     <div className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2 text-base">
-        <div className="flex items-center gap-2">
-            <span className="text-base-content/75">{showLabel}</span>
-            <div role="tablist" className="tabs tabs-box tabs-sm">
-                <button
-                    type="button"
-                    role="tab"
-                    data-testid="tabInstallsLatest"
-                    aria-selected={show === 'latest'}
-                    className={clsx('tab text-base', {
-                        'tab-active': show === 'latest',
-                    })}
-                    onClick={() => onShowChange('latest')}
-                >
-                    {latestLabel}
-                </button>
-                <button
-                    type="button"
-                    role="tab"
-                    data-testid="tabInstallsAll"
-                    aria-selected={show === 'all'}
-                    className={clsx('tab text-base', {
-                        'tab-active': show === 'all',
-                    })}
-                    onClick={() => onShowChange('all')}
-                >
-                    {allLabel}
-                </button>
+        {forkSourceId === null && (
+            <div className="flex items-center gap-2">
+                <span className="text-base-content/75">{showLabel}</span>
+                <div role="tablist" className="tabs tabs-box tabs-sm">
+                    <button
+                        type="button"
+                        role="tab"
+                        data-testid="tabInstallsLatest"
+                        aria-selected={show === 'latest'}
+                        className={clsx('tab text-base', {
+                            'tab-active': show === 'latest',
+                        })}
+                        onClick={() => onShowChange('latest')}
+                    >
+                        {latestLabel}
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        data-testid="tabInstallsAll"
+                        aria-selected={show === 'all'}
+                        className={clsx('tab text-base', {
+                            'tab-active': show === 'all',
+                        })}
+                        onClick={() => onShowChange('all')}
+                    >
+                        {allLabel}
+                    </button>
+                </div>
             </div>
-        </div>
+        )}
 
         <div className="flex items-center gap-2">
             <span className="text-base-content/75">{channelLabel}</span>
@@ -90,9 +100,12 @@ export const InstallEditorFilters: React.FC<InstallEditorFiltersProps> = ({
                     type="button"
                     role="tab"
                     data-testid="tabInstallsRelease"
-                    aria-selected={channel === 'stable'}
+                    aria-selected={
+                        forkSourceId === null && channel === 'stable'
+                    }
                     className={clsx('tab text-base', {
-                        'tab-active': channel === 'stable',
+                        'tab-active':
+                            forkSourceId === null && channel === 'stable',
                     })}
                     onClick={() => onChannelChange('stable')}
                 >
@@ -102,14 +115,32 @@ export const InstallEditorFilters: React.FC<InstallEditorFiltersProps> = ({
                     type="button"
                     role="tab"
                     data-testid="tabInstallsPrerelease"
-                    aria-selected={channel === 'prerelease'}
+                    aria-selected={
+                        forkSourceId === null && channel === 'prerelease'
+                    }
                     className={clsx('tab text-base', {
-                        'tab-active': channel === 'prerelease',
+                        'tab-active':
+                            forkSourceId === null && channel === 'prerelease',
                     })}
                     onClick={() => onChannelChange('prerelease')}
                 >
                     {prereleaseLabel}
                 </button>
+                {forkSources.map((source) => (
+                    <button
+                        key={source.id}
+                        type="button"
+                        role="tab"
+                        data-testid={`tabInstallsFork_${source.id}`}
+                        aria-selected={forkSourceId === source.id}
+                        className={clsx('tab text-base', {
+                            'tab-active': forkSourceId === source.id,
+                        })}
+                        onClick={() => onForkSourceChange?.(source.id)}
+                    >
+                        {source.label}
+                    </button>
+                ))}
             </div>
         </div>
 

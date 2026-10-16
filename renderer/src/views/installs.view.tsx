@@ -8,7 +8,7 @@ import {
     SquareMinus,
     Trash2,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     ActionMenu,
@@ -19,6 +19,7 @@ import { ContentDivider } from '../components/ui/content-divider.component';
 import { EmptyState } from '../components/ui/empty-state.component.tsx';
 import { WaitingForDialogOverlay } from '../components/waiting-for-dialog-overlay.component';
 import { useAlerts } from '../hooks/alerts.hook';
+import { useEngineSources } from '../hooks/engine-sources.hook';
 import { usePreferences } from '../hooks/preferences.hook';
 import { useProjects } from '../hooks/projects.hook';
 import { useRelease } from '../hooks/release.hook';
@@ -116,6 +117,36 @@ export const InstallsView: React.FC<InstallsViewProps> = ({
         loading,
         hasError,
     } = useRelease();
+    const { listSources } = useEngineSources();
+    const [forkSourceNames, setForkSourceNames] = useState<
+        Record<string, string>
+    >({});
+    const hasForkInstalls = installedReleases.some((release) => release.fork);
+
+    useEffect(() => {
+        if (!hasForkInstalls) {
+            return;
+        }
+        let cancelled = false;
+        listSources()
+            .then((sources) => {
+                if (!cancelled) {
+                    setForkSourceNames(
+                        Object.fromEntries(
+                            sources.map((source) => [
+                                source.id,
+                                source.displayName,
+                            ]),
+                        ),
+                    );
+                }
+            })
+            // Section headers fall back to `owner/repo` without source names.
+            .catch(() => undefined);
+        return () => {
+            cancelled = true;
+        };
+    }, [hasForkInstalls, listSources]);
     const {
         isReleaseActionBusy,
         runReleaseAction,
@@ -333,6 +364,7 @@ export const InstallsView: React.FC<InstallsViewProps> = ({
                             <InstalledReleaseList
                                 rows={filteredRows}
                                 t={t}
+                                forkSourceNames={forkSourceNames}
                                 isReleaseActionBusy={(release, action) =>
                                     removingKeys.has(
                                         getReleaseActionKey(release),

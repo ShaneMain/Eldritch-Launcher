@@ -208,6 +208,11 @@ export class AppController implements AppBridge {
         return getCurrentAppConfig().e2eFixtures ? 'win32' : process.platform;
     }
 
+    @AppHandler('getArch')
+    async getArch(): Promise<string> {
+        return process.arch;
+    }
+
     @AppHandler('getTrayAvailability')
     getTrayAvailability() {
         return this.trayAvailabilityService.isAvailable();

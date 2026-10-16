@@ -1,0 +1,70 @@
+[
+    {
+        "id": 413553680,
+        "name": "Import thread-safety ClassDB/ShaderFile \u2014 b90e204 (.NET editor and templates)",
+        "tag_name": "native-import-thread-safety-b90e204",
+        "published_at": "2026-10-15T08:04:20Z",
+        "draft": false,
+        "prerelease": false,
+        "assets": [
+            {
+                "id": 643149811,
+                "url": "https://api.github.com/repos/Eldritch-Game-Studio/Eldritch-Engine/releases/assets/643149811",
+                "name": "godot-native-attenuation-b90e2049efff97732d8dffa8af3f4ea48fb140d9-linux-x86_64-mono-editor.tar.gz",
+                "browser_download_url": "https://github.com/Eldritch-Game-Studio/Eldritch-Engine/releases/download/native-import-thread-safety-b90e204/godot-native-attenuation-b90e2049efff97732d8dffa8af3f4ea48fb140d9-linux-x86_64-mono-editor.tar.gz",
+                "digest": "sha256:43da0be9ccd1d3fe69e01cbf63b8e3828e1fd9aaaa86efde96f3f5209c1d60e7",
+                "size": 355242645
+            },
+            {
+                "id": 643149815,
+                "url": "https://api.github.com/repos/Eldritch-Game-Studio/Eldritch-Engine/releases/assets/643149815",
+                "name": "godot-native-attenuation-b90e2049efff97732d8dffa8af3f4ea48fb140d9-linux-x86_64-mono-manifest.json",
+                "browser_download_url": "https://github.com/Eldritch-Game-Studio/Eldritch-Engine/releases/download/native-import-thread-safety-b90e204/godot-native-attenuation-b90e2049efff97732d8dffa8af3f4ea48fb140d9-linux-x86_64-mono-manifest.json",
+                "digest": "sha256:6ef19fc738627914aa6039140a84c9df0322053062d73ba3109e3480123e5ff8",
+                "size": 38383
+            },
+            {
+                "id": 643149817,
+                "url": "https://api.github.com/repos/Eldritch-Game-Studio/Eldritch-Engine/releases/assets/643149817",
+                "name": "godot-native-attenuation-b90e2049efff97732d8dffa8af3f4ea48fb140d9-linux-x86_64-mono-templates.tpz",
+                "browser_download_url": "https://github.com/Eldritch-Game-Studio/Eldritch-Engine/releases/download/native-import-thread-safety-b90e204/godot-native-attenuation-b90e2049efff97732d8dffa8af3f4ea48fb140d9-linux-x86_64-mono-templates.tpz",
+                "digest": "sha256:1b8f84ed53813acbb109ac96f5a625e0d67f11e59774f3d0dc11ee40ad7a38af",
+                "size": 374649783
+            }
+        ]
+    },
+    {
+        "id": 412321820,
+        "name": "Native attenuation and opt-in camera shadow visibility 9301bad42 (.NET Linux x86_64)",
+        "tag_name": "native-attenuation-9301bad",
+        "published_at": "2026-10-14T03:53:46Z",
+        "draft": false,
+        "prerelease": false,
+        "assets": [
+            {
+                "id": 639139571,
+                "url": "https://api.github.com/repos/Eldritch-Game-Studio/Eldritch-Engine/releases/assets/639139571",
+                "name": "godot-native-attenuation-9301bad42358599c73aab71ecb38c36a21ccdf7d-linux-x86_64-mono-editor.tar.gz",
+                "browser_download_url": "https://github.com/Eldritch-Game-Studio/Eldritch-Engine/releases/download/native-attenuation-9301bad/godot-native-attenuation-9301bad42358599c73aab71ecb38c36a21ccdf7d-linux-x86_64-mono-editor.tar.gz",
+                "digest": "sha256:fdb9c77e6d5544a8c9fb854f96cf36fd9ee47f006e9a42d38696c6a15c304874",
+                "size": 113308494
+            },
+            {
+                "id": 639139572,
+                "url": "https://api.github.com/repos/Eldritch-Game-Studio/Eldritch-Engine/releases/assets/639139572",
+                "name": "godot-native-attenuation-9301bad42358599c73aab71ecb38c36a21ccdf7d-linux-x86_64-mono-manifest.json",
+                "browser_download_url": "https://github.com/Eldritch-Game-Studio/Eldritch-Engine/releases/download/native-attenuation-9301bad/godot-native-attenuation-9301bad42358599c73aab71ecb38c36a21ccdf7d-linux-x86_64-mono-manifest.json",
+                "digest": "sha256:597ef885a1c524de4fd1ed20170e2ec50df0129bda76506f6fa63e10a6583ce9",
+                "size": 1992
+            },
+            {
+                "id": 639139568,
+                "url": "https://api.github.com/repos/Eldritch-Game-Studio/Eldritch-Engine/releases/assets/639139568",
+                "name": "godot-native-attenuation-9301bad42358599c73aab71ecb38c36a21ccdf7d-linux-x86_64-mono-templates.tpz",
+                "browser_download_url": "https://github.com/Eldritch-Game-Studio/Eldritch-Engine/releases/download/native-attenuation-9301bad/godot-native-attenuation-9301bad42358599c73aab71ecb38c36a21ccdf7d-linux-x86_64-mono-templates.tpz",
+                "digest": "sha256:bf00560aa37247b13a66bb80e6a6080dc1581f9bfe02301d9b028417e55eb1c5",
+                "size": 61259585
+            }
+        ]
+    }
+]

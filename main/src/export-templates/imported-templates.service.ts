@@ -15,6 +15,7 @@ import { dialog } from 'electron';
 import logger from 'electron-log';
 import { AtomicJsonFileAdapter } from '../json-store/atomic-json-file.adapter.js';
 import type { ProjectsStore } from '../projects/projects.store.js';
+import { getReleaseTemplateIdentity } from '../utils/template-identity.util.js';
 import {
     type SwitchJournal,
     type SwitchPackageSnapshot,
@@ -1850,7 +1851,7 @@ export class ImportedTemplatesService {
      * @param project - Saved editor identity.
      */
     private identity(project: ProjectDetails): string {
-        return `${project.release.version.replace('-', '.')}${project.release.mono ? '.mono' : ''}`;
+        return getReleaseTemplateIdentity(project.release);
     }
     /** Validates a label at the main-process boundary.
      * @param value - User-provided label.

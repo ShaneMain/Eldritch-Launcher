@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import type { ProjectDetails } from '@shared/contracts';
+import { getReleaseTemplateIdentity } from '../utils/template-identity.util.js';
 import {
     isTemplateIdentity,
     readTemplateTree,
@@ -112,7 +113,7 @@ export async function readTemplateMigrationSource(
         projectPath: project.path,
         name: project.name,
         launchPath: project.launch_path,
-        setId: `${project.release.version.replace('-', '.')}${project.release.mono ? '.mono' : ''}`,
+        setId: getReleaseTemplateIdentity(project.release),
         mode: project.exportTemplateMode,
         buildSelections: { ...project.exportTemplateBuilds },
         localRoot,

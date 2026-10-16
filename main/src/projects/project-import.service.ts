@@ -42,6 +42,7 @@ import {
 } from '../utils/godotProject.utils.js';
 import { sanitiseProjectDirectoryName } from '../utils/projectDirectoryName.utils.js';
 import {
+    getProjectLauncherFork,
     getReleaseBaseVersion,
     getReleaseChannel,
     getReleaseFlavor,
@@ -66,9 +67,14 @@ function releaseMatchesProjectLauncherConfig(
     release: InstalledRelease,
     launcherConfig: ProjectLauncherConfig,
 ): boolean {
+    const pinnedFork = getProjectLauncherFork(launcherConfig);
     return (
         getReleaseChannel(release) === launcherConfig.editor.channel &&
-        getReleaseFlavor(release) === launcherConfig.editor.flavor
+        getReleaseFlavor(release) === launcherConfig.editor.flavor &&
+        (!pinnedFork ||
+            (release.fork?.revision === pinnedFork.revision &&
+                release.fork.source.toLowerCase() ===
+                    pinnedFork.source.toLowerCase()))
     );
 }
 
@@ -92,7 +98,11 @@ function findProjectLauncherFallbackRelease(
     launcherConfig: ProjectLauncherConfig,
     configVersion: number,
 ): InstalledRelease | undefined {
-    if (launcherConfig.editor.channel === 'custom') {
+    // Custom and fork pins name one exact build; never substitute another.
+    if (
+        launcherConfig.editor.channel === 'custom' ||
+        launcherConfig.editor.channel === 'fork'
+    ) {
         return undefined;
     }
 
@@ -113,16 +123,21 @@ function createEditorResolution(
     launcherConfig: ProjectLauncherConfig,
     fallback: InstalledRelease | undefined,
 ): AddProjectEditorResolution {
+    const fork = getProjectLauncherFork(launcherConfig);
     const requested = {
         kind: 'exact' as const,
-        ...launcherConfig.editor,
+        channel: launcherConfig.editor.channel,
+        flavor: launcherConfig.editor.flavor,
+        base_version: launcherConfig.editor.base_version,
+        version: launcherConfig.editor.version,
+        ...(fork ? { fork } : {}),
     };
 
     return {
         requested,
         fallback,
         downloadable:
-            requested.channel === 'official'
+            requested.channel === 'official' || fork
                 ? {
                       match: 'exact',
                       version: requested.version,
@@ -130,6 +145,7 @@ function createEditorResolution(
                       prerelease: !requested.version
                           .toLowerCase()
                           .includes('stable'),
+                      ...(fork ? { fork } : {}),
                   }
                 : undefined,
     };
@@ -168,6 +184,7 @@ function buildMissingRelease(
     launcherConfig: ProjectLauncherConfig,
     configVersion: number,
 ): InstalledRelease {
+    const fork = getProjectLauncherFork(launcherConfig);
     return {
         version: launcherConfig.editor.version,
         base_version: launcherConfig.editor.base_version,
@@ -184,7 +201,9 @@ function buildMissingRelease(
         config_version: configVersion as 5,
         published_at: null,
         valid: false,
-        source: launcherConfig.editor.channel,
+        source:
+            launcherConfig.editor.channel === 'custom' ? 'custom' : 'official',
+        ...(fork ? { fork } : {}),
     };
 }
 

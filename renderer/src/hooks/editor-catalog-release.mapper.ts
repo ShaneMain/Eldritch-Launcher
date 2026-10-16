@@ -4,10 +4,18 @@ import type {
     ReleaseSummary,
 } from '@shared/contracts';
 
+/** Built-in providers that publish the official Godot channels. */
+const OFFICIAL_PROVIDER_IDS: Record<string, true> = {
+    'official-stable': true,
+    'official-prerelease': true,
+};
+
 /** Catalog data in the shape still used by the release provider. */
 export type LegacyEditorCatalog = {
     availableReleases: ReleaseSummary[];
     availablePrereleases: ReleaseSummary[];
+    /** Builds published by fork sources, kept apart from official channels. */
+    forkReleases: ReleaseSummary[];
     refreshError?: string;
 };
 
@@ -38,27 +46,55 @@ export function mapEditorCatalogRelease(
                 mono: variant.flavor === 'dotnet',
             })),
         ),
+        ...(release.fork
+            ? {
+                  fork: {
+                      sourceId: release.fork.sourceId,
+                      source: release.fork.source,
+                      revision: release.fork.revision,
+                  },
+              }
+            : {}),
     };
 }
 
 /**
  * Splits catalog releases into the lists used by the current UI.
  *
+ * Fork builds are returned separately so official channels stay unchanged.
+ * Fork providers that need a GitHub login are reported by the engine sources
+ * UI rather than as a generic catalog failure.
+ *
  * @param result - The catalog result to convert.
- * @returns Legacy stable and prerelease lists with any refresh error.
+ * @returns Official stable and prerelease lists, fork builds, and any refresh error.
  */
 export function mapEditorCatalogResult(
     result: EditorCatalogResult,
 ): LegacyEditorCatalog {
-    const releases = deduplicateEditorCatalogReleases(result.releases).map(
-        mapEditorCatalogRelease,
-    );
+    const officialReleases = deduplicateEditorCatalogReleases(
+        result.releases.filter((release) => !release.fork),
+    ).map(mapEditorCatalogRelease);
 
     return {
-        availableReleases: releases.filter((release) => !release.prerelease),
-        availablePrereleases: releases.filter((release) => release.prerelease),
-        refreshError: result.providers.find((provider) => provider.refreshError)
-            ?.refreshError,
+        availableReleases: officialReleases.filter(
+            (release) => !release.prerelease,
+        ),
+        availablePrereleases: officialReleases.filter(
+            (release) => release.prerelease,
+        ),
+        forkReleases: result.releases
+            .filter((release) => release.fork)
+            .map(mapEditorCatalogRelease),
+        // Fork sources waiting for a GitHub login are shown by the engine
+        // sources UI, not as a generic catalog failure.
+        refreshError: result.providers.find(
+            (provider) =>
+                provider.refreshError &&
+                !(
+                    provider.state === 'auth-required' &&
+                    OFFICIAL_PROVIDER_IDS[provider.id] !== true
+                ),
+        )?.refreshError,
     };
 }
 
