@@ -36,14 +36,13 @@
             "help": "Aiuto",
             "settings": "Impostazioni",
             "connections": "Connessioni",
-            "new": "Novità",
-            "joinCommunity": "Unisciti alla community"
+            "new": "Novità"
         },
         "update": {
             "availableWithVersion": "La versione {{version}} è disponibile. <DownloadButton>Scarica aggiornamento</DownloadButton> o <SkipButton>Salta questa versione</SkipButton>",
             "availableNoVersion": "È disponibile una nuova versione. <DownloadButton>Scarica aggiornamento</DownloadButton>",
-            "readyWithVersion": "La versione {{version}} è pronta, riavvia Godot Launcher per installarla. <RestartButton>Riavvia ora</RestartButton>",
-            "readyNoVersion": "L'aggiornamento è pronto, riavvia Godot Launcher per installarlo. <RestartButton>Riavvia ora</RestartButton>",
+            "readyWithVersion": "La versione {{version}} è pronta, riavvia Eldritch Launcher per installarla. <RestartButton>Riavvia ora</RestartButton>",
+            "readyNoVersion": "L'aggiornamento è pronto, riavvia Eldritch Launcher per installarlo. <RestartButton>Riavvia ora</RestartButton>",
             "manualWithVersion": "La versione {{version}} è disponibile, ma l’installazione automatica non è supportata su questo sistema rpm-ostree. <ReleaseLink>Scarica manualmente</ReleaseLink> o <SkipButton>Salta questa versione</SkipButton>",
             "manualNoVersion": "È disponibile una nuova versione, ma l’installazione automatica non è supportata su questo sistema rpm-ostree. <ReleaseLink>Scarica manualmente</ReleaseLink>",
             "notification": {
@@ -55,10 +54,10 @@
                 "downloadingProgress": "Scaricamento {{percent}}%"
             },
             "panel": {
-                "titleWithVersion": "Godot Launcher {{version}}",
-                "title": "Aggiornamento di Godot Launcher",
+                "titleWithVersion": "Eldritch Launcher {{version}}",
+                "title": "Aggiornamento di Eldritch Launcher",
                 "installAfterDownload": "Riavvia per installare al termine del download.",
-                "ready": "L’aggiornamento è stato scaricato. Riavvia Godot Launcher per installarlo.",
+                "ready": "L’aggiornamento è stato scaricato. Riavvia Eldritch Launcher per installarlo.",
                 "manual": "L’installazione automatica non è supportata su questo sistema rpm-ostree. Scarica e installa l’aggiornamento manualmente.",
                 "readReleaseNotes": "Leggi le note di rilascio",
                 "download": "Scarica aggiornamento",

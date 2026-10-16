@@ -36,14 +36,13 @@
             "help": "Għajnuna",
             "settings": "Issettjar",
             "connections": "Konnessjonijiet",
-            "new": "Ġdid",
-            "joinCommunity": "Ingħaqad mal-Komunità"
+            "new": "Ġdid"
         },
         "update": {
             "availableWithVersion": "Il-verżjoni {{version}} hija disponibbli. <DownloadButton>Niżżel l-aġġornament</DownloadButton> jew <SkipButton>Aqbeż din il-verżjoni</SkipButton>",
             "availableNoVersion": "Verżjoni ġdida hija disponibbli. <DownloadButton>Niżżel l-aġġornament</DownloadButton>",
-            "readyWithVersion": "Il-verżjoni {{version}} hija lesta, erġa' ibda Godot Launcher biex tinstallaha. <RestartButton>Ibda mill-ġdid issa</RestartButton>",
-            "readyNoVersion": "L-aġġornament huwa lest, erġa' ibda Godot Launcher biex tinstallah. <RestartButton>Ibda mill-ġdid issa</RestartButton>",
+            "readyWithVersion": "Il-verżjoni {{version}} hija lesta, erġa' ibda Eldritch Launcher biex tinstallaha. <RestartButton>Ibda mill-ġdid issa</RestartButton>",
+            "readyNoVersion": "L-aġġornament huwa lest, erġa' ibda Eldritch Launcher biex tinstallah. <RestartButton>Ibda mill-ġdid issa</RestartButton>",
             "manualWithVersion": "Il-verżjoni {{version}} hija disponibbli, iżda l-installazzjoni awtomatika mhix appoġġjata fuq din is-sistema rpm-ostree. <ReleaseLink>Niżżel manwalment</ReleaseLink> jew <SkipButton>Aqbeż din il-verżjoni</SkipButton>",
             "manualNoVersion": "Hemm verżjoni ġdida disponibbli, iżda l-installazzjoni awtomatika mhix appoġġjata fuq din is-sistema rpm-ostree. <ReleaseLink>Niżżel manwalment</ReleaseLink>",
             "notification": {
@@ -55,10 +54,10 @@
                 "downloadingProgress": "Tniżżil {{percent}}%"
             },
             "panel": {
-                "titleWithVersion": "Godot Launcher {{version}}",
-                "title": "Aġġornament ta’ Godot Launcher",
+                "titleWithVersion": "Eldritch Launcher {{version}}",
+                "title": "Aġġornament ta’ Eldritch Launcher",
                 "installAfterDownload": "Erġa’ ibda biex tinstalla wara li titlesta t-tniżżila.",
-                "ready": "L-aġġornament tniżżel. Erġa’ ibda Godot Launcher biex tinstallah.",
+                "ready": "L-aġġornament tniżżel. Erġa’ ibda Eldritch Launcher biex tinstallah.",
                 "manual": "L-installazzjoni awtomatika mhijiex appoġġjata fuq din is-sistema rpm-ostree. Niżżel u installa l-aġġornament manwalment.",
                 "readReleaseNotes": "Aqra n-noti tar-rilaxx",
                 "download": "Niżżel l-aġġornament",

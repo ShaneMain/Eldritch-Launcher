@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/godotlauncher/launcher/main/schemas/v1/engine-manifest.json",
-    "title": "Godot Launcher Custom Editor Manifest",
+    "$id": "https://raw.githubusercontent.com/ShaneMain/Eldritch-Launcher/main/schemas/v1/engine-manifest.json",
+    "title": "Eldritch Launcher Custom Editor Manifest",
     "type": "object",
     "additionalProperties": false,
     "required": [

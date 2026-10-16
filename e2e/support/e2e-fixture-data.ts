@@ -262,7 +262,7 @@ export const SAMPLE_AVAILABLE_RELEASES_WITH_EDITOR_RESOLUTION: ReleaseSummary[] 
 export const SAMPLE_PREFS: UserPreferences = {
     prefs_version: 3,
     install_location: '/Users/docs/Godot/Editors',
-    config_location: '/Users/docs/.gd-launcher',
+    config_location: '/Users/docs/.eldritch-launcher',
     projects_location: '/Users/docs/Godot/Projects',
     post_launch_action: 'close_to_tray',
     auto_check_updates: true,
@@ -288,7 +288,7 @@ export function createFilesystemPreferences(
     return {
         ...SAMPLE_PREFS,
         install_location: path.join(homeDir, 'Godot', 'Editors'),
-        config_location: path.join(homeDir, '.gd-launcher'),
+        config_location: path.join(homeDir, '.eldritch-launcher'),
         projects_location: path.join(homeDir, 'Godot', 'Projects'),
     };
 }

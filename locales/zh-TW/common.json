@@ -36,14 +36,13 @@
             "help": "說明",
             "settings": "設定",
             "connections": "連線",
-            "new": "全新",
-            "joinCommunity": "加入社群"
+            "new": "全新"
         },
         "update": {
             "availableWithVersion": "版本 {{version}} 可用。<DownloadButton>下載更新</DownloadButton> 或 <SkipButton>跳過此版本</SkipButton>",
             "availableNoVersion": "有新版本可用。<DownloadButton>下載更新</DownloadButton>",
-            "readyWithVersion": "版本 {{version}} 已就緒，重新啟動 Godot Launcher 以安裝。<RestartButton>立即重新啟動</RestartButton>",
-            "readyNoVersion": "更新已就緒，重新啟動 Godot Launcher 以安裝。<RestartButton>立即重新啟動</RestartButton>",
+            "readyWithVersion": "版本 {{version}} 已就緒，重新啟動 Eldritch Launcher 以安裝。<RestartButton>立即重新啟動</RestartButton>",
+            "readyNoVersion": "更新已就緒，重新啟動 Eldritch Launcher 以安裝。<RestartButton>立即重新啟動</RestartButton>",
             "manualWithVersion": "{{version}} 版本可用，但此 rpm-ostree 系統不支援自動安裝。<ReleaseLink>手動下載</ReleaseLink>或<SkipButton>略過此版本</SkipButton>",
             "manualNoVersion": "有新版本可用，但此 rpm-ostree 系統不支援自動安裝。<ReleaseLink>手動下載</ReleaseLink>",
             "notification": {
@@ -55,10 +54,10 @@
                 "downloadingProgress": "下載中 {{percent}}%"
             },
             "panel": {
-                "titleWithVersion": "Godot Launcher {{version}}",
-                "title": "Godot Launcher 更新",
+                "titleWithVersion": "Eldritch Launcher {{version}}",
+                "title": "Eldritch Launcher 更新",
                 "installAfterDownload": "下載完成後重新啟動以安裝更新。",
-                "ready": "更新已下載。請重新啟動 Godot Launcher 以安裝。",
+                "ready": "更新已下載。請重新啟動 Eldritch Launcher 以安裝。",
                 "manual": "此 rpm-ostree 系統不支援自動安裝。請手動下載並安裝更新。",
                 "readReleaseNotes": "閱讀版本資訊",
                 "download": "下載更新",

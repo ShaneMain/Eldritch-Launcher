@@ -419,7 +419,7 @@ export class TemplateStorageService {
             for (const root of saved.officialWorkRoots ?? []) {
                 const work = path.join(
                     path.dirname(root),
-                    '.godot-launcher-template-work',
+                    '.eldritch-launcher-template-work',
                 );
                 try {
                     const stat = await lstat(work);
@@ -1371,7 +1371,7 @@ export class TemplateStorageService {
                     target,
                     path.join(
                         path.dirname(root),
-                        '.godot-launcher-template-work',
+                        '.eldritch-launcher-template-work',
                     ),
                 )
             )
@@ -1433,7 +1433,7 @@ export class TemplateStorageService {
         }
         const probe = path.join(
             parent,
-            `.godot-launcher-link-probe-${randomUUID()}`,
+            `.eldritch-launcher-link-probe-${randomUUID()}`,
         );
         const link = `${probe}.link`;
         try {
@@ -1460,7 +1460,7 @@ export class TemplateStorageService {
         if (await lstat(canonicalParent)) {
             const second = path.join(
                 canonicalParent,
-                `.godot-launcher-link-probe-${randomUUID()}`,
+                `.eldritch-launcher-link-probe-${randomUUID()}`,
             );
             try {
                 await fs.promises.symlink(

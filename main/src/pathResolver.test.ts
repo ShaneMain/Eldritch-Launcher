@@ -68,7 +68,7 @@ describe('Path Resolver', () => {
     it('resolves source resources below the application path', () => {
         const input = {
             isPackaged: false,
-            appPath: '/workspace/Godot Launcher',
+            appPath: '/workspace/Eldritch Launcher',
         };
 
         expect(getExternalResourceRoot(input)).toBe(input.appPath);
@@ -81,7 +81,7 @@ describe('Path Resolver', () => {
     it('resolves official package resources beside the application archive', () => {
         const input = {
             isPackaged: true,
-            appPath: '/opt/Godot Launcher/resources/app.asar',
+            appPath: '/opt/Eldritch Launcher/resources/app.asar',
         };
         const resourceRoot = path.dirname(input.appPath);
 

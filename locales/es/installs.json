@@ -48,14 +48,14 @@
     },
     "customEditor": {
         "selectManifestTitle": "Añadir manifiesto de editor personalizado",
-        "manifestFilterName": "Manifiesto de editor de Godot Launcher",
+        "manifestFilterName": "Manifiesto de editor de Eldritch Launcher",
         "waitingForDialog": "Esperando al diálogo...",
         "replace": {
             "action": "Reemplazar",
             "title": "¿Reemplazar editor personalizado?",
             "message": "Ya hay un editor personalizado con esta versión registrado.",
             "versionLabel": "Versión",
-            "detail": "Al reemplazarlo, se actualizará el registro del Godot Launcher para usar el manifiesto seleccionado. No se eliminarán los archivos del editor."
+            "detail": "Al reemplazarlo, se actualizará el registro del Eldritch Launcher para usar el manifiesto seleccionado. No se eliminarán los archivos del editor."
         },
         "drop": {
             "title": "Suelta el manifiesto para añadir el editor personalizado",
@@ -73,7 +73,7 @@
                 },
                 "name": {
                     "label": "Nombre visible",
-                    "help": "Nombre que se muestra en Godot Launcher para este editor personalizado.",
+                    "help": "Nombre que se muestra en Eldritch Launcher para este editor personalizado.",
                     "placeholder": "Editor personalizado Acme Godot 4.4"
                 },
                 "version": {
@@ -180,7 +180,7 @@
             "title": "Eliminar editores seleccionados",
             "message": "¿Eliminar estos editores?",
             "managed": "Los archivos de los editores instalados se eliminarán de tu dispositivo. Puedes volver a instalarlos más tarde.",
-            "custom": "Los editores personalizados se quitarán de Godot Launcher. Se conservarán sus archivos.",
+            "custom": "Los editores personalizados se quitarán de Eldritch Launcher. Se conservarán sus archivos.",
             "used": "Proyectos que usan este editor: {{names}}. Necesitarán otro editor."
         },
         "results": {

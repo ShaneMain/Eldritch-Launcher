@@ -213,7 +213,7 @@ async function restoreFault(): Promise<void> {
 
 test.beforeEach(async () => {
     home = await createFixtureHome();
-    const prefsPath = path.join(home, '.gd-launcher', 'prefs.json');
+    const prefsPath = path.join(home, '.eldritch-launcher', 'prefs.json');
     const prefs = JSON.parse(await fs.readFile(prefsPath, 'utf8'));
     prefs.language = 'en';
     prefs.export_template_migration_offered = true;
@@ -249,10 +249,10 @@ test.beforeEach(async () => {
         }
     }
     await fs.writeFile(
-        path.join(home, '.gd-launcher', 'projects.json'),
+        path.join(home, '.eldritch-launcher', 'projects.json'),
         JSON.stringify(projects),
     );
-    root = path.join(home, '.gd-launcher', 'godot', 'export_templates');
+    root = path.join(home, '.eldritch-launcher', 'godot', 'export_templates');
     for (const id of [ids[1], ids[2]]) {
         await fs.mkdir(path.join(root, id), { recursive: true });
         await fs.writeFile(path.join(root, id, 'template'), `shared ${id}`);
@@ -295,7 +295,7 @@ for (const option of [
 ]) {
     test(`migrates macOS bundles and missing editors with ${option}`, async () => {
         await app.close();
-        const projectsPath = path.join(home, '.gd-launcher', 'projects.json');
+        const projectsPath = path.join(home, '.eldritch-launcher', 'projects.json');
         const projects = JSON.parse(
             await fs.readFile(projectsPath, 'utf8'),
         ) as ProjectDetails[];
@@ -383,7 +383,7 @@ for (const option of [
 
 test('offers About once and remembers Finish later without changing files', async () => {
     await app.close();
-    const prefsPath = path.join(home, '.gd-launcher', 'prefs.json');
+    const prefsPath = path.join(home, '.eldritch-launcher', 'prefs.json');
     const prefs = JSON.parse(await fs.readFile(prefsPath, 'utf8'));
     prefs.export_template_migration_offered = false;
     await fs.writeFile(prefsPath, JSON.stringify(prefs));
@@ -656,7 +656,7 @@ test('an unreadable recovery file blocks Review and keeps a failed recovery acti
     await app.close();
     const journal = path.join(
         home,
-        '.gd-launcher',
+        '.eldritch-launcher',
         'export-templates',
         'version-migration.json',
     );
@@ -685,7 +685,7 @@ test('empty projects connect automatically and do not trigger the upgrade offer'
         await fs.rm(local(index), { recursive: true });
         await fs.mkdir(local(index));
     }
-    const prefsPath = path.join(home, '.gd-launcher', 'prefs.json');
+    const prefsPath = path.join(home, '.eldritch-launcher', 'prefs.json');
     const prefs = JSON.parse(await fs.readFile(prefsPath, 'utf8'));
     prefs.export_template_migration_offered = false;
     await fs.writeFile(prefsPath, JSON.stringify(prefs));

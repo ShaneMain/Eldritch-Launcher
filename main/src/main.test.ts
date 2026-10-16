@@ -33,7 +33,7 @@ vi.mock('electron-log/main.js', () => ({
 vi.mock('./app.module.js', () => ({ AppModule: class AppModule {} }));
 vi.mock('./config/index.js', () => ({
     configuration: () => ({
-        appName: 'Godot Launcher',
+        appName: 'Eldritch Launcher',
         isDev: false,
         e2eFixtures: false,
         startHidden: true,

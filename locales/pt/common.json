@@ -36,14 +36,13 @@
             "help": "Ajuda",
             "settings": "Definições",
             "connections": "Ligações",
-            "new": "Novo",
-            "joinCommunity": "Junta-te à comunidade"
+            "new": "Novo"
         },
         "update": {
             "availableWithVersion": "A versão {{version}} está disponível. <DownloadButton>Baixar atualização</DownloadButton> ou <SkipButton>Ignorar esta versão</SkipButton>",
             "availableNoVersion": "Está disponível uma nova versão. <DownloadButton>Baixar atualização</DownloadButton>",
-            "readyWithVersion": "A versão {{version}} está pronta, reinicia o Godot Launcher para a instalar. <RestartButton>Reinicia agora</RestartButton>",
-            "readyNoVersion": "A atualização está pronta, reinicia o Godot Launcher para a instalar. <RestartButton>Reinicia agora</RestartButton>",
+            "readyWithVersion": "A versão {{version}} está pronta, reinicia o Eldritch Launcher para a instalar. <RestartButton>Reinicia agora</RestartButton>",
+            "readyNoVersion": "A atualização está pronta, reinicia o Eldritch Launcher para a instalar. <RestartButton>Reinicia agora</RestartButton>",
             "manualWithVersion": "A versão {{version}} está disponível, mas a instalação automática não é suportada neste sistema rpm-ostree. <ReleaseLink>Transferir manualmente</ReleaseLink> ou <SkipButton>Ignorar esta versão</SkipButton>",
             "manualNoVersion": "Está disponível uma nova versão, mas a instalação automática não é suportada neste sistema rpm-ostree. <ReleaseLink>Transferir manualmente</ReleaseLink>",
             "notification": {
@@ -55,10 +54,10 @@
                 "downloadingProgress": "Transferindo {{percent}}%"
             },
             "panel": {
-                "titleWithVersion": "Godot Launcher {{version}}",
-                "title": "Atualização do Godot Launcher",
+                "titleWithVersion": "Eldritch Launcher {{version}}",
+                "title": "Atualização do Eldritch Launcher",
                 "installAfterDownload": "Reinicie para instalar após a transferência terminar.",
-                "ready": "A atualização foi transferida. Reinicie o Godot Launcher para a instalar.",
+                "ready": "A atualização foi transferida. Reinicie o Eldritch Launcher para a instalar.",
                 "manual": "A instalação automática não é suportada neste sistema rpm-ostree. Transfira e instale a atualização manualmente.",
                 "readReleaseNotes": "Ler notas da versão",
                 "download": "Transferir atualização",

@@ -14,7 +14,7 @@
     "appearance": {
         "theme": {
             "title": "Motyw",
-            "description": "Dostosuj wygląd Godot Launcher",
+            "description": "Dostosuj wygląd Eldritch Launcher",
             "light": "Jasny",
             "dark": "Ciemny",
             "system": "System (automatyczny)"
@@ -22,30 +22,30 @@
     },
     "behavior": {
         "trayAvailability": {
-            "warning": "Nie udało się potwierdzić obsługi zasobnika systemowego w tej sesji. Godot Launcher pozostanie widoczny lub zakończy działanie zamiast się ukryć.",
-            "closeFallback": "Zamknięcie do zasobnika systemowego pozostawi Godot Launcher widoczny."
+            "warning": "Nie udało się potwierdzić obsługi zasobnika systemowego w tej sesji. Eldritch Launcher pozostanie widoczny lub zakończy działanie zamiast się ukryć.",
+            "closeFallback": "Zamknięcie do zasobnika systemowego pozostawi Eldritch Launcher widoczny."
         },
         "projects": {
             "title": "Projekty",
-            "description": "Wybierz zachowanie Godot Launcher dla projektów.",
+            "description": "Wybierz zachowanie Eldritch Launcher dla projektów.",
             "confirmRemove": "Pytaj o potwierdzenie przy usuwaniu projektów."
         },
         "autoStart": {
             "title": "Preferencje uruchamiania",
-            "description": "Wybierz, co robi Godot Launcher po uruchomieniu komputera",
+            "description": "Wybierz, co robi Eldritch Launcher po uruchomieniu komputera",
             "linuxWarning": "Automatyczne uruchamianie nie jest obecnie obsługiwane na Linuksie",
             "startOnBoot": "Uruchom przy starcie komputera.",
             "startInTray": "Uruchom w zasobniku systemowym."
         },
         "windowClose": {
             "title": "Zamykanie okna",
-            "description": "Wybierz, co ma się dziać po zamknięciu okna Godot Launcher.",
+            "description": "Wybierz, co ma się dziać po zamknięciu okna Eldritch Launcher.",
             "closeToTray": "Zamknij do zasobnika systemowego",
-            "quit": "Zakończ Godot Launcher"
+            "quit": "Zakończ Eldritch Launcher"
         },
         "projectLaunch": {
             "title": "Akcja uruchamiania projektu",
-            "description": "Wybierz, co robi Godot Launcher po uruchomieniu projektu",
+            "description": "Wybierz, co robi Eldritch Launcher po uruchomieniu projektu",
             "none": "Nic",
             "minimize": "Minimalizuj",
             "closeToTray": "Zamknij do zasobnika systemowego"
@@ -77,7 +77,7 @@
     "general": {
         "language": {
             "label": "Język",
-            "description": "Wybierz język dla Godot Launcher (nie zmienia języka Godot)",
+            "description": "Wybierz język dla Eldritch Launcher (nie zmienia języka Godot)",
             "system": "System (automatyczne wykrywanie)"
         }
     },
@@ -150,7 +150,7 @@
         }
     },
     "tools": {
-        "overview": "Godot Launcher szybko sprawdza pamiętane ścieżki narzędzi, gdy ta karta otrzymuje fokus. Wykonaj pełne ponowne skanowanie, jeśli zmieniłeś instalacje na tym systemie.",
+        "overview": "Eldritch Launcher szybko sprawdza pamiętane ścieżki narzędzi, gdy ta karta otrzymuje fokus. Wykonaj pełne ponowne skanowanie, jeśli zmieniłeś instalacje na tym systemie.",
         "actions": {
             "refresh": "Ponownie przeskanuj narzędzia",
             "scanning": "Ponowne skanowanie...",
@@ -171,7 +171,7 @@
         "installation": {
             "drawerTitle": "Ustawienia {{tool}}",
             "title": "Instalacja",
-            "description": "Godot Launcher wykrywa i sprawdza tę instalację. Nie instaluje ani nie aktualizuje narzędzia {{tool}}.",
+            "description": "Eldritch Launcher wykrywa i sprawdza tę instalację. Nie instaluje ani nie aktualizuje narzędzia {{tool}}.",
             "status": "Status",
             "path": "Ścieżka wykonywalna",
             "version": "Wersja"
@@ -209,7 +209,7 @@
             },
             "installation": {
                 "title": "Instalacja",
-                "description": "Godot Launcher sprawdza ten plik wykonywalny przed każdą operacją Git.",
+                "description": "Eldritch Launcher sprawdza ten plik wykonywalny przed każdą operacją Git.",
                 "status": "Status",
                 "path": "Ścieżka wykonywalna",
                 "version": "Wersja"
@@ -227,7 +227,7 @@
                 },
                 "preset": {
                     "title": "Wstępnie ustawiona tożsamość projektu",
-                    "description": "Zapisz jedną tożsamość dla repozytoriów utworzonych przez Godot Launcher. Nie ma to żadnego efektu, dopóki nie zostanie wybrane lub automatycznie zastosowane podczas tworzenia projektu.",
+                    "description": "Zapisz jedną tożsamość dla repozytoriów utworzonych przez Eldritch Launcher. Nie ma to żadnego efektu, dopóki nie zostanie wybrane lub automatycznie zastosowane podczas tworzenia projektu.",
                     "nameHelp": "Sugerowana nazwa autora nowej tożsamości Git w lokalnym repozytorium.",
                     "emailHelp": "Sugerowany adres e-mail autora dla nowej tożsamości lokalnej Git w repozytorium.",
                     "automaticTitle": "Używaj automatycznie w przypadku nowych repozytoriów",
@@ -257,10 +257,10 @@
     },
     "connections": {
         "title": "Zarządzaj połączeniami",
-        "overview": "Połącz usługi zewnętrzne, aby używać ich w Godot Launcher.",
+        "overview": "Połącz usługi zewnętrzne, aby używać ich w Eldritch Launcher.",
         "loading": "Wczytywanie połączeń...",
         "loadError": "Nie udało się wczytać połączeń.",
-        "genericDescription": "Połącz tę usługę, aby używać jej w Godot Launcher.",
+        "genericDescription": "Połącz tę usługę, aby używać jej w Eldritch Launcher.",
         "flow": {
             "reauthoriseDescription": "Wybierz konto do ponownej autoryzacji, a następnie kontynuuj w przeglądarce, aby przywrócić jego połączenie z GitHub.",
             "connectAnotherAccount": "Połącz inne konto",
@@ -278,7 +278,7 @@
             "accessDescription": "Zarządzaj dostępem do repozytoriów w GitHub lub dodaj inne konto, a następnie odśwież listę repozytoriów."
         },
         "github": {
-            "description": "Połącz GitHub, aby udostępnić swoje repozytoria w Godot Launcher.",
+            "description": "Połącz GitHub, aby udostępnić swoje repozytoria w Eldritch Launcher.",
             "accessNote": "To Ty wybierasz repozytoria, do których aplikacja GitHub ma dostęp.",
             "summary": "Połączenia: {{count}}"
         },
@@ -315,12 +315,12 @@
         },
         "drawer": {
             "title": "Połączenia GitHub",
-            "description": "Zarządzaj połączeniami GitHub dostępnymi dla Godot Launcher.",
+            "description": "Zarządzaj połączeniami GitHub dostępnymi dla Eldritch Launcher.",
             "connections": "Połączenia",
             "chooseConnection": "Wybierz połączenia",
             "chooseConnectionDescription": "Wybierz co najmniej jedną istniejącą instalację GitHub App lub zainstaluj aplikację w nowym miejscu.",
             "finishSetup": "Dokończ konfigurację w GitHub",
-            "finishSetupDescription": "Dokończ instalację w przeglądarce. Możesz tu wrócić, gdy Godot Launcher nadal czeka.",
+            "finishSetupDescription": "Dokończ instalację w przeglądarce. Możesz tu wrócić, gdy Eldritch Launcher nadal czeka.",
             "installations": "Instalacje aplikacji",
             "noInstallations": "To połączenie nie ma jeszcze dostępnych instalacji aplikacji.",
             "organization": "Organizacja",
@@ -328,7 +328,7 @@
         },
         "disconnectConfirm": {
             "title": "Rozłączyć {{connection}}?",
-            "description": "Spowoduje to usunięcie połączenia z Godot Launcher. Aplikacja GitHub nie zostanie odinstalowana, a zdalne adresy projektów nie zostaną zmienione.",
+            "description": "Spowoduje to usunięcie połączenia z Eldritch Launcher. Aplikacja GitHub nie zostanie odinstalowana, a zdalne adresy projektów nie zostaną zmienione.",
             "finalDescription": "Spowoduje to usunięcie połączenia z tego urządzenia. Aplikacja GitHub nie zostanie odinstalowana, a dostęp do repozytoriów i zdalne adresy projektów nie zostaną zmienione.",
             "revokeAllDevices": "Unieważnij też tę autoryzację GitHub na wszystkich urządzeniach z Launcherem.",
             "revokeDetail": "Inne urządzenia z Launcherem połączone z tym kontem GitHub będą wymagały ponownego połączenia.",
@@ -339,13 +339,13 @@
         },
         "credentialStorage": {
             "configure": "Konfiguruj magazyn",
-            "restartFailedTitle": "Nie udało się ponownie uruchomić Godot Launcher",
-            "restartFailed": "Twój wybór został zapisany. Całkowicie zamknij Godot Launcher i otwórz go ponownie, aby zastosować zapisany wybór.",
+            "restartFailedTitle": "Nie udało się ponownie uruchomić Eldritch Launcher",
+            "restartFailed": "Twój wybór został zapisany. Całkowicie zamknij Eldritch Launcher i otwórz go ponownie, aby zastosować zapisany wybór.",
             "restartNow": "Uruchom ponownie teraz",
             "notNow": "Nie teraz",
             "linuxOnly": "Tylko Linux",
             "title": "Przechowywanie poświadczeń",
-            "description": "Wybierz, jak Godot Launcher uzyskuje dostęp do bezpiecznego przechowywania poświadczeń w systemie Linux. Secret Service wymaga zgodnego pęku kluczy działającego w sesji pulpitu.",
+            "description": "Wybierz, jak Eldritch Launcher uzyskuje dostęp do bezpiecznego przechowywania poświadczeń w systemie Linux. Secret Service wymaga zgodnego pęku kluczy działającego w sesji pulpitu.",
             "savedChoice": "Zapisany wybór",
             "automatic": "Automatycznie",
             "secretService": "Secret Service",
@@ -353,14 +353,14 @@
             "save": "Zapisz wybór",
             "saving": "Zapisywanie...",
             "saveError": "Nie można zapisać wyboru. Poprzednio zapisany wybór pozostaje bez zmian. Spróbuj ponownie.",
-            "restart": "Całkowicie zamknij Godot Launcher, w tym jego proces w zasobniku systemowym, a następnie otwórz go ponownie, aby zastosować zapisany wybór.",
+            "restart": "Całkowicie zamknij Eldritch Launcher, w tym jego proces w zasobniku systemowym, a następnie otwórz go ponownie, aby zastosować zapisany wybór.",
             "restartPending": "Zapisany wybór różni się od wyboru użytego podczas uruchamiania. Wymagane jest pełne ponowne uruchomienie.",
             "override": "Flaga uruchomieniowa steruje przechowywaniem poświadczeń w tej sesji ({{backend}}). Usuń flagę przed ponownym uruchomieniem, jeśli chcesz użyć zapisanego wyboru.",
             "sessionChoice": "Wybór przy uruchamianiu: {{choice}}",
             "activeBackend": "Aktywny backend przechowywania: {{backend}}",
             "available": "Bezpieczne przechowywanie jest dostępne.",
-            "unavailable": "Bezpieczne przechowywanie jest niedostępne. Sprawdź, czy zgodna usługa pęku kluczy działa i jest dostępna, a następnie całkowicie uruchom ponownie Godot Launcher.",
-            "selectionFailed": "Zażądano Secret Service, ale nie jest to aktywny backend. Sprawdź, czy działa zgodny pęk kluczy Secret Service, a następnie całkowicie uruchom ponownie Godot Launcher.",
+            "unavailable": "Bezpieczne przechowywanie jest niedostępne. Sprawdź, czy zgodna usługa pęku kluczy działa i jest dostępna, a następnie całkowicie uruchom ponownie Eldritch Launcher.",
+            "selectionFailed": "Zażądano Secret Service, ale nie jest to aktywny backend. Sprawdź, czy działa zgodny pęk kluczy Secret Service, a następnie całkowicie uruchom ponownie Eldritch Launcher.",
             "statusError": "Nie można odczytać bieżącego stanu przechowywania.",
             "loading": "Odczytywanie stanu przechowywania...",
             "summary": "Wybierz bezpieczne przechowywanie poświadczeń dla systemu Linux.",
@@ -377,7 +377,7 @@
     },
     "updates": {
         "title": "Aktualizacje",
-        "description": "Skonfiguruj sposób sprawdzania aktualizacji przez Godot Launcher",
+        "description": "Skonfiguruj sposób sprawdzania aktualizacji przez Eldritch Launcher",
         "autoCheck": "Automatycznie sprawdzaj aktualizacje",
         "betaChannel": "Otrzymuj aktualizacje beta",
         "betaChannelDescription": "Pobierz wersje przedpremierowe z GitHub; mogą być mniej stabilne niż oficjalne wydania.",
@@ -385,8 +385,8 @@
         "downloadNow": "Pobierz aktualizację",
         "skipVersion": "Pomiń tę wersję",
         "unskipVersion": "Przywróć pominiętą aktualizację",
-        "readyWithVersion": "Wersja {{version}} jest gotowa, uruchom ponownie Godot Launcher, aby ją zainstalować. <Button>Uruchom ponownie teraz</Button>",
-        "readyNoVersion": "Aktualizacja jest gotowa, uruchom ponownie Godot Launcher, aby ją zainstalować. <Button>Uruchom ponownie teraz</Button>",
+        "readyWithVersion": "Wersja {{version}} jest gotowa, uruchom ponownie Eldritch Launcher, aby ją zainstalować. <Button>Uruchom ponownie teraz</Button>",
+        "readyNoVersion": "Aktualizacja jest gotowa, uruchom ponownie Eldritch Launcher, aby ją zainstalować. <Button>Uruchom ponownie teraz</Button>",
         "manualWithVersion": "Wersja {{version}} jest dostępna, ale automatyczna instalacja nie jest obsługiwana w tym systemie rpm-ostree. <Button>Otwórz stronę pobierania</Button>",
         "manualNoVersion": "Dostępna jest nowa wersja, ale automatyczna instalacja nie jest obsługiwana w tym systemie rpm-ostree. <Button>Otwórz stronę pobierania</Button>"
     },
@@ -401,12 +401,12 @@
         "enableAction": "Włącz dowiązania symboliczne",
         "disableAction": "Wyłącz dowiązania symboliczne",
         "enableDescription": {
-            "line1": "Po włączeniu Godot Launcher łączy każdy projekt z zainstalowanym edytorem zamiast go kopiować.",
+            "line1": "Po włączeniu Eldritch Launcher łączy każdy projekt z zainstalowanym edytorem zamiast go kopiować.",
             "line2": "To utrzymuje niskie zużycie dysku, ale Windows może poprosić o zatwierdzenie administratora podczas tworzenia nowych dowiązań symbolicznych.",
             "line3": "Istniejące projekty zachowują swoje bieżące kopie lokalne, dopóki ich wersja edytora nie zostanie zmieniona lub ponownie zainstalowana."
         },
         "disableDescription": {
-            "line1": "Wróć do kopii lokalnych, aby uniknąć próśb o podniesienie uprawnień. Godot Launcher skopiuje pliki edytora do każdego projektu.",
+            "line1": "Wróć do kopii lokalnych, aby uniknąć próśb o podniesienie uprawnień. Eldritch Launcher skopiuje pliki edytora do każdego projektu.",
             "line2": "Istniejące dowiązania symboliczne pozostają na miejscu, dopóki ich wersja edytora nie zostanie zmieniona lub ponownie zainstalowana."
         }
     }

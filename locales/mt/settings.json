@@ -14,7 +14,7 @@
     "appearance": {
         "theme": {
             "title": "Tema",
-            "description": "Ippersonalizza d-dehra għal Godot Launcher",
+            "description": "Ippersonalizza d-dehra għal Eldritch Launcher",
             "light": "Ċar",
             "dark": "Mudlam",
             "system": "Sistema (awtomatiku)"
@@ -22,30 +22,30 @@
     },
     "behavior": {
         "trayAvailability": {
-            "warning": "L-appoġġ għat-trej tas-sistema ma setax jiġi kkonfermat għal din is-sessjoni. Godot Launcher se jibqa' viżibbli jew jagħlaq minflok jinħeba.",
-            "closeFallback": "L-għeluq fit-trej tas-sistema se jħalli Godot Launcher viżibbli."
+            "warning": "L-appoġġ għat-trej tas-sistema ma setax jiġi kkonfermat għal din is-sessjoni. Eldritch Launcher se jibqa' viżibbli jew jagħlaq minflok jinħeba.",
+            "closeFallback": "L-għeluq fit-trej tas-sistema se jħalli Eldritch Launcher viżibbli."
         },
         "projects": {
             "title": "Proġetti",
-            "description": "Agħżel l-imġiba ta' Godot Launcher għall-proġetti.",
+            "description": "Agħżel l-imġiba ta' Eldritch Launcher għall-proġetti.",
             "confirmRemove": "Staqsi għal konferma meta tneħħi proġetti."
         },
         "autoStart": {
             "title": "Preferenza tal-Bidu",
-            "description": "Agħżel x'jagħmel Godot Launcher meta l-kompjuter tiegħek jibda",
+            "description": "Agħżel x'jagħmel Eldritch Launcher meta l-kompjuter tiegħek jibda",
             "linuxWarning": "Bidu awtomatiku bħalissa mhuwiex supportat fuq Linux",
             "startOnBoot": "Ibda meta l-kompjuter jibda.",
             "startInTray": "Ibda fit-tray."
         },
         "windowClose": {
             "title": "Għeluq tat-tieqa",
-            "description": "Agħżel x'jiġri meta tagħlaq it-tieqa ta' Godot Launcher.",
+            "description": "Agħżel x'jiġri meta tagħlaq it-tieqa ta' Eldritch Launcher.",
             "closeToTray": "Agħlaq għas-system tray",
-            "quit": "Oħroġ minn Godot Launcher"
+            "quit": "Oħroġ minn Eldritch Launcher"
         },
         "projectLaunch": {
             "title": "Azzjoni wara li Tibda Proġett",
-            "description": "Agħżel x'jagħmel Godot Launcher wara li jibda proġett",
+            "description": "Agħżel x'jagħmel Eldritch Launcher wara li jibda proġett",
             "none": "Xejn",
             "minimize": "Imminimizza",
             "closeToTray": "Agħlaq għas-system tray"
@@ -77,7 +77,7 @@
     "general": {
         "language": {
             "label": "Lingwa",
-            "description": "Agħżel lingwa għal Godot Launcher (ma tibdilx il-lingwa ta' Godot)",
+            "description": "Agħżel lingwa għal Eldritch Launcher (ma tibdilx il-lingwa ta' Godot)",
             "system": "Sistema (Awtomatiku)"
         }
     },
@@ -150,7 +150,7 @@
         }
     },
     "tools": {
-        "overview": "Godot Launcher jivvalida malajr il-paths tal-għodda fil-cache meta din it-tab tkun fil-fokus. Esegwix skannatura sħiħa jekk biddilt l-installazzjonijiet fuq dan is-sistema.",
+        "overview": "Eldritch Launcher jivvalida malajr il-paths tal-għodda fil-cache meta din it-tab tkun fil-fokus. Esegwix skannatura sħiħa jekk biddilt l-installazzjonijiet fuq dan is-sistema.",
         "actions": {
             "refresh": "Skannja mill-ġdid l-għodod",
             "scanning": "Qed jerskanna...",
@@ -171,7 +171,7 @@
         "installation": {
             "drawerTitle": "Issettjar ta' {{tool}}",
             "title": "Installazzjoni",
-            "description": "Godot Launcher jiskopri u jivvalida din l-installazzjoni. Ma jinstallax jew jaġġornax {{tool}}.",
+            "description": "Eldritch Launcher jiskopri u jivvalida din l-installazzjoni. Ma jinstallax jew jaġġornax {{tool}}.",
             "status": "Status",
             "path": "Mogħdija eżegwibbli",
             "version": "Verżjoni"
@@ -209,7 +209,7 @@
             },
             "installation": {
                 "title": "Installazzjoni",
-                "description": "Godot Launcher jivvalida dan l-eżekutibbli qabel kull operazzjoni Git.",
+                "description": "Eldritch Launcher jivvalida dan l-eżekutibbli qabel kull operazzjoni Git.",
                 "status": "Status",
                 "path": "Mogħdija eżegwibbli",
                 "version": "Verżjoni"
@@ -227,7 +227,7 @@
                 },
                 "preset": {
                     "title": "Issettjat minn qabel tal-identità tal-proġett",
-                    "description": "Ħlief identità waħda għal repożitorji maħluqa minn Godot Launcher. M'għandu l-ebda effett sakemm tagħżel jew tapplikaha awtomatikament waqt il-ħolqien tal-proġett.",
+                    "description": "Ħlief identità waħda għal repożitorji maħluqa minn Eldritch Launcher. M'għandu l-ebda effett sakemm tagħżel jew tapplikaha awtomatikament waqt il-ħolqien tal-proġett.",
                     "nameHelp": "Isem tal-awtur suġġerit għal identità Git ta' repożitorju ġdid lokali.",
                     "emailHelp": "Imejl suġġerit tal-awtur għal identità Git ta' repożitorju ġdid lokali.",
                     "automaticTitle": "Uża awtomatikament għal repożitorji ġodda",
@@ -257,10 +257,10 @@
     },
     "connections": {
         "title": "Immaniġġja l-konnessjonijiet",
-        "overview": "Qabbad servizzi esterni biex tużahom f'Godot Launcher.",
+        "overview": "Qabbad servizzi esterni biex tużahom f'Eldritch Launcher.",
         "loading": "Qed jitgħabbew il-konnessjonijiet...",
         "loadError": "Ma setgħux jitgħabbew il-konnessjonijiet.",
-        "genericDescription": "Qabbad dan is-servizz biex tużah f'Godot Launcher.",
+        "genericDescription": "Qabbad dan is-servizz biex tużah f'Eldritch Launcher.",
         "flow": {
             "reauthoriseDescription": "Agħżel kont biex tawtorizzah mill-ġdid, imbagħad kompli fil-brawżer biex terġa' tistabbilixxi l-konnessjoni tiegħu ma' GitHub.",
             "connectAnotherAccount": "Qabbad kont ieħor",
@@ -278,7 +278,7 @@
             "accessDescription": "Immaniġġja l-aċċess għar-repożitorji fuq GitHub jew żid kont ieħor, imbagħad aġġorna l-lista tar-repożitorji."
         },
         "github": {
-            "description": "Qabbad GitHub biex ir-repożitorji tiegħek ikunu disponibbli f'Godot Launcher.",
+            "description": "Qabbad GitHub biex ir-repożitorji tiegħek ikunu disponibbli f'Eldritch Launcher.",
             "accessNote": "Int tagħżel liema repożitorji tista' taċċessa l-app GitHub.",
             "summary": "{{count}} konnessjonijiet"
         },
@@ -315,12 +315,12 @@
         },
         "drawer": {
             "title": "Konnessjonijiet ta' GitHub",
-            "description": "Immaniġġja l-konnessjonijiet ta' GitHub disponibbli għal Godot Launcher.",
+            "description": "Immaniġġja l-konnessjonijiet ta' GitHub disponibbli għal Eldritch Launcher.",
             "connections": "Konnessjonijiet",
             "chooseConnection": "Agħżel konnessjonijiet",
             "chooseConnectionDescription": "Agħżel installazzjoni waħda jew aktar tal-GitHub App, jew installa l-App f'post ġdid.",
             "finishSetup": "Lesti s-setup fuq GitHub",
-            "finishSetupDescription": "Lesti l-installazzjoni fil-browser. Tista' terġa' lura hawn waqt li Godot Launcher jibqa' jistenna.",
+            "finishSetupDescription": "Lesti l-installazzjoni fil-browser. Tista' terġa' lura hawn waqt li Eldritch Launcher jibqa' jistenna.",
             "installations": "Installazzjonijiet tal-App",
             "noInstallations": "Din il-konnessjoni għad m'għandhiex installazzjonijiet tal-App aċċessibbli.",
             "organization": "Organizzazzjoni",
@@ -328,7 +328,7 @@
         },
         "disconnectConfirm": {
             "title": "Tiskonnettja {{connection}}?",
-            "description": "Dan ineħħi l-konnessjoni minn Godot Launcher. Ma jneħħix l-app GitHub u ma jibdilx ir-remotes tal-proġetti.",
+            "description": "Dan ineħħi l-konnessjoni minn Eldritch Launcher. Ma jneħħix l-app GitHub u ma jibdilx ir-remotes tal-proġetti.",
             "finalDescription": "Dan ineħħi l-konnessjoni minn dan l-apparat. Ma jneħħix l-app GitHub, ma jibdilx l-aċċess għar-repożitorji jew ir-remotes tal-proġetti.",
             "revokeAllDevices": "Irrevoka wkoll din l-awtorizzazzjoni ta' GitHub fuq l-apparati kollha ta' Godot Launcher.",
             "revokeDetail": "Apparati oħra ta' Godot Launcher konnessi ma' dan il-kont ta' GitHub ikollhom jerġgħu jikkonnettjaw.",
@@ -339,13 +339,13 @@
         },
         "credentialStorage": {
             "configure": "Ikkonfigura l-ħażna",
-            "restartFailedTitle": "Ma setax jerġa’ jinbeda Godot Launcher",
-            "restartFailed": "L-għażla tiegħek ġiet salvata. Agħlaq Godot Launcher kompletament u erġa’ iftħu biex tapplika l-għażla salvata.",
+            "restartFailedTitle": "Ma setax jerġa’ jinbeda Eldritch Launcher",
+            "restartFailed": "L-għażla tiegħek ġiet salvata. Agħlaq Eldritch Launcher kompletament u erġa’ iftħu biex tapplika l-għażla salvata.",
             "restartNow": "Erġa’ ibda issa",
             "notNow": "Mhux issa",
             "linuxOnly": "Linux biss",
             "title": "Ħażna tal-kredenzjali",
-            "description": "Agħżel kif Godot Launcher jaċċessa ħażna sigura tal-kredenzjali fuq Linux. Secret Service jeħtieġ keyring kompatibbli jaħdem fis-sessjoni tad-desktop tiegħek.",
+            "description": "Agħżel kif Eldritch Launcher jaċċessa ħażna sigura tal-kredenzjali fuq Linux. Secret Service jeħtieġ keyring kompatibbli jaħdem fis-sessjoni tad-desktop tiegħek.",
             "savedChoice": "Għażla ssejvjata",
             "automatic": "Awtomatiku",
             "secretService": "Secret Service",
@@ -353,14 +353,14 @@
             "save": "Issejvja l-għażla",
             "saving": "Qed jiġi ssejvjat...",
             "saveError": "Ma setgħetx tiġi ssejvjata l-għażla. L-għażla ssejvjata preċedentement ma nbidlitx. Erġa' pprova.",
-            "restart": "Agħlaq Godot Launcher kompletament, inkluż il-proċess fit-trej tas-sistema, u erġa' iftħu biex tapplika l-għażla ssejvjata.",
+            "restart": "Agħlaq Eldritch Launcher kompletament, inkluż il-proċess fit-trej tas-sistema, u erġa' iftħu biex tapplika l-għażla ssejvjata.",
             "restartPending": "L-għażla ssejvjata hija differenti minn dik użata mal-istartjar. Huwa meħtieġ li terġa' tibda kompletament.",
             "override": "Flag tat-tnedija tikkontrolla l-ħażna tal-kredenzjali għal din is-sessjoni ({{backend}}). Neħħi l-flag qabel terġa' tibda jekk trid tuża l-għażla ssejvjata.",
             "sessionChoice": "Għażla mal-istartjar: {{choice}}",
             "activeBackend": "Backend tal-ħażna attiv: {{backend}}",
             "available": "Ħażna sigura hija disponibbli.",
-            "unavailable": "Ħażna sigura mhix disponibbli. Iċċekkja li servizz ta' keyring kompatibbli qed jaħdem u huwa aċċessibbli, imbagħad erġa' ibda Godot Launcher kompletament.",
-            "selectionFailed": "Secret Service intalab iżda mhuwiex il-backend attiv. Iċċekkja li keyring Secret Service kompatibbli qed jaħdem, imbagħad erġa' ibda Godot Launcher kompletament.",
+            "unavailable": "Ħażna sigura mhix disponibbli. Iċċekkja li servizz ta' keyring kompatibbli qed jaħdem u huwa aċċessibbli, imbagħad erġa' ibda Eldritch Launcher kompletament.",
+            "selectionFailed": "Secret Service intalab iżda mhuwiex il-backend attiv. Iċċekkja li keyring Secret Service kompatibbli qed jaħdem, imbagħad erġa' ibda Eldritch Launcher kompletament.",
             "statusError": "Ma setax jinqara l-istatus attwali tal-ħażna.",
             "loading": "Qed jinqara l-istatus tal-ħażna...",
             "summary": "Agħżel il-ħażna sigura tal-kredenzjali għal Linux.",
@@ -377,7 +377,7 @@
     },
     "updates": {
         "title": "Aġġornamenti",
-        "description": "Ikkonfigura kif Godot Launcher jiċċekkja għal aġġornamenti",
+        "description": "Ikkonfigura kif Eldritch Launcher jiċċekkja għal aġġornamenti",
         "autoCheck": "Awtomatikament iċċekkja għal aġġornamenti",
         "betaChannel": "Irċievi aġġornamenti beta",
         "betaChannelDescription": "Niżżel build ta’ qabel rilaxx minn GitHub; dawn jistgħu jkunu inqas stabbli mill-verżjonijiet uffiċjali.",
@@ -385,8 +385,8 @@
         "downloadNow": "Niżżel l-aġġornament",
         "skipVersion": "Aqbeż din il-verżjoni",
         "unskipVersion": "Erġa’ attiva l-aġġornament maqbuż",
-        "readyWithVersion": "Il-verżjoni {{version}} hija lesta, erġa' ibda Godot Launcher biex tinstallaha. <Button>Ibda mill-ġdid issa</Button>",
-        "readyNoVersion": "L-aġġornament huwa lest, erġa' ibda Godot Launcher biex tinstallah. <Button>Ibda mill-ġdid issa</Button>",
+        "readyWithVersion": "Il-verżjoni {{version}} hija lesta, erġa' ibda Eldritch Launcher biex tinstallaha. <Button>Ibda mill-ġdid issa</Button>",
+        "readyNoVersion": "L-aġġornament huwa lest, erġa' ibda Eldritch Launcher biex tinstallah. <Button>Ibda mill-ġdid issa</Button>",
         "manualWithVersion": "Il-verżjoni {{version}} hija disponibbli, iżda l-installazzjoni awtomatika mhix appoġġjata fuq din is-sistema rpm-ostree. <Button>Iftaħ il-paġna tat-tniżżil</Button>",
         "manualNoVersion": "Hemm verżjoni ġdida disponibbli, iżda l-installazzjoni awtomatika mhix appoġġjata fuq din is-sistema rpm-ostree. <Button>Iftaħ il-paġna tat-tniżżil</Button>"
     },
@@ -401,12 +401,12 @@
         "enableAction": "Ippermetti symlinks",
         "disableAction": "Iddiżattiva symlinks",
         "enableDescription": {
-            "line1": "Meta attivat, Godot Launcher jagħqad kull proġett mal-editur installat minflok ma jikkopjah.",
+            "line1": "Meta attivat, Eldritch Launcher jagħqad kull proġett mal-editur installat minflok ma jikkopjah.",
             "line2": "Dan iżomm l-użu tad-disk baxx, iżda Windows jista' jitlob approvazzjoni ta' amministratur meta jinħolqu symlinks ġodda.",
             "line3": "Proġetti eżistenti jżommu l-kopji lokali kurrenti tagħhom sakemm il-verżjoni tal-editur tagħhom tinbidel jew tiġi installata mill-ġdid."
         },
         "disableDescription": {
-            "line1": "Ibdel lura għal kopji lokali biex tevita prompts ta' elevazzjoni. Godot Launcher se jikkopja l-fajls tal-editur f'kull proġett minflok.",
+            "line1": "Ibdel lura għal kopji lokali biex tevita prompts ta' elevazzjoni. Eldritch Launcher se jikkopja l-fajls tal-editur f'kull proġett minflok.",
             "line2": "Symlinks eżistenti jibqgħu fis-sitt sakemm il-verżjoni tal-editur tagħhom tinbidel jew tiġi installata mill-ġdid."
         }
     }

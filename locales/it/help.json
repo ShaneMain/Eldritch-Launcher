@@ -2,25 +2,18 @@
     "title": "Aiuto",
     "thirdPartyNotices": "Avvisi di terze parti",
     "launcher": {
-        "title": "Godot Launcher",
+        "title": "Eldritch Launcher",
         "changelog": "Registro modifiche",
-        "homePage": "Pagina principale",
-        "docs": "Documentazione Godot Launcher"
+        "homePage": "Pagina principale"
     },
     "godot": {
         "title": "Godot Engine",
         "engine": "Godot Engine",
         "docs": "Documentazione Godot"
     },
-    "community": {
-        "title": "Community e supporto",
-        "learnMore": "Scopri di più"
-    },
     "contribute": {
         "title": "Come contribuire",
-        "learnMore": "Scopri di più",
         "description": "Segnala bug o suggerimenti inviando una issue sul repository ufficiale GitHub",
-        "reportBug": "Credo di aver trovato un bug",
-        "suggestion": "Ho un suggerimento!"
+        "reportBug": "Credo di aver trovato un bug"
     }
 }

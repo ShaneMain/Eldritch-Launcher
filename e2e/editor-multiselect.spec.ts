@@ -103,7 +103,7 @@ test('select all includes custom registrations and matches the light theme', asy
     await screenshot('editors-selection-menu-light.png');
     await page.getByRole('button', { name: 'Remove selected (3)', exact: true }).click();
     const confirm = page.getByRole('dialog', { name: 'Remove selected editors', exact: true });
-    await expect(confirm.getByText('Custom editors will be removed from Godot Launcher. Their files will be kept.', { exact: true })).toBeVisible();
+    await expect(confirm.getByText('Custom editors will be removed from Eldritch Launcher. Their files will be kept.', { exact: true })).toBeVisible();
     await confirm.getByRole('button', { name: 'Cancel', exact: true }).click();
     await openActions();
     await page.getByRole('button', { name: 'Clear selection', exact: true }).click();
@@ -134,7 +134,7 @@ test('keeps partial failures visible and retries only failed removals through th
 });
 
 test('the actual batch handler deletes managed fixture files and preserves custom files', async () => {
-    const configDir = path.join(fixtureHome, '.gd-launcher');
+    const configDir = path.join(fixtureHome, '.eldritch-launcher');
     const managed = { ...SAMPLE_INSTALLED_RELEASES_WITH_CUSTOM[0], install_path: path.join(fixtureHome, 'managed-editor'), editor_path: path.join(fixtureHome, 'managed-editor', 'Godot') };
     const custom = { ...SAMPLE_INSTALLED_RELEASES_WITH_CUSTOM.find((release) => release.source === 'custom')!, install_path: path.join(fixtureHome, 'custom-editor'), editor_path: path.join(fixtureHome, 'custom-editor', 'Godot') };
     for (const release of [managed, custom]) {

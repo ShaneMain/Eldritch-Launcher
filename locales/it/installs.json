@@ -48,14 +48,14 @@
     },
     "customEditor": {
         "selectManifestTitle": "Aggiungi manifest editor personalizzato",
-        "manifestFilterName": "Manifest editor Godot Launcher",
+        "manifestFilterName": "Manifest editor Eldritch Launcher",
         "waitingForDialog": "In attesa della finestra di dialogo...",
         "replace": {
             "action": "Sostituisci",
             "title": "Sostituire l’editor personalizzato?",
             "message": "Un editor personalizzato con questa versione è già registrato.",
             "versionLabel": "Versione",
-            "detail": "La sostituzione aggiornerà il record di Godot Launcher per usare il manifest selezionato. I file dell’editor non saranno eliminati."
+            "detail": "La sostituzione aggiornerà il record di Eldritch Launcher per usare il manifest selezionato. I file dell’editor non saranno eliminati."
         },
         "drop": {
             "title": "Rilascia il manifest per aggiungere l’editor personalizzato",
@@ -73,7 +73,7 @@
                 },
                 "name": {
                     "label": "Nome visualizzato",
-                    "help": "Nome mostrato in Godot Launcher per questo editor personalizzato.",
+                    "help": "Nome mostrato in Eldritch Launcher per questo editor personalizzato.",
                     "placeholder": "Editor personalizzato Acme Godot 4.4"
                 },
                 "version": {
@@ -180,7 +180,7 @@
             "title": "Rimuovi editor selezionati",
             "message": "Rimuovere questi editor?",
             "managed": "I file degli editor installati verranno eliminati dal dispositivo. Potrai reinstallarli in seguito.",
-            "custom": "Gli editor personalizzati verranno rimossi da Godot Launcher. I loro file verranno conservati.",
+            "custom": "Gli editor personalizzati verranno rimossi da Eldritch Launcher. I loro file verranno conservati.",
             "used": "Progetti che usano questo editor: {{names}}. Avranno bisogno di un altro editor."
         },
         "results": {

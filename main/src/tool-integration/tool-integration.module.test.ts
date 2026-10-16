@@ -178,7 +178,7 @@ describe('ToolIntegrationModule', () => {
  */
 function createConfig(): AppConfig {
     return {
-        appName: 'Godot Launcher',
+        appName: 'Eldritch Launcher',
         isDev: true,
         debugMode: false,
         disableSandbox: false,

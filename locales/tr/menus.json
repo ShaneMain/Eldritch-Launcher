@@ -37,7 +37,7 @@
     "tray": {
         "recentProjects": "Son Projeler",
         "invalidProject": "{{project}} (Geçersiz)",
-        "showGodotLauncher": "Godot Launcher'ı Göster",
+        "showGodotLauncher": "Eldritch Launcher'ı Göster",
         "quit": "Çıkış"
     }
 }

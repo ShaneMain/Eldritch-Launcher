@@ -14,7 +14,7 @@
     "appearance": {
         "theme": {
             "title": "Tema",
-            "description": "Personaliza la apariencia de Godot Launcher",
+            "description": "Personaliza la apariencia de Eldritch Launcher",
             "light": "Claro",
             "dark": "Oscuro",
             "system": "Sistema (automático)"
@@ -22,30 +22,30 @@
     },
     "behavior": {
         "trayAvailability": {
-            "warning": "No se pudo confirmar la compatibilidad con la bandeja del sistema para esta sesión. Godot Launcher permanecerá visible o se cerrará en lugar de ocultarse.",
-            "closeFallback": "Cerrar en la bandeja del sistema dejará Godot Launcher visible."
+            "warning": "No se pudo confirmar la compatibilidad con la bandeja del sistema para esta sesión. Eldritch Launcher permanecerá visible o se cerrará en lugar de ocultarse.",
+            "closeFallback": "Cerrar en la bandeja del sistema dejará Eldritch Launcher visible."
         },
         "projects": {
             "title": "Proyectos",
-            "description": "Elige el comportamiento de Godot Launcher para los proyectos.",
+            "description": "Elige el comportamiento de Eldritch Launcher para los proyectos.",
             "confirmRemove": "Pedir confirmación al quitar proyectos."
         },
         "autoStart": {
             "title": "Preferencia de inicio",
-            "description": "Elige qué hace Godot Launcher cuando tu ordenador se inicia",
+            "description": "Elige qué hace Eldritch Launcher cuando tu ordenador se inicia",
             "linuxWarning": "El inicio automático actualmente no es compatible con Linux",
             "startOnBoot": "Iniciar cuando el ordenador se inicia.",
             "startInTray": "Iniciar en la bandeja del sistema."
         },
         "windowClose": {
             "title": "Cierre de ventana",
-            "description": "Elige qué ocurre al cerrar la ventana de Godot Launcher.",
+            "description": "Elige qué ocurre al cerrar la ventana de Eldritch Launcher.",
             "closeToTray": "Cerrar a la bandeja del sistema",
-            "quit": "Salir de Godot Launcher"
+            "quit": "Salir de Eldritch Launcher"
         },
         "projectLaunch": {
             "title": "Acción al iniciar proyecto",
-            "description": "Elige qué hace Godot Launcher después de iniciar un proyecto",
+            "description": "Elige qué hace Eldritch Launcher después de iniciar un proyecto",
             "none": "Nada",
             "minimize": "Minimizar",
             "closeToTray": "Cerrar a la bandeja del sistema"
@@ -77,7 +77,7 @@
     "general": {
         "language": {
             "label": "Idioma",
-            "description": "Selecciona el idioma para Godot Launcher (no cambia el idioma de Godot)",
+            "description": "Selecciona el idioma para Eldritch Launcher (no cambia el idioma de Godot)",
             "system": "Sistema (detección automática)"
         }
     },
@@ -150,7 +150,7 @@
         }
     },
     "tools": {
-        "overview": "Godot Launcher valida rápidamente las rutas de herramientas en caché cuando esta pestaña recibe el foco. Ejecuta un reescaneo completo si cambiaste instalaciones en este sistema.",
+        "overview": "Eldritch Launcher valida rápidamente las rutas de herramientas en caché cuando esta pestaña recibe el foco. Ejecuta un reescaneo completo si cambiaste instalaciones en este sistema.",
         "actions": {
             "refresh": "Volver a escanear herramientas",
             "scanning": "Reescanear...",
@@ -171,7 +171,7 @@
         "installation": {
             "drawerTitle": "Configuración de {{tool}}",
             "title": "Instalación",
-            "description": "Godot Launcher detecta y valida esta instalación. No instala ni actualiza {{tool}}.",
+            "description": "Eldritch Launcher detecta y valida esta instalación. No instala ni actualiza {{tool}}.",
             "status": "Estado",
             "path": "Ruta ejecutable",
             "version": "Versión"
@@ -209,7 +209,7 @@
             },
             "installation": {
                 "title": "Instalación",
-                "description": "Godot Launcher valida este ejecutable antes de cada operación de Git.",
+                "description": "Eldritch Launcher valida este ejecutable antes de cada operación de Git.",
                 "status": "Estado",
                 "path": "Ruta ejecutable",
                 "version": "Versión"
@@ -227,7 +227,7 @@
                 },
                 "preset": {
                     "title": "Preestablecido de identidad del proyecto",
-                    "description": "Guarde una identidad para los repositorios creados por Godot Launcher. No tiene ningún efecto hasta que lo seleccione o lo aplique automáticamente durante la creación del proyecto.",
+                    "description": "Guarde una identidad para los repositorios creados por Eldritch Launcher. No tiene ningún efecto hasta que lo seleccione o lo aplique automáticamente durante la creación del proyecto.",
                     "nameHelp": "Nombre de autor sugerido para una nueva identidad Git local del repositorio.",
                     "emailHelp": "Correo electrónico de autor sugerido para una nueva identidad Git local del repositorio.",
                     "automaticTitle": "Usar automáticamente para nuevos repositorios",
@@ -257,10 +257,10 @@
     },
     "connections": {
         "title": "Gestionar conexiones",
-        "overview": "Conecta servicios externos para usarlos en Godot Launcher.",
+        "overview": "Conecta servicios externos para usarlos en Eldritch Launcher.",
         "loading": "Cargando conexiones...",
         "loadError": "No se pudieron cargar las conexiones.",
-        "genericDescription": "Conecta este servicio para usarlo en Godot Launcher.",
+        "genericDescription": "Conecta este servicio para usarlo en Eldritch Launcher.",
         "flow": {
             "reauthoriseDescription": "Elige una cuenta para volver a autorizarla y continúa en el navegador para restablecer su conexión con GitHub.",
             "connectAnotherAccount": "Conectar otra cuenta",
@@ -278,7 +278,7 @@
             "accessDescription": "Gestiona el acceso a los repositorios en GitHub o añade otra cuenta y, después, actualiza la lista de repositorios."
         },
         "github": {
-            "description": "Conecta GitHub para que tus repositorios estén disponibles en Godot Launcher.",
+            "description": "Conecta GitHub para que tus repositorios estén disponibles en Eldritch Launcher.",
             "accessNote": "Tú decides a qué repositorios puede acceder la aplicación de GitHub.",
             "summary": "{{count}} conexiones"
         },
@@ -315,12 +315,12 @@
         },
         "drawer": {
             "title": "Conexiones de GitHub",
-            "description": "Gestiona las conexiones de GitHub disponibles para Godot Launcher.",
+            "description": "Gestiona las conexiones de GitHub disponibles para Eldritch Launcher.",
             "connections": "Conexiones",
             "chooseConnection": "Elige conexiones",
             "chooseConnectionDescription": "Elige una o más instalaciones existentes de GitHub App o instala la aplicación en otro lugar.",
             "finishSetup": "Finaliza la configuración en GitHub",
-            "finishSetupDescription": "Completa la instalación en el navegador. Puedes volver aquí mientras Godot Launcher sigue esperando.",
+            "finishSetupDescription": "Completa la instalación en el navegador. Puedes volver aquí mientras Eldritch Launcher sigue esperando.",
             "installations": "Instalaciones de la aplicación",
             "noInstallations": "Esta conexión aún no tiene instalaciones accesibles de la aplicación.",
             "organization": "Organización",
@@ -328,7 +328,7 @@
         },
         "disconnectConfirm": {
             "title": "¿Desconectar {{connection}}?",
-            "description": "Esto elimina la conexión de Godot Launcher. No desinstala la aplicación de GitHub ni cambia los remotos de los proyectos.",
+            "description": "Esto elimina la conexión de Eldritch Launcher. No desinstala la aplicación de GitHub ni cambia los remotos de los proyectos.",
             "finalDescription": "Esto elimina la conexión de este dispositivo. No desinstala la aplicación de GitHub ni cambia el acceso a los repositorios o los remotos de los proyectos.",
             "revokeAllDevices": "Revocar también esta autorización de GitHub en todos los dispositivos con Godot Launcher.",
             "revokeDetail": "Los demás dispositivos con Godot Launcher conectados a esta cuenta de GitHub deberán volver a conectarse.",
@@ -339,13 +339,13 @@
         },
         "credentialStorage": {
             "configure": "Configurar almacenamiento",
-            "restartFailedTitle": "No se pudo reiniciar Godot Launcher",
-            "restartFailed": "Tu elección está guardada. Cierra Godot Launcher por completo y vuelve a abrirlo para aplicar la elección guardada.",
+            "restartFailedTitle": "No se pudo reiniciar Eldritch Launcher",
+            "restartFailed": "Tu elección está guardada. Cierra Eldritch Launcher por completo y vuelve a abrirlo para aplicar la elección guardada.",
             "restartNow": "Reiniciar ahora",
             "notNow": "Ahora no",
             "linuxOnly": "Solo Linux",
             "title": "Almacenamiento de credenciales",
-            "description": "Elige cómo accede Godot Launcher al almacenamiento seguro de credenciales en Linux. Secret Service requiere un llavero compatible en ejecución en tu sesión de escritorio.",
+            "description": "Elige cómo accede Eldritch Launcher al almacenamiento seguro de credenciales en Linux. Secret Service requiere un llavero compatible en ejecución en tu sesión de escritorio.",
             "savedChoice": "Opción guardada",
             "automatic": "Automático",
             "secretService": "Secret Service",
@@ -353,14 +353,14 @@
             "save": "Guardar opción",
             "saving": "Guardando...",
             "saveError": "No se pudo guardar la opción. La opción guardada anteriormente no ha cambiado. Inténtalo de nuevo.",
-            "restart": "Cierra Godot Launcher por completo, incluido su proceso de bandeja del sistema, y ábrelo de nuevo para aplicar la opción guardada.",
+            "restart": "Cierra Eldritch Launcher por completo, incluido su proceso de bandeja del sistema, y ábrelo de nuevo para aplicar la opción guardada.",
             "restartPending": "La opción guardada difiere de la usada al iniciar. Es necesario reiniciar por completo.",
             "override": "Una opción de inicio controla el almacenamiento de credenciales durante esta sesión ({{backend}}). Quita la opción antes de reiniciar si quieres usar la opción guardada.",
             "sessionChoice": "Opción al iniciar: {{choice}}",
             "activeBackend": "Backend de almacenamiento activo: {{backend}}",
             "available": "El almacenamiento seguro está disponible.",
-            "unavailable": "El almacenamiento seguro no está disponible. Comprueba que un servicio de llavero compatible esté en ejecución y accesible; después reinicia Godot Launcher por completo.",
-            "selectionFailed": "Se solicitó Secret Service, pero no es el backend activo. Comprueba que haya un llavero Secret Service compatible en ejecución; después reinicia Godot Launcher por completo.",
+            "unavailable": "El almacenamiento seguro no está disponible. Comprueba que un servicio de llavero compatible esté en ejecución y accesible; después reinicia Eldritch Launcher por completo.",
+            "selectionFailed": "Se solicitó Secret Service, pero no es el backend activo. Comprueba que haya un llavero Secret Service compatible en ejecución; después reinicia Eldritch Launcher por completo.",
             "statusError": "No se pudo leer el estado actual del almacenamiento.",
             "loading": "Leyendo el estado del almacenamiento...",
             "summary": "Elige el almacenamiento seguro de credenciales para Linux.",
@@ -377,7 +377,7 @@
     },
     "updates": {
         "title": "Actualizaciones",
-        "description": "Configura cómo Godot Launcher busca actualizaciones",
+        "description": "Configura cómo Eldritch Launcher busca actualizaciones",
         "autoCheck": "Buscar actualizaciones automáticamente",
         "betaChannel": "Recibir actualizaciones beta",
         "betaChannelDescription": "Descarga compilaciones preliminares desde GitHub; podrían ser menos estables que los lanzamientos oficiales.",
@@ -385,8 +385,8 @@
         "downloadNow": "Descargar actualización",
         "skipVersion": "Omitir esta versión",
         "unskipVersion": "Restaurar actualización omitida",
-        "readyWithVersion": "La versión {{version}} está lista, reinicia Godot Launcher para instalarla. <Button>Reiniciar ahora</Button>",
-        "readyNoVersion": "La actualización está lista, reinicia Godot Launcher para instalarla. <Button>Reiniciar ahora</Button>",
+        "readyWithVersion": "La versión {{version}} está lista, reinicia Eldritch Launcher para instalarla. <Button>Reiniciar ahora</Button>",
+        "readyNoVersion": "La actualización está lista, reinicia Eldritch Launcher para instalarla. <Button>Reiniciar ahora</Button>",
         "manualWithVersion": "La versión {{version}} está disponible, pero la instalación automática no es compatible con este sistema rpm-ostree. <Button>Abrir página de descarga</Button>",
         "manualNoVersion": "Hay una nueva versión disponible, pero la instalación automática no es compatible con este sistema rpm-ostree. <Button>Abrir página de descarga</Button>"
     },
@@ -401,12 +401,12 @@
         "enableAction": "Habilitar enlaces simbólicos",
         "disableAction": "Deshabilitar enlaces simbólicos",
         "enableDescription": {
-            "line1": "Cuando está habilitado, Godot Launcher vincula cada proyecto al editor instalado en lugar de copiarlo.",
+            "line1": "Cuando está habilitado, Eldritch Launcher vincula cada proyecto al editor instalado en lugar de copiarlo.",
             "line2": "Esto mantiene bajo el uso del disco, pero Windows puede solicitar aprobación del administrador cuando se crean nuevos enlaces simbólicos.",
             "line3": "Los proyectos existentes mantienen sus copias locales actuales hasta que su versión del editor sea cambiada o reinstalada."
         },
         "disableDescription": {
-            "line1": "Vuelve a las copias locales para evitar solicitudes de elevación. Godot Launcher copiará los archivos del editor en cada proyecto en su lugar.",
+            "line1": "Vuelve a las copias locales para evitar solicitudes de elevación. Eldritch Launcher copiará los archivos del editor en cada proyecto en su lugar.",
             "line2": "Los enlaces simbólicos existentes permanecen en su lugar hasta que su versión del editor sea cambiada o reinstalada."
         }
     }

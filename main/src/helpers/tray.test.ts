@@ -29,7 +29,7 @@ vi.mock('../i18n/index.js', () => {
     const translations = {
         'menus:tray.recentProjects': 'Recent Projects',
         'menus:tray.invalidProject': '{{project}} (Invalid)',
-        'menus:tray.showGodotLauncher': 'Show Godot Launcher',
+        'menus:tray.showGodotLauncher': 'Show Eldritch Launcher',
         'menus:tray.quit': 'Quit',
     } as const;
 
@@ -181,7 +181,7 @@ test('Should have tray menu with show and quit', async () => {
 
     // Find the relevant menu items for testing
     const showMenuItem = capturedTemplate.find(
-        (item) => 'label' in item && item.label === 'Show Godot Launcher',
+        (item) => 'label' in item && item.label === 'Show Eldritch Launcher',
     );
     const separatorItem = capturedTemplate.find(
         (item) => 'type' in item && item.type === 'separator',

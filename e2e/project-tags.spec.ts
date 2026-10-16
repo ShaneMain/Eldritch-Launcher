@@ -41,7 +41,7 @@ async function openSettings(index = 0) {
 
 /** Reads real tag state saved by the main process. */
 async function readTags() {
-    return JSON.parse(await fs.readFile(path.join(fixtureHome, '.gd-launcher', 'project-tags.json'), 'utf8')) as { tags: { id: string; name: string; colour: number }[]; assignments: Record<string, string[]> };
+    return JSON.parse(await fs.readFile(path.join(fixtureHome, '.eldritch-launcher', 'project-tags.json'), 'utf8')) as { tags: { id: string; name: string; colour: number }[]; assignments: Record<string, string[]> };
 }
 
 test.beforeAll(async () => {
@@ -132,7 +132,7 @@ test('stages tags, supports keyboard selection and discard, and persists through
     expect(stored.tags).toHaveLength(2);
     expect(Object.values(stored.assignments)).toEqual([[stored.tags[1].id]]);
     // The existing Launcher project records carry no tag writes.
-    const projects = JSON.parse(await fs.readFile(path.join(fixtureHome, '.gd-launcher', 'projects.json'), 'utf8'));
+    const projects = JSON.parse(await fs.readFile(path.join(fixtureHome, '.eldritch-launcher', 'projects.json'), 'utf8'));
     expect(projects.map((project: { path: string }) => project.path).sort()).toEqual(SAMPLE_PROJECTS.map(project => project.path).sort());
     expect(projects.every((project: object) => !('tags' in project) && !('tagIds' in project))).toBe(true);
     // A larger shared catalogue must remain usable at the minimum window height.

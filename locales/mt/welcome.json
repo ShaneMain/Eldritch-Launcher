@@ -1,5 +1,5 @@
 {
-    "title": "Godot Launcher",
+    "title": "Eldritch Launcher",
     "steps": {
         "welcome": "Merħba",
         "macos": "MacOS",
@@ -28,23 +28,23 @@
         "backCustomizeBehavior": "Lura: Ippersonalizza l-Imġiba"
     },
     "welcomeStep": {
-        "title": "Grazzi talli tuża Godot Launcher!",
-        "description": "Godot Launcher jagħmilha faċli biex <strong>timmanġġja verżjonijiet multipli tal-Godot Engine</strong> u jżomm <strong>settings tal-editur separati għal kull proġett.</strong>",
+        "title": "Grazzi talli tuża Eldritch Launcher!",
+        "description": "Eldritch Launcher jagħmilha faċli biex <strong>timmanġġja verżjonijiet multipli tal-Godot Engine</strong> u jżomm <strong>settings tal-editur separati għal kull proġett.</strong>",
         "feedback": "Billi tużah, qed tgħin biex tappoġġja l-proġett! Jekk xi darba jkollok feedback jew issib bug, għidilna, nixtiequ nagħmluh aħjar għalik.",
         "enjoy": "Igawdi u kodjar ferrieħ!"
     },
     "startStep": {
         "title": "Kollox Lest! 🚀",
-        "subtitle": "Godot Launcher huwa lest biex tmur! Issa tista' timmanġġja l-proġetti tiegħek u tesplora l-features kollha.",
+        "subtitle": "Eldritch Launcher huwa lest biex tmur! Issa tista' timmanġġja l-proġetti tiegħek u tesplora l-features kollha.",
         "whatsNext": "X'inhu Li jmiss?",
         "installTab": "Installa u esperimenta bl-aħħar prereleases fit-tab <strong>Installa</strong>.",
         "projectsTab": "Żid jew oħloq proġetti malajr fit-tab <strong>Proġetti</strong>.",
         "settingsTab": "Ippersonalizza l-esperjenza tiegħek kif trid fit-tab <strong>Settings</strong>."
     },
     "customizeBehavior": {
-        "trayAvailabilityWarning": "L-appoġġ għat-trej tas-sistema ma setax jiġi kkonfermat għal din is-sessjoni. Godot Launcher se jibqa' viżibbli jew jagħlaq minflok jinħeba.",
-        "trayCloseFallback": "L-għeluq fit-trej tas-sistema se jħalli Godot Launcher viżibbli.",
-        "trayStartFallback": "Il-bidu fit-trej se jiftaħ Godot Launcher b'mod normali.",
+        "trayAvailabilityWarning": "L-appoġġ għat-trej tas-sistema ma setax jiġi kkonfermat għal din is-sessjoni. Eldritch Launcher se jibqa' viżibbli jew jagħlaq minflok jinħeba.",
+        "trayCloseFallback": "L-għeluq fit-trej tas-sistema se jħalli Eldritch Launcher viżibbli.",
+        "trayStartFallback": "Il-bidu fit-trej se jiftaħ Eldritch Launcher b'mod normali.",
         "afterLaunching": "Wara li Tibda Proġett",
         "nothing": "Xejn",
         "minimize": "Imminimizza",
@@ -74,22 +74,22 @@
     },
     "macosStep": {
         "title": "Nota macOS",
-        "intro": "Il-Godot Launcher joħloq kopja tal-editur għal kull proġett.",
+        "intro": "Il-Eldritch Launcher joħloq kopja tal-editur għal kull proġett.",
         "whyTitle": "Għaliex?",
         "reason": "Il-ħolqien ta' symbolic links fuq macOS mhuwiex irristrett minn permessi, iżda l-ftuħ tal-editur permezz ta' symlink wera li mhuwiex affidabbli. Biex niżguraw esperjenza bla problemi, nipprovdu kopja ddedikata tal-engine għal kull proġett. Filwaqt li Godot huwa madwar 200MB biss (u dan ġeneralment mhux problema) kun af li proġetti multipli jistgħu jwasslu għal użu akbar tad-disk.",
         "dotnetNote": "NOTA: Jekk qed taħdem b'Edituri .NET, se jkollok bżonn tinstalla l-.NET SDK minn <ButtonLink>Microsoft .NET website</ButtonLink> <Icon />"
     },
     "windowsStep": {
         "title": "Nota Windows",
-        "intro": "Minn verżjoni 1.4.0, Godot Launcher jista' joħloq <code>symlinks</code> għall-editur għal kull proġett. Biex inżommu s-setup sempliċi, issa awtomatikament nużaw kopji lokali. Tista' tippermetti symlinks kull meta trid minn <strong>Settings → Behavior → Editor symlinks</strong> meta trid użu iktar baxx tad-disk.",
-        "change1": "Il-ħolqien ta' symbolic links fuq Windows jeħtieġ privileġġi ta' amministratur u eżekuzzjoni ta' kmandi elevati. Godot Launcher issa jelevah il-permessi biss meta joħloq symlinks.",
+        "intro": "Minn verżjoni 1.4.0, Eldritch Launcher jista' joħloq <code>symlinks</code> għall-editur għal kull proġett. Biex inżommu s-setup sempliċi, issa awtomatikament nużaw kopji lokali. Tista' tippermetti symlinks kull meta trid minn <strong>Settings → Behavior → Editor symlinks</strong> meta trid użu iktar baxx tad-disk.",
+        "change1": "Il-ħolqien ta' symbolic links fuq Windows jeħtieġ privileġġi ta' amministratur u eżekuzzjoni ta' kmandi elevati. Eldritch Launcher issa jelevah il-permessi biss meta joħloq symlinks.",
         "change2": "Tara prompt UAC biss jekk m'intix <code>Amministratur</code> fuq il-PC tiegħek u jekk <code>Developer Mode</code> mhuwiex attivat.",
         "change3": "Lest biex tipprova symlinks? Aktiva <strong>Editor symlinks</strong> fis-Settings meta tkun lest għall-prompts ta' elevazzjoni okkażjonali.",
         "dotnetNote": "NOTA: Jekk qed tuża edituri bbażati fuq .NET, jeħtieġ tinstalla l-.NET SDK minn <ButtonLink>Microsoft .NET website</ButtonLink> <Icon />"
     },
     "linuxStep": {
         "title": "Nota Linux",
-        "intro": "Godot Launcher juża symbolic links għal kull proġett",
+        "intro": "Eldritch Launcher juża symbolic links għal kull proġett",
         "whyTitle": "Għaliex?",
         "reason": "Kuntrarju għall-verżjonijiet Windows u MacOS, Linux juża symbolic links għall-editur biex jibda proġetti. Dan jiffranka spazju fuq id-disk u jippermetti settings għal kull proġett.",
         "dotnetNote": "NOTA: Jekk qed taħdem b'Edituri .NET, se jkollok bżonn tinstalla l-.NET SDK minn <ButtonLink>Microsoft .NET website</ButtonLink> <Icon />"
@@ -105,16 +105,16 @@
         "reassurance": "Tista' tibdel dawn l-għażliet aktar tard fis-Settings.",
         "welcome": {
             "title": "Merħba",
-            "description": "Ikkonfigura Godot Launcher skont kif taħdem.",
+            "description": "Ikkonfigura Eldritch Launcher skont kif taħdem.",
             "expectation": "Fi ftit passi qosra, agħżel fejn jinħażnu l-proġetti u l-edituri, qabbad editur tal-kodiċi, u agħżel l-imġiba li tippreferi meta tiftaħ proġett.",
-            "benefitsLabel": "Kif jgħinek Godot Launcher",
+            "benefitsLabel": "Kif jgħinek Eldritch Launcher",
             "officialAndCustomEditors": "Installa u mmaniġġja edituri uffiċjali jew personalizzati ta' Godot.",
             "projectSettings": "Żomm l-għażla tal-editur u s-settings separati għal kull proġett.",
             "codeEditorIntegration": "Iftaħ il-fajls tal-proġett f'editur tal-kodiċi identifikat."
         },
         "appearance": {
             "title": "Agħżel id-dehra",
-            "description": "Agħżel kif jidher Godot Launcher. L-għażla tiegħek tiġi applikata minnufih.",
+            "description": "Agħżel kif jidher Eldritch Launcher. L-għażla tiegħek tiġi applikata minnufih.",
             "preview": "Tista' tibdel id-dehra aktar tard fis-Settings."
         },
         "setup": {
@@ -131,7 +131,7 @@
             "browseImportedTemplatesLocation": "Fittex post għall-mudelli ta' esportazzjoni importati",
             "movingImportedTemplates": "Qed jitmexxew il-mudelli ta' esportazzjoni importati: {{stage}}",
             "codeEditor": "Editur tal-kodiċi predefinit",
-            "codeEditorHelp": "Jintuża meta tiftaħ skripts u fajls minn Godot Launcher. Tista' tibdlu aktar tard.",
+            "codeEditorHelp": "Jintuża meta tiftaħ skripts u fajls minn Eldritch Launcher. Tista' tibdlu aktar tard.",
             "noCodeEditor": "Xejn",
             "detectingCodeEditors": "Qed jiġu identifikati l-edituri tal-kodiċi installati...",
             "codeEditorDetectionFailed": "L-edituri tal-kodiċi ma setgħux jiġu identifikati. Tista' tikkonfigura wieħed aktar tard fis-Settings.",
@@ -145,16 +145,16 @@
         },
         "preferences": {
             "title": "Agħżel il-preferenzi",
-            "description": "Agħżel x'jagħmel Godot Launcher wara li jiftaħ proġett u meta jinxtegħel il-kompjuter.",
+            "description": "Agħżel x'jagħmel Eldritch Launcher wara li jiftaħ proġett u meta jinxtegħel il-kompjuter.",
             "afterLaunching": "Wara li jinfetaħ proġett",
-            "keepOpen": "Żomm Godot Launcher miftuħ",
-            "keepOpenHelp": "Ħalli t-tieqa ta' Godot Launcher viżibbli.",
-            "minimizeHelp": "Imminimizza t-tieqa ta' Godot Launcher.",
-            "closeToTrayHelp": "Aħbi t-tieqa ta' Godot Launcher u żommu aċċessibbli mit-trej tas-sistema.",
-            "closeToTrayFallback": "Jekk it-trej tas-sistema ma jkunx disponibbli, Godot Launcher jibqa' miftuħ.",
-            "trayUnavailable": "L-appoġġ għat-trej tas-sistema ma setax jiġi kkonfermat. Minflok l-azzjonijiet tat-trej, it-tieqa ta' Godot Launcher tibqa' miftuħa.",
+            "keepOpen": "Żomm Eldritch Launcher miftuħ",
+            "keepOpenHelp": "Ħalli t-tieqa ta' Eldritch Launcher viżibbli.",
+            "minimizeHelp": "Imminimizza t-tieqa ta' Eldritch Launcher.",
+            "closeToTrayHelp": "Aħbi t-tieqa ta' Eldritch Launcher u żommu aċċessibbli mit-trej tas-sistema.",
+            "closeToTrayFallback": "Jekk it-trej tas-sistema ma jkunx disponibbli, Eldritch Launcher jibqa' miftuħ.",
+            "trayUnavailable": "L-appoġġ għat-trej tas-sistema ma setax jiġi kkonfermat. Minflok l-azzjonijiet tat-trej, it-tieqa ta' Eldritch Launcher tibqa' miftuħa.",
             "startupTitle": "Meta jinxtegħel il-kompjuter",
-            "startWithComputer": "Iftaħ Godot Launcher meta jinxtegħel il-kompjuter",
+            "startWithComputer": "Iftaħ Eldritch Launcher meta jinxtegħel il-kompjuter",
             "startInTray": "Ibda fit-trej tas-sistema",
             "startInTrayFallback": "Jiftaħ f'tieqa normali jekk it-trej ma jkunx disponibbli."
         },

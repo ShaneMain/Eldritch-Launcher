@@ -36,14 +36,13 @@
             "help": "ヘルプ",
             "settings": "設定",
             "connections": "接続",
-            "new": "新着",
-            "joinCommunity": "コミュニティに参加"
+            "new": "新着"
         },
         "update": {
             "availableWithVersion": "バージョン {{version}} が利用可能です。<DownloadButton>アップデートをダウンロード</DownloadButton> または <SkipButton>このバージョンをスキップ</SkipButton>",
             "availableNoVersion": "新しいバージョンが利用可能です。<DownloadButton>アップデートをダウンロード</DownloadButton>",
-            "readyWithVersion": "バージョン {{version}} のアップデートの準備ができました。インストールするには Godot Launcher を再起動してください。<RestartButton>今すぐ再起動</RestartButton>",
-            "readyNoVersion": "アップデートの準備ができました。インストールするには Godot Launcher を再起動してください。<RestartButton>今すぐ再起動</RestartButton>",
+            "readyWithVersion": "バージョン {{version}} のアップデートの準備ができました。インストールするには Eldritch Launcher を再起動してください。<RestartButton>今すぐ再起動</RestartButton>",
+            "readyNoVersion": "アップデートの準備ができました。インストールするには Eldritch Launcher を再起動してください。<RestartButton>今すぐ再起動</RestartButton>",
             "manualWithVersion": "バージョン {{version}} が利用可能ですが、この rpm-ostree システムでは自動インストールはサポートされていません。<ReleaseLink>手動でダウンロード</ReleaseLink>または<SkipButton>このバージョンをスキップ</SkipButton>",
             "manualNoVersion": "新しいバージョンが利用可能ですが、この rpm-ostree システムでは自動インストールはサポートされていません。<ReleaseLink>手動でダウンロード</ReleaseLink>",
             "notification": {
@@ -55,10 +54,10 @@
                 "downloadingProgress": "ダウンロード中 {{percent}}%"
             },
             "panel": {
-                "titleWithVersion": "Godot Launcher {{version}}",
-                "title": "Godot Launcher の更新",
+                "titleWithVersion": "Eldritch Launcher {{version}}",
+                "title": "Eldritch Launcher の更新",
                 "installAfterDownload": "ダウンロード完了後に再起動するとインストールされます。",
-                "ready": "更新をダウンロードしました。Godot Launcher を再起動してインストールしてください。",
+                "ready": "更新をダウンロードしました。Eldritch Launcher を再起動してインストールしてください。",
                 "manual": "この rpm-ostree システムでは自動インストールに対応していません。更新を手動でダウンロードしてインストールしてください。",
                 "readReleaseNotes": "リリースノートを読む",
                 "download": "更新をダウンロード",

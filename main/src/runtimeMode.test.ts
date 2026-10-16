@@ -18,7 +18,7 @@ describe('runtime mode', () => {
 
     it.each([
         '/usr/lib/godot-launcher/app.asar',
-        'C:\\Program Files\\Godot Launcher\\APP.ASAR',
+        'C:\\Program Files\\Eldritch Launcher\\APP.ASAR',
     ])('treats an ASAR application path as installed: %s', (appPath) => {
         expect(isInstalledRuntime({ isPackaged: false, appPath })).toBe(true);
     });

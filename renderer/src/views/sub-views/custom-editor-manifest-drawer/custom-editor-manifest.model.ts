@@ -49,7 +49,7 @@ export const validationMessageFieldOrder: string[] = [
 
 const baseVersionPattern = /^\d+\.\d+$/;
 export const CUSTOM_ENGINE_MANIFEST_SCHEMA_URL =
-    'https://raw.githubusercontent.com/godotlauncher/launcher/main/schemas/v1/engine-manifest.json';
+    'https://raw.githubusercontent.com/ShaneMain/Eldritch-Launcher/main/schemas/v1/engine-manifest.json';
 export const manifestPlatformNames: CustomEngineManifestPlatformName[] = [
     'windows',
     'linux',

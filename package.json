@@ -1,11 +1,11 @@
 {
-    "name": "godot-launcher",
-    "productName": "Godot Launcher",
-    "desktopName": "org.godotlauncher.launcher.desktop",
+    "name": "eldritch-launcher",
+    "productName": "Eldritch Launcher",
+    "desktopName": "io.github.shanemain.eldritch-launcher.desktop",
     "private": true,
     "version": "1.13.0",
     "packageManager": "npm@12.2.0",
-    "description": "Godot Launcher is the companion app for managing Godot projects with per-project editor settings.",
+    "description": "Eldritch Launcher is a Godot Launcher fork, the companion app for managing Godot projects with per-project editor settings.",
     "keywords": [
         "godot",
         "launcher",
@@ -19,19 +19,19 @@
     "type": "module",
     "main": "dist-electron/main.js",
     "author": {
-        "name": "Mario Debono - godotlauncher.org",
-        "email": "mario@godotlauncher.org",
-        "url": "https://godotlauncher.org"
+        "name": "ShaneMain",
+        "email": "118647167+ShaneMain@users.noreply.github.com",
+        "url": "https://github.com/ShaneMain"
     },
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/godotlauncher/launcher.git"
+        "url": "git+https://github.com/ShaneMain/Eldritch-Launcher.git"
     },
     "bugs": {
-        "url": "https://github.com/godotlauncher/launcher/issues"
+        "url": "https://github.com/ShaneMain/Eldritch-Launcher/issues"
     },
-    "homepage": "https://godotlauncher.org",
+    "homepage": "https://github.com/ShaneMain/Eldritch-Launcher",
     "engines": {
         "node": ">=24.15.0"
     },
@@ -57,8 +57,8 @@
         "format": "biome format --write",
         "preview": "vite preview",
         "build:sources": "npm run build && npm run transpile:electron",
-        "build:native:git-askpass:x64": "msbuild native/git-credentials-helper/windows-askpass/godot-launcher-git-askpass.vcxproj -target:Rebuild -property:Configuration=Release -property:Platform=x64 -nologo -verbosity:minimal",
-        "build:native:git-askpass:arm64": "msbuild native/git-credentials-helper/windows-askpass/godot-launcher-git-askpass.vcxproj -target:Rebuild -property:Configuration=Release -property:Platform=ARM64 -nologo -verbosity:minimal",
+        "build:native:git-askpass:x64": "msbuild native/git-credentials-helper/windows-askpass/eldritch-launcher-git-askpass.vcxproj -target:Rebuild -property:Configuration=Release -property:Platform=x64 -nologo -verbosity:minimal",
+        "build:native:git-askpass:arm64": "msbuild native/git-credentials-helper/windows-askpass/eldritch-launcher-git-askpass.vcxproj -target:Rebuild -property:Configuration=Release -property:Platform=ARM64 -nologo -verbosity:minimal",
         "build:native:git-askpass:windows": "npm run build:native:git-askpass:x64 && npm run build:native:git-askpass:arm64",
         "test:native:git-askpass": "node native/git-credentials-helper/windows-askpass/tests/test.mjs",
         "dist:mac": "npm run build:sources && electron-builder --config electron-builder-config.ts --mac --publish never",

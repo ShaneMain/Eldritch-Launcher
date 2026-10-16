@@ -11,10 +11,10 @@
             "missing-project": "Этот проект больше недоступен.",
             "missing-directory": "Папка проекта больше недоступна.",
             "disabled": "Терминал отключен. Включите его в Настройки > Инструменты > Терминал.",
-            "invalid-configuration": "Сохранённые настройки терминала несовместимы с этой версией Godot Launcher.",
+            "invalid-configuration": "Сохранённые настройки терминала несовместимы с этой версией Eldritch Launcher.",
             "unavailable": "Выбранный терминал не найден. Выберите его в Настройки > Инструменты > Терминал.",
             "unsupported-directory": "Выбранный терминал не может открыть эту папку проекта.",
-            "launch-failed": "Godot Launcher не смог открыть выбранный терминал. Повторите попытку или выберите другой."
+            "launch-failed": "Eldritch Launcher не смог открыть выбранный терминал. Повторите попытку или выберите другой."
         },
         "openSettings": "Открыть настройки терминала"
     },
@@ -22,15 +22,15 @@
     "emptyState": {
         "welcome": {
             "heading": "Добавьте или создайте проект",
-            "description": "Добавьте существующую работу в Godot Launcher или начните что-то новое.",
+            "description": "Добавьте существующую работу в Eldritch Launcher или начните что-то новое.",
             "newProject": {
                 "heading": "Новый проект",
-                "description": "Выберите версию Godot.\nGodot Launcher загрузит её при необходимости.",
+                "description": "Выберите версию Godot.\nEldritch Launcher загрузит её при необходимости.",
                 "action": "Создать проект"
             },
             "existingProject": {
                 "heading": "Существующий проект",
-                "description": "Godot Launcher найдёт версию Godot,\nкоторая нужна каждому проекту.",
+                "description": "Eldritch Launcher найдёт версию Godot,\nкоторая нужна каждому проекту.",
                 "fromComputer": "С этого компьютера",
                 "fromGitHub": "С GitHub",
                 "fromPublicGit": "По URL публичного Git-репозитория",
@@ -40,7 +40,7 @@
         "addExistingProject": "Добавить существующий проект",
         "withoutEditor": {
             "heading": "Установите Godot, чтобы начать проект",
-            "description": "Godot Launcher нужен редактор для создания или запуска проектов.",
+            "description": "Eldritch Launcher нужен редактор для создания или запуска проектов.",
             "installEditor": "Установить редактор",
             "installingDescription": "Редактор устанавливается. Вы сможете создать проект, как только он будет готов.",
             "installingEditor": "Установка редактора..."
@@ -208,7 +208,7 @@
                 "addProjects": "Добавить выбранные проекты ({{count}})",
                 "cloneAndAdd": "Клонировать и добавить проект",
                 "cancelImport": "Отменить импорт",
-                "retryRegistration": "Повторите попытку добавления в Godot Launcher.",
+                "retryRegistration": "Повторите попытку добавления в Eldritch Launcher.",
                 "reviewAndRetry": "Просмотрите и повторите попытку",
                 "close": "Закрыть",
                 "done": "Готово",
@@ -224,7 +224,7 @@
             },
             "submodules": {
                 "title": "Этот репозиторий использует подмодули Git",
-                "description": "Godot Launcher может инициализировать анонимные общедоступные подмодули HTTPS перед повторным сканированием. Операция остановится, если подмодуль закрытый или использует неподдерживаемый URL.",
+                "description": "Eldritch Launcher может инициализировать анонимные общедоступные подмодули HTTPS перед повторным сканированием. Операция остановится, если подмодуль закрытый или использует неподдерживаемый URL.",
                 "preparing": "Подготовка инициализации подмодулей...",
                 "initialise": "Инициализировать подмодули",
                 "continueWithoutSubmodules": "Продолжить без подмодулей",
@@ -260,7 +260,7 @@
                 "added": "Добавлен",
                 "skipped": "Пропущен",
                 "failed": "Ошибка",
-                "alreadyAdded": "Проект с таким именем или путём уже есть в Godot Launcher.",
+                "alreadyAdded": "Проект с таким именем или путём уже есть в Eldritch Launcher.",
                 "notAdded": "Проект не был добавлен."
             },
             "editorBatch": {
@@ -292,7 +292,7 @@
                 "discoveryLimitExceeded": "Репозиторий клонирован, но он слишком большой или глубоко вложенный для безопасного сканирования.",
                 "finaliseFailed": "Завершенный клон не удалось переместить в пункт назначения.",
                 "cancelled": "Импорт был отменен.",
-                "registration-failed": "Репозиторий был клонирован, но его не удалось добавить в Godot Launcher.",
+                "registration-failed": "Репозиторий был клонирован, но его не удалось добавить в Eldritch Launcher.",
                 "cloneFolderOpenFailed": "Не удалось открыть папку клона.",
                 "cloneCleanupChanged": "После импорта клон был изменён или заменён, поэтому он не был удалён.",
                 "cloneCleanupFailed": "Не удалось удалить клон. Он был сохранён."
@@ -300,8 +300,8 @@
         },
         "conflicts": {
             "title": "Проверка импорта проектов",
-            "description": "Выберите имя в Godot Launcher или пропустите проект. Имена Godot и папки останутся без изменений.",
-            "label": "Имя в Godot Launcher",
+            "description": "Выберите имя в Eldritch Launcher или пропустите проект. Имена Godot и папки останутся без изменений.",
+            "label": "Имя в Eldritch Launcher",
             "name": "Это имя проекта уже используется. Выберите другое имя или пропустите этот проект.",
             "folder": "Эта папка уже зарегистрирована или выбрана. Пропустите эту запись.",
             "invalid": "Введите допустимое имя. Нечитаемые файлы проектов необходимо пропустить.",
@@ -341,12 +341,12 @@
         "failedAddProject": "Не удалось добавить проект: {{error}}",
         "dropProjectFilesHere": "Перетащите файлы проекта Godot сюда",
         "dropProjectFilesHelpPrefix": "Перетащите один или несколько",
-        "dropProjectFilesHelpSuffix": "файлов, чтобы добавить их в Godot Launcher.",
+        "dropProjectFilesHelpSuffix": "файлов, чтобы добавить их в Eldritch Launcher.",
         "invalidReasons": {
             "missingProjectFile": "Файл проекта не найден. Проверьте расположение проекта или удалите проект и добавьте его снова.",
             "missingEditor": "Выбранный редактор недоступен. Подключите диск или выберите другой редактор."
         },
-        "recoveredCodeEditorConfig": "Некоторые файлы конфигурации редактора кода были некорректны. Godot Launcher создал их заново и сохранил оригиналы как копии .bad.",
+        "recoveredCodeEditorConfig": "Некоторые файлы конфигурации редактора кода были некорректны. Eldritch Launcher создал их заново и сохранил оригиналы как копии .bad.",
         "codeEditorLaunch": {
             "title": "{{editor}} не найден",
             "message": "Этот проект настроен для использования {{editor}}. Godot всё равно может запуститься, но открытие скриптов в этом редакторе может завершиться ошибкой.",
@@ -436,7 +436,7 @@
         "fields": {
             "name": {
                 "label": "Имя проекта",
-                "help": "Имя, отображаемое в Godot Launcher.",
+                "help": "Имя, отображаемое в Eldritch Launcher.",
                 "placeholder": "Мой проект"
             },
             "path": {
@@ -466,7 +466,7 @@
             "renameLabel": "Также переименовать проект Godot",
             "loading": "Проверка проекта Godot...",
             "currentName": "Текущее имя проекта Godot: {{name}}",
-            "unavailable": "project.godot недоступен. Можно изменить только имя в Godot Launcher."
+            "unavailable": "project.godot недоступен. Можно изменить только имя в Eldritch Launcher."
         },
         "actions": {
             "installAndSave": "Установить и сохранить",

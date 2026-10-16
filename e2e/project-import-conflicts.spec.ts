@@ -124,7 +124,7 @@ test('uses compact conflict items for dropped files with inline editing, skippin
     await page.getByRole('option', { name: /Use 4.8-beta2/ }).click();
 
     await dialog.getByRole('button', { name: 'Edit name: Original', exact: true }).nth(1).click();
-    const name = dialog.getByLabel('Name in Godot Launcher', { exact: true });
+    const name = dialog.getByLabel('Name in Eldritch Launcher', { exact: true });
     await expect(name).toBeFocused();
     await expect(name).toHaveAccessibleDescription(nameConflictMessage);
     await name.fill('Cancelled edit');
@@ -204,7 +204,7 @@ for (const source of ['public-git-url', 'github'] as const) {
         }
         await page.getByTestId('btnContinueRemoteProjectImport').click();
         await page.getByTestId('btnCloneRemoteProjectRepository').click();
-        const name = page.getByLabel('Name in Godot Launcher', { exact: true });
+        const name = page.getByLabel('Name in Eldritch Launcher', { exact: true });
         await expect(page.getByRole('button', { name: 'Edit name: Same', exact: true })).toHaveCount(2);
         await expect(page.getByTestId('btnAddDiscoveredProjects')).toBeDisabled();
         await expect(page.getByRole('alert')).toHaveText([nameConflictMessage]);

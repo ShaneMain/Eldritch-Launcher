@@ -7,7 +7,7 @@ describe('getAppReleaseNotesUrl', () => {
         'targets the exact release %s',
         (version) => {
             expect(getAppReleaseNotesUrl(version)).toBe(
-                `${LAUNCHER_RELEASE_NOTES_URL}${encodeURIComponent(version)}/`,
+                `${LAUNCHER_RELEASE_NOTES_URL}${encodeURIComponent(version)}`,
             );
         },
     );

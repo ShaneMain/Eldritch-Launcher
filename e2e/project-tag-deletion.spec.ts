@@ -47,7 +47,7 @@ async function openFilter() {
 
 test.beforeAll(async () => {
     home = await createFixtureHome();
-    await fs.writeFile(path.join(home, '.gd-launcher', 'project-tags.json'), JSON.stringify({ tags, assignments }));
+    await fs.writeFile(path.join(home, '.eldritch-launcher', 'project-tags.json'), JSON.stringify({ tags, assignments }));
     await launch();
 });
 test.afterAll(async () => {
@@ -132,7 +132,7 @@ test('an open settings draft drops a deleted tag and retains other pending edits
     await input.press('Escape');
     await drawer.getByRole('button', { name: 'Update', exact: true }).click();
     await expect(drawer).toBeHidden();
-    const saved = JSON.parse(await fs.readFile(path.join(home, '.gd-launcher', 'project-tags.json'), 'utf8'));
+    const saved = JSON.parse(await fs.readFile(path.join(home, '.eldritch-launcher', 'project-tags.json'), 'utf8'));
     expect(saved.tags.some((tag: { id: string }) => tag.id === 'unused')).toBe(false);
     expect(saved.tags.some((tag: { name: string }) => tag.name === 'Draft kept')).toBe(true);
     await expect(page.getByTestId('btnProjectTags').first()).toHaveAccessibleName('Tags: Draft kept');

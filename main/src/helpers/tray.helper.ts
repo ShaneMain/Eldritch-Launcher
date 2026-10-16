@@ -41,7 +41,7 @@ export async function createTray(
         ),
     );
 
-    tray.setToolTip('Godot Launcher');
+    tray.setToolTip('Eldritch Launcher');
 
     if (process.platform === 'darwin') {
         tray.on('click', async () => {

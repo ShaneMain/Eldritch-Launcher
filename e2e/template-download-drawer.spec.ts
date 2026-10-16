@@ -22,7 +22,7 @@ test.beforeAll(async () => {
     home = await createFixtureHome();
     const cataloguePath = path.join(
         home,
-        '.gd-launcher',
+        '.eldritch-launcher',
         'editor-catalog.json',
     );
     const catalogue = JSON.parse(await fs.readFile(cataloguePath, 'utf8'));
@@ -41,12 +41,12 @@ test.beforeAll(async () => {
         }
     }
     await fs.writeFile(cataloguePath, JSON.stringify(catalogue));
-    const prefsPath = path.join(home, '.gd-launcher', 'prefs.json');
+    const prefsPath = path.join(home, '.eldritch-launcher', 'prefs.json');
     const prefs = JSON.parse(await fs.readFile(prefsPath, 'utf8'));
     prefs.language = 'en';
     prefs.export_template_migration_offered = true;
     await fs.writeFile(prefsPath, JSON.stringify(prefs));
-    await fs.writeFile(path.join(home, '.gd-launcher', 'projects.json'), '[]');
+    await fs.writeFile(path.join(home, '.eldritch-launcher', 'projects.json'), '[]');
     const env = {
         ...process.env,
         HOME: home,

@@ -66,7 +66,7 @@ test('confirms a save, disables modal actions while pending, and shows restart g
         name: 'Credential storage choice saved',
     });
     await expect(success).toContainText(
-        'Fully quit Godot Launcher, including its system tray process, and open it again to apply the saved choice.',
+        'Fully quit Eldritch Launcher, including its system tray process, and open it again to apply the saved choice.',
     );
     await success.getByRole('button', { name: 'Not now' }).click();
     await expect(
@@ -147,7 +147,7 @@ test('shows override diagnostics inline while leaving an unavailable selector op
         'A launch flag controls credential storage for this session (gnome-libsecret). Remove the flag before restarting if you want to use the saved choice.',
     );
     await expect(details).toContainText(
-        'Secret Service was requested but is not the active backend. Check that a compatible Secret Service keyring is running, then fully restart Godot Launcher.',
+        'Secret Service was requested but is not the active backend. Check that a compatible Secret Service keyring is running, then fully restart Eldritch Launcher.',
     );
     await expect(mainPage.getByRole('button', { name: 'Storage details' })).toHaveCount(0);
 });
@@ -254,8 +254,8 @@ test('shows a restart failure modal and keeps the saved preference', async () =>
     await mainPage.getByRole('button', { name: 'Save choice' }).click();
     await mainPage.getByRole('dialog').getByRole('button', { name: 'Save choice' }).click();
     await mainPage.getByRole('dialog').getByRole('button', { name: 'Restart now' }).click();
-    const failure = mainPage.getByRole('dialog', { name: 'Could not restart Godot Launcher' });
-    await expect(failure).toContainText('Your choice is saved. Quit Godot Launcher completely and reopen it to apply the saved choice.');
+    const failure = mainPage.getByRole('dialog', { name: 'Could not restart Eldritch Launcher' });
+    await expect(failure).toContainText('Your choice is saved. Quit Eldritch Launcher completely and reopen it to apply the saved choice.');
     await failure.getByRole('button', { name: 'Ok' }).click();
     await expect(mainPage.getByRole('dialog')).toHaveCount(0);
     await expect(mainPage.getByLabel(/Saved choice:/)).toHaveValue('gnome-libsecret');

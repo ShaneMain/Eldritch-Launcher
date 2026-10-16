@@ -47,7 +47,7 @@ async function openFilter() {
 
 test.beforeAll(async () => {
     home = await createFixtureHome();
-    await fs.writeFile(path.join(home, '.gd-launcher', 'project-tags.json'), JSON.stringify({ tags, assignments }));
+    await fs.writeFile(path.join(home, '.eldritch-launcher', 'project-tags.json'), JSON.stringify({ tags, assignments }));
     await launch();
 });
 test.afterAll(async () => {

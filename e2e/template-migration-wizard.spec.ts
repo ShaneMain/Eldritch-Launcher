@@ -20,12 +20,12 @@ test.setTimeout(60_000);
 
 test.beforeAll(async () => {
     home = await createFixtureHome();
-    const prefsPath = path.join(home, '.gd-launcher', 'prefs.json');
+    const prefsPath = path.join(home, '.eldritch-launcher', 'prefs.json');
     const prefs = JSON.parse(await fs.readFile(prefsPath, 'utf8'));
     prefs.language = 'en';
     prefs.export_template_migration_offered = true;
     await fs.writeFile(prefsPath, JSON.stringify(prefs));
-    await fs.writeFile(path.join(home, '.gd-launcher', 'projects.json'), '[]');
+    await fs.writeFile(path.join(home, '.eldritch-launcher', 'projects.json'), '[]');
     const env: NodeJS.ProcessEnv = {
         ...process.env,
         HOME: home,

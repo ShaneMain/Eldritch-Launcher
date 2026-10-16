@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-    <id>org.godotlauncher.launcher</id>
-    <name>Godot Launcher</name>
+    <id>io.github.shanemain.eldritch-launcher</id>
+    <name>Eldritch Launcher</name>
     <summary>Godot Engine launcher and version manager</summary>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>MIT</project_license>
     <description>
         <p>
-            Godot Launcher is the companion app for managing Godot projects with
-            per-project editor settings.
+            Eldritch Launcher is a fork of Godot Launcher for managing Godot
+            projects with per-project editor settings and private engine forks.
         </p>
     </description>
-    <launchable type="desktop-id">org.godotlauncher.launcher.desktop</launchable>
+    <launchable type="desktop-id">io.github.shanemain.eldritch-launcher.desktop</launchable>
     <categories>
         <category>Development</category>
     </categories>
-    <url type="homepage">https://godotlauncher.org</url>
-    <url type="bugtracker">https://github.com/godotlauncher/launcher/issues</url>
-    <url type="vcs-browser">https://github.com/godotlauncher/launcher</url>
-    <developer id="org.godotlauncher">
-        <name>Godot Launcher</name>
+    <url type="homepage">https://github.com/ShaneMain/Eldritch-Launcher</url>
+    <url type="bugtracker">https://github.com/ShaneMain/Eldritch-Launcher/issues</url>
+    <url type="vcs-browser">https://github.com/ShaneMain/Eldritch-Launcher</url>
+    <developer id="io.github.shanemain">
+        <name>ShaneMain</name>
     </developer>
     <content_rating type="oars-1.1" />
 </component>

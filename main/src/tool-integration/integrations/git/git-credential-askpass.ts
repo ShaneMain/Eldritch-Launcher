@@ -12,7 +12,7 @@ const invocationIssue = getInvocationIssue(port, sessionRef, prompt);
 
 if (invocationIssue) {
     process.stderr.write(
-        `Godot Launcher Git credential helper rejected ${invocationIssue}.\n`,
+        `Eldritch Launcher Git credential helper rejected ${invocationIssue}.\n`,
     );
     process.exitCode = 1;
 } else {
@@ -22,7 +22,7 @@ if (invocationIssue) {
         })
         .catch(() => {
             process.stderr.write(
-                'Godot Launcher Git credential helper could not reach its credential session.\n',
+                'Eldritch Launcher Git credential helper could not reach its credential session.\n',
             );
             process.exitCode = 1;
         });

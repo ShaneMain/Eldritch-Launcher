@@ -24,7 +24,7 @@ async function launch() {
 
 /** Reads real tag state saved by the main process. */
 async function readTags() {
-    return JSON.parse(await fs.readFile(path.join(fixtureHome, '.gd-launcher', 'project-tags.json'), 'utf8')) as { tags: { id: string; name: string; colour: number }[]; assignments: Record<string, string[]> };
+    return JSON.parse(await fs.readFile(path.join(fixtureHome, '.eldritch-launcher', 'project-tags.json'), 'utf8')) as { tags: { id: string; name: string; colour: number }[]; assignments: Record<string, string[]> };
 }
 
 test.beforeAll(async () => {

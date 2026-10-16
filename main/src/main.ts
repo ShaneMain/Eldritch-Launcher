@@ -39,7 +39,7 @@ if (appConfig.isDev) {
 logger.initialize();
 logger.debug('Raw process argv before CLI parsing:', process.argv);
 
-logger.info('Starting Godot Launcher');
+logger.info('Starting Eldritch Launcher');
 logger.info(`Version: ${app.getVersion()}`);
 logger.info(
     `Electron: ${process.versions.electron}, Chrome: ${process.versions.chrome}, Node: ${process.versions.node}, V8: ${process.versions.v8}`,
@@ -88,7 +88,7 @@ let diApp: Application | undefined;
 async function bootstrap(): Promise<void> {
     const applicationPromise = createElectronApplication(AppModule, {
         appName: appConfig.appName,
-        desktopName: 'org.godotlauncher.launcher.desktop',
+        desktopName: 'io.github.shanemain.eldritch-launcher.desktop',
         instanceMode: appConfig.e2eFixtures ? 'multi' : 'single',
         hideOnClose: true,
         logger: ['error', 'warn'],

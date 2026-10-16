@@ -11,10 +11,10 @@
             "missing-project": "Questo progetto non è più disponibile.",
             "missing-directory": "La cartella del progetto non è più disponibile.",
             "disabled": "Il terminale è disabilitato. Abilitalo in Impostazioni > Strumenti > Terminale.",
-            "invalid-configuration": "Le impostazioni del terminale salvate non sono compatibili con questa versione di Godot Launcher.",
+            "invalid-configuration": "Le impostazioni del terminale salvate non sono compatibili con questa versione di Eldritch Launcher.",
             "unavailable": "Il terminale selezionato non è stato trovato. Scegline uno in Impostazioni > Strumenti > Terminale.",
             "unsupported-directory": "Il terminale selezionato non può aprire questa cartella di progetto.",
-            "launch-failed": "Godot Launcher non ha potuto aprire il terminale selezionato. Riprova o scegline un altro."
+            "launch-failed": "Eldritch Launcher non ha potuto aprire il terminale selezionato. Riprova o scegline un altro."
         },
         "openSettings": "Apri impostazioni del terminale"
     },
@@ -22,15 +22,15 @@
     "emptyState": {
         "welcome": {
             "heading": "Aggiungi o crea un progetto",
-            "description": "Porta il tuo lavoro esistente in Godot Launcher, oppure inizia qualcosa di nuovo.",
+            "description": "Porta il tuo lavoro esistente in Eldritch Launcher, oppure inizia qualcosa di nuovo.",
             "newProject": {
                 "heading": "Nuovo progetto",
-                "description": "Scegli una versione di Godot.\nGodot Launcher la scarica se necessario.",
+                "description": "Scegli una versione di Godot.\nEldritch Launcher la scarica se necessario.",
                 "action": "Crea progetto"
             },
             "existingProject": {
                 "heading": "Progetto esistente",
-                "description": "Godot Launcher trova la versione di Godot\ndi cui ogni progetto ha bisogno.",
+                "description": "Eldritch Launcher trova la versione di Godot\ndi cui ogni progetto ha bisogno.",
                 "fromComputer": "Da questo computer",
                 "fromGitHub": "Da GitHub",
                 "fromPublicGit": "Da un URL Git pubblico",
@@ -40,7 +40,7 @@
         "addExistingProject": "Aggiungi un progetto esistente",
         "withoutEditor": {
             "heading": "Installa Godot per avviare un progetto",
-            "description": "Godot Launcher richiede un editor prima di poter creare o eseguire progetti.",
+            "description": "Eldritch Launcher richiede un editor prima di poter creare o eseguire progetti.",
             "installEditor": "Installa un editor",
             "installingDescription": "L'editor è in fase di installazione. Potrai creare un progetto non appena sarà pronto.",
             "installingEditor": "Installazione dell'editor..."
@@ -208,7 +208,7 @@
                 "addProjects": "Aggiungi i progetti selezionati ({{count}})",
                 "cloneAndAdd": "Clona e aggiungi progetto",
                 "cancelImport": "Annulla l'importazione",
-                "retryRegistration": "Riprova ad aggiungere al Godot Launcher",
+                "retryRegistration": "Riprova ad aggiungere al Eldritch Launcher",
                 "reviewAndRetry": "Rivedi e riprova",
                 "close": "Chiudi",
                 "done": "Fatto",
@@ -224,7 +224,7 @@
             },
             "submodules": {
                 "title": "Questo repository usa sottomoduli Git",
-                "description": "Godot Launcher può inizializzare sottomoduli HTTPS pubblici e anonimi prima di eseguire una nuova scansione. L'operazione si interrompe se un sottomodulo è privato o usa un URL non supportato.",
+                "description": "Eldritch Launcher può inizializzare sottomoduli HTTPS pubblici e anonimi prima di eseguire una nuova scansione. L'operazione si interrompe se un sottomodulo è privato o usa un URL non supportato.",
                 "preparing": "Preparazione dell'inizializzazione dei sottomoduli...",
                 "initialise": "Inizializza sottomoduli",
                 "continueWithoutSubmodules": "Continua senza sottomoduli",
@@ -260,7 +260,7 @@
                 "added": "Aggiunto",
                 "skipped": "Ignorato",
                 "failed": "Non riuscito",
-                "alreadyAdded": "Un progetto con questo nome o percorso è già presente in Godot Launcher.",
+                "alreadyAdded": "Un progetto con questo nome o percorso è già presente in Eldritch Launcher.",
                 "notAdded": "Il progetto non è stato aggiunto."
             },
             "editorBatch": {
@@ -292,7 +292,7 @@
                 "discoveryLimitExceeded": "Il repository è stato clonato, ma è troppo grande o annidato per essere analizzato in sicurezza.",
                 "finaliseFailed": "Impossibile spostare il clone completato nella destinazione.",
                 "cancelled": "L'importazione è stata annullata.",
-                "registration-failed": "Il repository è stato clonato ma non è stato possibile aggiungerlo al Godot Launcher.",
+                "registration-failed": "Il repository è stato clonato ma non è stato possibile aggiungerlo al Eldritch Launcher.",
                 "cloneFolderOpenFailed": "Non è stato possibile aprire la cartella del clone.",
                 "cloneCleanupChanged": "Il clone è stato modificato o sostituito dopo l'importazione, quindi non è stato eliminato.",
                 "cloneCleanupFailed": "Non è stato possibile eliminare il clone. È stato mantenuto."
@@ -300,8 +300,8 @@
         },
         "conflicts": {
             "title": "Rivedi le importazioni",
-            "description": "Scegli un nome in Godot Launcher o salta il progetto. I nomi Godot e le cartelle restano invariati.",
-            "label": "Nome in Godot Launcher",
+            "description": "Scegli un nome in Eldritch Launcher o salta il progetto. I nomi Godot e le cartelle restano invariati.",
+            "label": "Nome in Eldritch Launcher",
             "name": "Questo nome del progetto è già in uso. Scegli un altro nome o salta il progetto.",
             "folder": "Questa cartella è già registrata o selezionata. Salta questa voce.",
             "invalid": "Inserisci un nome valido. Salta i file di progetto illeggibili.",
@@ -341,12 +341,12 @@
         "failedAddProject": "Impossibile aggiungere il progetto: {{error}}",
         "dropProjectFilesHere": "Rilascia qui i file di progetto Godot",
         "dropProjectFilesHelpPrefix": "Rilascia uno o più",
-        "dropProjectFilesHelpSuffix": "file per aggiungerli a Godot Launcher.",
+        "dropProjectFilesHelpSuffix": "file per aggiungerli a Eldritch Launcher.",
         "invalidReasons": {
             "missingProjectFile": "File di progetto non trovato. Controlla il percorso del progetto oppure rimuovilo e aggiungilo di nuovo.",
             "missingEditor": "L’editor selezionato non è disponibile. Monta l’unità o scegli un altro editor."
         },
-        "recoveredCodeEditorConfig": "Alcuni file di configurazione dell'editor di codice non erano validi. Godot Launcher li ha ricreati e ha conservato gli originali come copie .bad.",
+        "recoveredCodeEditorConfig": "Alcuni file di configurazione dell'editor di codice non erano validi. Eldritch Launcher li ha ricreati e ha conservato gli originali come copie .bad.",
         "codeEditorLaunch": {
             "title": "{{editor}} non è stato trovato",
             "message": "Questo progetto è configurato per usare {{editor}}. Godot può comunque avviarsi, ma l’apertura degli script in questo editor potrebbe non riuscire.",
@@ -436,7 +436,7 @@
         "fields": {
             "name": {
                 "label": "Nome progetto",
-                "help": "Nome mostrato in Godot Launcher.",
+                "help": "Nome mostrato in Eldritch Launcher.",
                 "placeholder": "Il mio progetto"
             },
             "path": {
@@ -466,7 +466,7 @@
             "renameLabel": "Rinomina anche il progetto Godot",
             "loading": "Controllo del progetto Godot...",
             "currentName": "Nome attuale del progetto Godot: {{name}}",
-            "unavailable": "project.godot non è disponibile. Puoi modificare solo il nome in Godot Launcher."
+            "unavailable": "project.godot non è disponibile. Puoi modificare solo il nome in Eldritch Launcher."
         },
         "actions": {
             "installAndSave": "Installa e salva",

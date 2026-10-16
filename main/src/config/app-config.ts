@@ -99,7 +99,7 @@ export function configuration(
     }
 
     return AppConfigSchema.parse({
-        appName: 'Godot Launcher',
+        appName: 'Eldritch Launcher',
         isDev,
         debugMode: cliConfig.debug ?? false,
         disableSandbox:

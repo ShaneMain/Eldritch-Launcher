@@ -169,7 +169,7 @@ async function createPosixCredentialLauncher(
     helperFileName: string,
 ): Promise<GitAskPassHandle> {
     const directory = await fs.mkdtemp(
-        path.join(os.tmpdir(), 'godot-launcher-git-askpass-'),
+        path.join(os.tmpdir(), 'eldritch-launcher-git-askpass-'),
     );
     const executablePath = path.join(directory, 'askpass.sh');
     const helperPath = fileURLToPath(

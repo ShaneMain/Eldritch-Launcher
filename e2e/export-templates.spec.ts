@@ -73,7 +73,7 @@ test.describe.configure({ mode: 'serial' });
 test.setTimeout(90_000);
 test.beforeAll(async () => {
     home = await createFixtureHome();
-    const cataloguePath = path.join(home, '.gd-launcher', 'editor-catalog.json');
+    const cataloguePath = path.join(home, '.eldritch-launcher', 'editor-catalog.json');
     const catalogue: {
         providers: Record<string, {
             templateMetadataRefreshed: boolean;
@@ -95,7 +95,7 @@ test.beforeAll(async () => {
         }
     }
     await fs.writeFile(cataloguePath, JSON.stringify(catalogue));
-    root = path.join(home, '.gd-launcher', 'godot', 'export_templates');
+    root = path.join(home, '.eldritch-launcher', 'godot', 'export_templates');
     const project = {
         ...SAMPLE_PROJECTS[0],
         name: 'Template migration',
@@ -117,7 +117,7 @@ test.beforeAll(async () => {
     await fs.mkdir(path.dirname(project.launch_path), { recursive: true });
     await fs.writeFile(project.launch_path, 'fixture editor');
     await fs.writeFile(
-        path.join(home, '.gd-launcher', 'projects.json'),
+        path.join(home, '.eldritch-launcher', 'projects.json'),
         JSON.stringify([project]),
     );
     const env: NodeJS.ProcessEnv = {
@@ -460,7 +460,7 @@ test('keeps an accepted download submitted when the following job read fails', a
 
 test('shows a library read error after a committed import and recovers on refresh', async () => {
     const archive = path.join(home, 'read-recovery-template.tpz');
-    const registryPath = path.join(home, '.gd-launcher', 'export-templates', 'imported-templates.json');
+    const registryPath = path.join(home, '.eldritch-launcher', 'export-templates', 'imported-templates.json');
     const original = await fs.readFile(registryPath, 'utf8').catch(() => undefined);
     await fs.writeFile(archive, storedZip({
         'templates/version.txt': '4.4.stable',
@@ -488,7 +488,7 @@ test('shows a library read error after a committed import and recovers on refres
         await restoreReadAfterAction();
         if (original === undefined) await fs.rm(registryPath, { force: true });
         else await fs.writeFile(registryPath, original);
-        await fs.rm(path.join(home, '.gd-launcher', 'export-templates', 'imported', '4.4.stable', 'Read recovery fixture'), { recursive: true, force: true });
+        await fs.rm(path.join(home, '.eldritch-launcher', 'export-templates', 'imported', '4.4.stable', 'Read recovery fixture'), { recursive: true, force: true });
         await fs.rm(archive, { force: true });
         await page.getByRole('button', { name: 'Refresh', exact: true }).click();
     }
@@ -498,7 +498,7 @@ test('opens an imported build folder from its row', async () => {
     const label = 'Folder action fixture';
     const id = randomUUID();
     const revision = randomUUID();
-    const libraryRoot = path.join(home, '.gd-launcher', 'export-templates');
+    const libraryRoot = path.join(home, '.eldritch-launcher', 'export-templates');
     const registryPath = path.join(libraryRoot, 'imported-templates.json');
     const folder = path.join(libraryRoot, 'imported', '4.8.stable', label);
     const original = await fs.readFile(registryPath, 'utf8').catch(() => undefined);
@@ -539,7 +539,7 @@ test('opens an imported build folder from its row', async () => {
 });
 
 test('stores imported builds under readable names and rejects folder collisions', async () => {
-    const libraryRoot = path.join(home, '.gd-launcher', 'export-templates');
+    const libraryRoot = path.join(home, '.eldritch-launcher', 'export-templates');
     const registryPath = path.join(libraryRoot, 'imported-templates.json');
     const original = await fs.readFile(registryPath, 'utf8').catch(() => undefined);
     const archive = path.join(home, 'readable-template.tpz');
@@ -909,14 +909,14 @@ test('rejects unsafe imported archives without changing ordinary templates', asy
     await expect(modal.getByRole('button', { name: 'Save', exact: true })).toHaveCount(0);
     await modal.getByRole('button', { name: 'Cancel', exact: true }).click();
     expect(await fs.readFile(path.join(root, '4.4.stable', 'new-file'), 'utf8')).toBe('external change');
-    expect(await fs.stat(path.join(home, '.gd-launcher', 'export-templates', '.staging', 'outside')).catch(() => null)).toBeNull();
+    expect(await fs.stat(path.join(home, '.eldritch-launcher', 'export-templates', '.staging', 'outside')).catch(() => null)).toBeNull();
 });
 
 test('recovers an interrupted directory swap without removing newer user changes', async () => {
     const id = randomUUID();
     const work = path.join(
         path.dirname(root),
-        '.godot-launcher-template-work',
+        '.eldritch-launcher-template-work',
         id,
     );
     const set = '4.5.stable';
@@ -1061,7 +1061,7 @@ test('cancels TPZ preparation with Cancel and Escape and cleans staging', async 
             if (close === 'Cancel') await modal.getByRole('button', { name: 'Cancel', exact: true }).click();
             else await page.keyboard.press('Escape');
             await expect(modal).toBeHidden();
-            const staging = path.join(home, '.gd-launcher', 'export-templates', '.staging');
+            const staging = path.join(home, '.eldritch-launcher', 'export-templates', '.staging');
             await expect.poll(async () => fs.readdir(staging).catch(() => [])).toEqual([]);
             const library = await page.evaluate(async () => (window as unknown as BridgeWindow).__di_electron__.invoke('exportTemplates.getImportedTemplates')) as { data: { builds: unknown[] } };
             expect(library.data.builds).toEqual([]);
@@ -1330,7 +1330,7 @@ test('saves local versions as named imports and switches version links on Update
     await fs.writeFile(path.join(local, '__MACOSX', '._templates'), 'finder metadata');
     await fs.mkdir(path.join(root, '4.4.stable'), { recursive: true });
     await fs.writeFile(path.join(root, '4.4.stable', 'linux_release.x86_64'), 'shared official');
-    const projectsFile = path.join(home, '.gd-launcher', 'projects.json');
+    const projectsFile = path.join(home, '.eldritch-launcher', 'projects.json');
     const saved = JSON.parse(await fs.readFile(projectsFile, 'utf8'));
     saved[0].exportTemplateMode = 'separate';
     delete saved[0].exportTemplateBuilds;
@@ -1354,7 +1354,7 @@ test('saves local versions as named imports and switches version links on Update
     await waitForTemplateStage('complete');
     await app.evaluate(() => { (globalThis as any).restoreMigrationSymlink(); delete (globalThis as any).restoreMigrationSymlink; });
     await migration.getByRole('button', { name: 'Done', exact: true }).click();
-    const registryPath = path.join(home, '.gd-launcher', 'export-templates', 'imported-templates.json');
+    const registryPath = path.join(home, '.eldritch-launcher', 'export-templates', 'imported-templates.json');
     const registry = JSON.parse(await fs.readFile(registryPath, 'utf8'));
     const build = registry.builds.find((item: { setId: string }) => item.setId === '4.4.stable');
     expect(registry.builds).toHaveLength(2);
@@ -1367,7 +1367,7 @@ test('saves local versions as named imports and switches version links on Update
     expect((await fs.lstat(path.join(local, '4.4.stable'))).isSymbolicLink()).toBe(true);
     expect(await fs.readFile(path.join(local, '4.4.stable', 'web_release.zip'), 'utf8')).toBe('project custom build');
     expect((await fs.stat(path.join(local, '4.4.stable', 'web_release.zip'))).mode).toBe(originalTemplate.mode);
-    expect(await fs.stat(path.join(home, '.gd-launcher', 'export-templates', 'saved-project-migration.json')).catch(() => null)).toBeNull();
+    expect(await fs.stat(path.join(home, '.eldritch-launcher', 'export-templates', 'saved-project-migration.json')).catch(() => null)).toBeNull();
     expect(await fs.readFile(path.join(root, '4.4.stable', 'linux_release.x86_64'), 'utf8')).toBe('shared official');
     expect(await fs.stat(path.join(root, '4.4.stable', 'web_release.zip')).catch(() => null)).toBeNull();
     let drawer = await openProjectTemplates();
@@ -1482,8 +1482,8 @@ test('saves the chosen imported source without applying a hidden Official draft'
 
 test('uses Official for a new editor version and restores remembered imports without hiding missing files', async () => {
     await app.close();
-    const projectsFile = path.join(home, '.gd-launcher', 'projects.json');
-    const registryPath = path.join(home, '.gd-launcher', 'export-templates', 'imported-templates.json');
+    const projectsFile = path.join(home, '.eldritch-launcher', 'projects.json');
+    const registryPath = path.join(home, '.eldritch-launcher', 'export-templates', 'imported-templates.json');
     const registry = JSON.parse(await fs.readFile(registryPath, 'utf8'));
     const build = registry.builds.find((item: { label: string; setId: string }) => item.label === 'Template migration' && item.setId === '4.4.stable');
     let saved = JSON.parse(await fs.readFile(projectsFile, 'utf8'));
@@ -1505,7 +1505,7 @@ test('uses Official for a new editor version and restores remembered imports wit
     drawer = await openProjectTemplates();
     await expect(drawer.getByRole('button', { name: /^Export template build:/ })).toContainText('Template migration');
     expect(await fs.readFile(path.join(local, '4.4.stable', 'web_release.zip'), 'utf8')).toBe('project custom build');
-    const files = path.join(home, '.gd-launcher', 'export-templates', 'imported', build.setId, build.directoryName);
+    const files = path.join(home, '.eldritch-launcher', 'export-templates', 'imported', build.setId, build.directoryName);
     await fs.rename(files, `${files}-unavailable`);
     await page.evaluate(() => window.dispatchEvent(new Event('focus')));
     await expect(drawer.getByRole('alert')).toHaveText('Some files for this imported build are missing. Replace the package in Export Templates, or choose another build.');

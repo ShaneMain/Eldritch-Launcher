@@ -1,26 +1,14 @@
 // LAUNCHER
-export const LAUNCHER_PAGE_URL = 'https://godotlauncher.org';
-export const LAUNCHER_DOCS_URL = 'https://docs.godotlauncher.org';
-export const LAUNCHER_RELEASE_NOTES_URL = `${LAUNCHER_DOCS_URL}/release-notes/`;
-export const LAUNCHER_CONTRIBUTE_URL = 'https://godotlauncher.org/contribute';
-export const LAUNCHER_DOWNLOAD_URL = 'https://godotlauncher.org/download/';
+export const LAUNCHER_GITHUB_URL =
+    'https://github.com/ShaneMain/Eldritch-Launcher';
+export const LAUNCHER_GITHUB_RELEASES_URL = `${LAUNCHER_GITHUB_URL}/releases`;
+export const LAUNCHER_GITHUB_ISSUES_URL = `${LAUNCHER_GITHUB_URL}/issues`;
+export const LAUNCHER_RELEASE_NOTES_URL = `${LAUNCHER_GITHUB_RELEASES_URL}/tag/v`;
+export const LAUNCHER_DOWNLOAD_URL = LAUNCHER_GITHUB_RELEASES_URL;
 export const LAUNCHER_THIRD_PARTY_RAW_URL =
-    'https://raw.githubusercontent.com/godotlauncher/launcher/refs/heads/main/COPYRIGHT.txt';
-
-// GItHub
-export const LAUNCHER_GITHUB_URL = 'https://github.com/godotlauncher/launcher';
-export const LAUNCHER_GITHUB_RELEASES_URL =
-    'https://github.com/godotlauncher/launcher/releases';
-export const LAUNCHER_GITHUB_ISSUES_URL =
-    'https://github.com/godotlauncher/launcher/issues';
-export const LAUNCHER_GITHUB_PROPOSALS_URL =
-    'https://github.com/godotlauncher/launcher/issues';
+    'https://raw.githubusercontent.com/ShaneMain/Eldritch-Launcher/refs/heads/main/COPYRIGHT.txt';
 export const GITHUB_STATUS_URL = 'https://www.githubstatus.com/';
 
 // GODOT
 export const GODOT_PAGE_URL = 'https://godotengine.org';
 export const GODOT_DOCS_URL = 'https://docs.godotengine.org';
-
-// COMMUNITY
-export const COMMUNITY_PAGE_URL = 'https://godotlauncher.org/community';
-export const COMMUNITY_DISCORD_URL = 'https://discord.gg/Ju9jkFJGvz';

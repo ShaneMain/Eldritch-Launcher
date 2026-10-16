@@ -17,7 +17,7 @@ test('remembers a terminal choice and opens a stored project through the real ma
     const projectPath = path.join(fixtureHome, 'project é ; $HOME ` quote\'');
     await fs.mkdir(projectPath);
     const project = { ...SAMPLE_PROJECTS[0], path: projectPath };
-    await fs.writeFile(path.join(fixtureHome, '.gd-launcher', 'projects.json'), JSON.stringify([project]));
+    await fs.writeFile(path.join(fixtureHome, '.eldritch-launcher', 'projects.json'), JSON.stringify([project]));
     const env = Object.fromEntries(Object.entries(process.env).filter((entry): entry is [string, string] => typeof entry[1] === 'string'));
     delete env.ELECTRON_RUN_AS_NODE;
     const app = await _electron.launch({ args: ['.', `--user-data-dir=${path.join(fixtureHome, 'electron-user-data')}`], env: { ...env, GODOT_LAUNCHER_E2E_FIXTURES: '1', GODOT_LAUNCHER_E2E_HOME_DIR: fixtureHome } });
@@ -43,7 +43,7 @@ test('remembers a terminal choice and opens a stored project through the real ma
         await drawer.getByRole('button', { name: 'Rescan', exact: true }).click();
         await drawer.getByRole('radio', { name: /Fixture terminal/ }).click();
         await expect(drawer.getByRole('radio', { name: /Fixture terminal/ })).toBeChecked();
-        const stored = JSON.parse(await fs.readFile(path.join(fixtureHome, '.gd-launcher', 'tool-integrations.json'), 'utf8'));
+        const stored = JSON.parse(await fs.readFile(path.join(fixtureHome, '.eldritch-launcher', 'tool-integrations.json'), 'utf8'));
         expect(stored.tools.terminal.configuration.preferences[process.platform]).toBe(targetId);
         await page.screenshot({ path: testInfo.outputPath('terminal-settings.png') });
         await page.keyboard.press('Escape');
@@ -90,7 +90,7 @@ test('remembers a terminal choice and opens a stored project through the real ma
 
 test('recovers unsupported terminal settings through the warning shortcut', async ({}, testInfo) => {
     const fixtureHome = await createFixtureHome();
-    const configDir = path.join(fixtureHome, '.gd-launcher');
+    const configDir = path.join(fixtureHome, '.eldritch-launcher');
     await fs.writeFile(
         path.join(configDir, 'tool-integrations.json'),
         JSON.stringify({
@@ -144,7 +144,7 @@ test('recovers unsupported terminal settings through the warning shortcut', asyn
         await page.getByTestId('btnProjectTerminal').first().click();
         const warning = page.getByRole('dialog', { name: 'Warning' });
         await expect(warning).toContainText(
-            'The saved terminal settings are incompatible with this version of Godot Launcher.',
+            'The saved terminal settings are incompatible with this version of Eldritch Launcher.',
         );
         await expect(warning.locator('header svg.lucide-triangle-alert')).toBeVisible();
         await captureSettledScreenshot(

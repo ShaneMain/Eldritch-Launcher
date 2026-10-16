@@ -36,14 +36,13 @@
             "help": "Yardım",
             "settings": "Ayarlar",
             "connections": "Bağlantılar",
-            "new": "Yeni",
-            "joinCommunity": "Topluluğa Katıl"
+            "new": "Yeni"
         },
         "update": {
             "availableWithVersion": "Sürüm {{version}} mevcut. <DownloadButton>Güncellemeyi indir</DownloadButton> veya <SkipButton>Bu sürümü atla</SkipButton>",
             "availableNoVersion": "Yeni bir sürüm mevcut. <DownloadButton>Güncellemeyi indir</DownloadButton>",
-            "readyWithVersion": "{{version}} sürümü hazır, yüklemek için Godot Launcher'ı yeniden başlatın. <RestartButton>Şimdi yeniden başlat</RestartButton>",
-            "readyNoVersion": "Güncelleme hazır, yüklemek için Godot Launcher'ı yeniden başlatın. <RestartButton>Şimdi yeniden başlat</RestartButton>",
+            "readyWithVersion": "{{version}} sürümü hazır, yüklemek için Eldritch Launcher'ı yeniden başlatın. <RestartButton>Şimdi yeniden başlat</RestartButton>",
+            "readyNoVersion": "Güncelleme hazır, yüklemek için Eldritch Launcher'ı yeniden başlatın. <RestartButton>Şimdi yeniden başlat</RestartButton>",
             "manualWithVersion": "Sürüm {{version}} kullanılabilir, ancak bu rpm-ostree sisteminde otomatik kurulum desteklenmiyor. <ReleaseLink>Elle indir</ReleaseLink> veya <SkipButton>Bu sürümü atla</SkipButton>",
             "manualNoVersion": "Yeni bir sürüm kullanılabilir, ancak bu rpm-ostree sisteminde otomatik kurulum desteklenmiyor. <ReleaseLink>Elle indir</ReleaseLink>",
             "notification": {
@@ -55,10 +54,10 @@
                 "downloadingProgress": "İndiriliyor {{percent}}%"
             },
             "panel": {
-                "titleWithVersion": "Godot Launcher {{version}}",
-                "title": "Godot Launcher güncellemesi",
+                "titleWithVersion": "Eldritch Launcher {{version}}",
+                "title": "Eldritch Launcher güncellemesi",
                 "installAfterDownload": "İndirme tamamlandıktan sonra yüklemek için yeniden başlatın.",
-                "ready": "Güncelleme indirildi. Yüklemek için Godot Launcher uygulamasını yeniden başlatın.",
+                "ready": "Güncelleme indirildi. Yüklemek için Eldritch Launcher uygulamasını yeniden başlatın.",
                 "manual": "Bu rpm-ostree sisteminde otomatik yükleme desteklenmiyor. Güncellemeyi elle indirip yükleyin.",
                 "readReleaseNotes": "Sürüm notlarını oku",
                 "download": "Güncellemeyi indir",

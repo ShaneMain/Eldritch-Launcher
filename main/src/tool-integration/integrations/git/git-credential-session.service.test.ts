@@ -10,7 +10,7 @@ import {
 const mocks = vi.hoisted(() => ({
     getAppPath: vi.fn(() => '/workspace/launcher'),
     resolveWindowsExecutable: vi.fn(
-        async () => 'C:\\launcher\\godot-launcher-git-askpass.exe',
+        async () => 'C:\\launcher\\eldritch-launcher-git-askpass.exe',
     ),
 }));
 
@@ -228,7 +228,7 @@ describe('GitCredentialSessionService', () => {
         const session = await service.openRejecting();
 
         expect(session.environment.GIT_ASKPASS).toBe(
-            'C:\\launcher\\godot-launcher-git-askpass.exe',
+            'C:\\launcher\\eldritch-launcher-git-askpass.exe',
         );
         expect(mocks.resolveWindowsExecutable).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -242,7 +242,7 @@ describe('GitCredentialSessionService', () => {
     it('quotes the verified Windows executable as a bound helper', async () => {
         vi.spyOn(process, 'platform', 'get').mockReturnValue('win32');
         mocks.resolveWindowsExecutable.mockResolvedValueOnce(
-            'C:\\Program Files\\Godot Launcher\\godot-launcher-git-askpass.exe',
+            'C:\\Program Files\\Eldritch Launcher\\eldritch-launcher-git-askpass.exe',
         );
         const service = new GitCredentialSessionService();
 
@@ -252,7 +252,7 @@ describe('GitCredentialSessionService', () => {
         );
 
         expect(session.helper).toBe(
-            "!exec 'C:/Program Files/Godot Launcher/godot-launcher-git-askpass.exe'",
+            "!exec 'C:/Program Files/Eldritch Launcher/eldritch-launcher-git-askpass.exe'",
         );
         expect(session.environment.GIT_ASKPASS).toBeUndefined();
         await session.close();

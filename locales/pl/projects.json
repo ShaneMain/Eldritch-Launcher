@@ -11,10 +11,10 @@
             "missing-project": "Ten projekt nie jest już dostępny.",
             "missing-directory": "Folder projektu nie jest już dostępny.",
             "disabled": "Terminal jest wyłączony. Włącz go w Ustawienia > Narzędzia > Terminal.",
-            "invalid-configuration": "Zapisane ustawienia terminala są niezgodne z tą wersją Godot Launcher.",
+            "invalid-configuration": "Zapisane ustawienia terminala są niezgodne z tą wersją Eldritch Launcher.",
             "unavailable": "Wybranego terminala nie znaleziono. Wybierz go w Ustawienia > Narzędzia > Terminal.",
             "unsupported-directory": "Wybrany terminal nie może otworzyć tego folderu projektu.",
-            "launch-failed": "Godot Launcher nie mógł otworzyć wybranego terminala. Spróbuj ponownie lub wybierz inny."
+            "launch-failed": "Eldritch Launcher nie mógł otworzyć wybranego terminala. Spróbuj ponownie lub wybierz inny."
         },
         "openSettings": "Otwórz ustawienia terminala"
     },
@@ -25,12 +25,12 @@
             "description": "Przenieś istniejącą pracę do Launchera lub zacznij coś nowego.",
             "newProject": {
                 "heading": "Nowy projekt",
-                "description": "Wybierz wersję Godot.\nGodot Launcher pobierze ją, jeśli będzie potrzebna.",
+                "description": "Wybierz wersję Godot.\nEldritch Launcher pobierze ją, jeśli będzie potrzebna.",
                 "action": "Utwórz projekt"
             },
             "existingProject": {
                 "heading": "Istniejący projekt",
-                "description": "Godot Launcher znajduje wersję Godot\npotrzebną dla każdego projektu.",
+                "description": "Eldritch Launcher znajduje wersję Godot\npotrzebną dla każdego projektu.",
                 "fromComputer": "Z tego komputera",
                 "fromGitHub": "Z GitHub",
                 "fromPublicGit": "Z publicznego adresu URL Git",
@@ -40,7 +40,7 @@
         "addExistingProject": "Dodaj istniejący projekt",
         "withoutEditor": {
             "heading": "Zainstaluj Godot, aby rozpocząć projekt",
-            "description": "Godot Launcher wymaga edytora, zanim będzie można tworzyć lub uruchamiać projekty.",
+            "description": "Eldritch Launcher wymaga edytora, zanim będzie można tworzyć lub uruchamiać projekty.",
             "installEditor": "Zainstaluj edytor",
             "installingDescription": "Edytor jest instalowany. Projekt będzie można utworzyć, gdy tylko będzie gotowy.",
             "installingEditor": "Instalowanie edytora..."
@@ -224,7 +224,7 @@
             },
             "submodules": {
                 "title": "To repozytorium używa podmodułów Git",
-                "description": "Godot Launcher może zainicjalizować anonimowe publiczne podmoduły HTTPS przed ponownym skanowaniem. Operacja zatrzyma się, jeśli podmoduł jest prywatny lub używa nieobsługiwanego adresu URL.",
+                "description": "Eldritch Launcher może zainicjalizować anonimowe publiczne podmoduły HTTPS przed ponownym skanowaniem. Operacja zatrzyma się, jeśli podmoduł jest prywatny lub używa nieobsługiwanego adresu URL.",
                 "preparing": "Przygotowywanie inicjalizacji podmodułów...",
                 "initialise": "Zainicjalizuj podmoduły",
                 "continueWithoutSubmodules": "Kontynuuj bez podmodułów",
@@ -346,7 +346,7 @@
             "missingProjectFile": "Nie znaleziono pliku projektu. Sprawdź lokalizację projektu albo usuń projekt i dodaj go ponownie.",
             "missingEditor": "Wybrany edytor jest niedostępny. Zamontuj dysk albo wybierz inny edytor."
         },
-        "recoveredCodeEditorConfig": "Niektóre pliki konfiguracyjne edytora kodu były nieprawidłowe. Godot Launcher utworzył je ponownie i zachował oryginały jako kopie .bad.",
+        "recoveredCodeEditorConfig": "Niektóre pliki konfiguracyjne edytora kodu były nieprawidłowe. Eldritch Launcher utworzył je ponownie i zachował oryginały jako kopie .bad.",
         "codeEditorLaunch": {
             "title": "Nie znaleziono {{editor}}",
             "message": "Ten projekt jest skonfigurowany do używania {{editor}}. Godot może się uruchomić, ale otwieranie skryptów w tym edytorze może się nie powieść.",
@@ -436,7 +436,7 @@
         "fields": {
             "name": {
                 "label": "Nazwa projektu",
-                "help": "Nazwa wyświetlana w Godot Launcher.",
+                "help": "Nazwa wyświetlana w Eldritch Launcher.",
                 "placeholder": "Mój projekt"
             },
             "path": {

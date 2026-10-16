@@ -1,5 +1,5 @@
 {
-    "title": "Godot Launcher",
+    "title": "Eldritch Launcher",
     "steps": {
         "welcome": "Bienvenue",
         "macos": "MacOS",
@@ -28,21 +28,21 @@
         "backCustomizeBehavior": "Retour : Personnaliser le comportement"
     },
     "welcomeStep": {
-        "title": "Merci d'utiliser Godot Launcher !",
-        "description": "Godot Launcher facilite la <strong>gestion de plusieurs versions du moteur Godot</strong> et maintient les <strong>paramètres de l'éditeur séparés pour chaque projet.</strong>",
+        "title": "Merci d'utiliser Eldritch Launcher !",
+        "description": "Eldritch Launcher facilite la <strong>gestion de plusieurs versions du moteur Godot</strong> et maintient les <strong>paramètres de l'éditeur séparés pour chaque projet.</strong>",
         "feedback": "En l'utilisant, vous contribuez à soutenir le projet ! Si vous avez des commentaires ou trouvez un bug, faites-le nous savoir, nous serions ravis de l'améliorer encore pour vous.",
         "enjoy": "Profitez-en et bon codage !"
     },
     "startStep": {
         "title": "Vous êtes prêt ! 🚀",
-        "subtitle": "Godot Launcher est prêt à fonctionner ! Vous pouvez maintenant gérer vos projets et explorer toutes les fonctionnalités.",
+        "subtitle": "Eldritch Launcher est prêt à fonctionner ! Vous pouvez maintenant gérer vos projets et explorer toutes les fonctionnalités.",
         "whatsNext": "Quelle est la suite ?",
         "installTab": "Installez et expérimentez les dernières préversions dans l'onglet <strong>Installation</strong>.",
         "projectsTab": "Ajoutez ou créez rapidement des projets dans l'onglet <strong>Projets</strong>.",
         "settingsTab": "Personnalisez votre expérience comme vous le souhaitez dans l'onglet <strong>Paramètres</strong>."
     },
     "customizeBehavior": {
-        "trayAvailabilityWarning": "La prise en charge de la zone de notification n'a pas pu être confirmée pour cette session. Godot Launcher restera visible ou se fermera au lieu d'être masqué.",
+        "trayAvailabilityWarning": "La prise en charge de la zone de notification n'a pas pu être confirmée pour cette session. Eldritch Launcher restera visible ou se fermera au lieu d'être masqué.",
         "trayCloseFallback": "Fermer dans la zone de notification laissera le lanceur visible.",
         "trayStartFallback": "Démarrer dans la zone de notification ouvrira le lanceur normalement.",
         "afterLaunching": "Après le lancement d'un projet",
@@ -74,14 +74,14 @@
     },
     "macosStep": {
         "title": "Note macOS",
-        "intro": "Godot Launcher crée une copie de l'éditeur pour chaque projet.",
+        "intro": "Eldritch Launcher crée une copie de l'éditeur pour chaque projet.",
         "whyTitle": "Pourquoi ?",
         "reason": "La création de liens symboliques sur macOS n'est pas limitée par les permissions, mais l'ouverture de l'éditeur via un lien symbolique s'est avérée peu fiable. Pour garantir une expérience fluide, nous fournissons une copie dédiée du moteur pour chaque projet. Bien que Godot ne pèse qu'environ 200 Mo (et ce n'est généralement pas un problème), sachez que plusieurs projets peuvent entraîner une utilisation accrue du disque.",
         "dotnetNote": "NOTE : Si vous travaillez avec des éditeurs .NET, vous devrez installer le SDK .NET depuis le <ButtonLink>site web Microsoft .NET</ButtonLink> <Icon />"
     },
     "windowsStep": {
         "title": "Note Windows",
-        "intro": "À partir de la version 1.4.0, Godot Launcher peut créer des <code>liens symboliques</code> vers l'éditeur pour chaque projet. Pour simplifier la configuration, nous utilisons désormais par défaut des copies locales. Vous pouvez activer les liens symboliques à tout moment depuis <strong>Paramètres → Comportement → Liens symboliques de l'éditeur</strong> lorsque vous souhaitez réduire l'utilisation du disque.",
+        "intro": "À partir de la version 1.4.0, Eldritch Launcher peut créer des <code>liens symboliques</code> vers l'éditeur pour chaque projet. Pour simplifier la configuration, nous utilisons désormais par défaut des copies locales. Vous pouvez activer les liens symboliques à tout moment depuis <strong>Paramètres → Comportement → Liens symboliques de l'éditeur</strong> lorsque vous souhaitez réduire l'utilisation du disque.",
         "change1": "La création de liens symboliques sous Windows nécessite des privilèges d'administrateur et l'exécution de commandes élevées. Le lanceur élève maintenant les permissions uniquement lors de la création de liens symboliques.",
         "change2": "Vous verrez une invite UAC uniquement si vous n'êtes pas <code>Administrateur</code> sur votre PC et si le <code>Mode développeur</code> n'est pas activé.",
         "change3": "Prêt à essayer les liens symboliques ? Activez <strong>Liens symboliques de l'éditeur</strong> dans les Paramètres lorsque vous êtes prêt pour l'invite d'élévation occasionnelle.",
@@ -89,7 +89,7 @@
     },
     "linuxStep": {
         "title": "Note Linux",
-        "intro": "Godot Launcher utilise des liens symboliques pour chaque projet",
+        "intro": "Eldritch Launcher utilise des liens symboliques pour chaque projet",
         "whyTitle": "Pourquoi ?",
         "reason": "Contrairement aux versions Windows et MacOS, Linux utilise des liens symboliques vers l'éditeur pour lancer des projets. Cela économise de l'espace disque et permet des paramètres par projet.",
         "dotnetNote": "NOTE : Si vous travaillez avec des éditeurs .NET, vous devrez installer le SDK .NET depuis le <ButtonLink>site web Microsoft .NET</ButtonLink> <Icon />"
@@ -105,16 +105,16 @@
         "reassurance": "Vous pourrez modifier ces options plus tard dans les paramètres.",
         "welcome": {
             "title": "Bienvenue",
-            "description": "Configurez Godot Launcher selon votre façon de travailler.",
+            "description": "Configurez Eldritch Launcher selon votre façon de travailler.",
             "expectation": "En quelques étapes, choisissez où stocker les projets et les éditeurs, connectez un éditeur de code et définissez le comportement au lancement.",
-            "benefitsLabel": "Ce que Godot Launcher vous permet de faire",
+            "benefitsLabel": "Ce que Eldritch Launcher vous permet de faire",
             "officialAndCustomEditors": "Installer et gérer des éditeurs Godot officiels ou personnalisés.",
             "projectSettings": "Conserver un choix d'éditeur et des paramètres distincts pour chaque projet.",
             "codeEditorIntegration": "Ouvrir les fichiers du projet dans un éditeur de code détecté."
         },
         "appearance": {
             "title": "Choisissez votre apparence",
-            "description": "Choisissez l'apparence de Godot Launcher. Votre sélection est appliquée immédiatement.",
+            "description": "Choisissez l'apparence de Eldritch Launcher. Votre sélection est appliquée immédiatement.",
             "preview": "Vous pourrez modifier l'apparence plus tard dans les paramètres."
         },
         "setup": {
@@ -131,7 +131,7 @@
             "browseImportedTemplatesLocation": "Parcourir les dossiers pour les modèles d'exportation importés",
             "movingImportedTemplates": "Déplacement des modèles d'exportation importés : {{stage}}",
             "codeEditor": "Éditeur de code par défaut",
-            "codeEditorHelp": "Utilisé pour ouvrir les scripts et les fichiers depuis Godot Launcher. Vous pourrez le modifier plus tard.",
+            "codeEditorHelp": "Utilisé pour ouvrir les scripts et les fichiers depuis Eldritch Launcher. Vous pourrez le modifier plus tard.",
             "noCodeEditor": "Aucun",
             "detectingCodeEditors": "Détection des éditeurs de code installés...",
             "codeEditorDetectionFailed": "Aucun éditeur de code n'a pu être détecté. Vous pourrez en configurer un plus tard dans les paramètres.",
@@ -145,16 +145,16 @@
         },
         "preferences": {
             "title": "Choisissez vos préférences",
-            "description": "Définissez le comportement de Godot Launcher après l'ouverture d'un projet et au démarrage de l'ordinateur.",
+            "description": "Définissez le comportement de Eldritch Launcher après l'ouverture d'un projet et au démarrage de l'ordinateur.",
             "afterLaunching": "Après le lancement d'un projet",
-            "keepOpen": "Garder Godot Launcher ouvert",
-            "keepOpenHelp": "Laisser la fenêtre de Godot Launcher visible.",
-            "minimizeHelp": "Réduire la fenêtre de Godot Launcher.",
-            "closeToTrayHelp": "Masquer la fenêtre de Godot Launcher tout en la gardant accessible dans la zone de notification.",
-            "closeToTrayFallback": "Si la zone de notification est indisponible, Godot Launcher reste ouvert.",
-            "trayUnavailable": "La prise en charge de la zone de notification n'a pas pu être confirmée. Les actions correspondantes laisseront la fenêtre de Godot Launcher ouverte par sécurité.",
+            "keepOpen": "Garder Eldritch Launcher ouvert",
+            "keepOpenHelp": "Laisser la fenêtre de Eldritch Launcher visible.",
+            "minimizeHelp": "Réduire la fenêtre de Eldritch Launcher.",
+            "closeToTrayHelp": "Masquer la fenêtre de Eldritch Launcher tout en la gardant accessible dans la zone de notification.",
+            "closeToTrayFallback": "Si la zone de notification est indisponible, Eldritch Launcher reste ouvert.",
+            "trayUnavailable": "La prise en charge de la zone de notification n'a pas pu être confirmée. Les actions correspondantes laisseront la fenêtre de Eldritch Launcher ouverte par sécurité.",
             "startupTitle": "Démarrage",
-            "startWithComputer": "Lancer Godot Launcher au démarrage de l'ordinateur",
+            "startWithComputer": "Lancer Eldritch Launcher au démarrage de l'ordinateur",
             "startInTray": "Démarrer dans la zone de notification",
             "startInTrayFallback": "Ouvre une fenêtre normale si la zone de notification est indisponible."
         },

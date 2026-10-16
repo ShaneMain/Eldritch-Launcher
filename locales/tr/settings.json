@@ -14,7 +14,7 @@
     "appearance": {
         "theme": {
             "title": "Tema",
-            "description": "Godot Launcher görünümünü özelleştirin",
+            "description": "Eldritch Launcher görünümünü özelleştirin",
             "light": "Açık",
             "dark": "Koyu",
             "system": "Sistem (otomatik)"
@@ -22,30 +22,30 @@
     },
     "behavior": {
         "trayAvailability": {
-            "warning": "Bu oturum için sistem tepsisi desteği doğrulanamadı. Godot Launcher gizlenmek yerine görünür kalacak veya kapanacak.",
+            "warning": "Bu oturum için sistem tepsisi desteği doğrulanamadı. Eldritch Launcher gizlenmek yerine görünür kalacak veya kapanacak.",
             "closeFallback": "Sistem tepsisine kapatma, başlatıcıyı görünür bırakacaktır."
         },
         "projects": {
             "title": "Projeler",
-            "description": "Projeler için Godot Launcher davranışını seçin.",
+            "description": "Projeler için Eldritch Launcher davranışını seçin.",
             "confirmRemove": "Projeleri kaldırırken onay iste."
         },
         "autoStart": {
             "title": "Başlangıç Tercihi",
-            "description": "Bilgisayarınız başladığında Godot Launcher'ın ne yapacağını seçin",
+            "description": "Bilgisayarınız başladığında Eldritch Launcher'ın ne yapacağını seçin",
             "linuxWarning": "Otomatik başlatma şu anda Linux'ta desteklenmiyor",
             "startOnBoot": "Bilgisayar başladığında başlat.",
             "startInTray": "Sistem tepsisinde başlat."
         },
         "windowClose": {
             "title": "Pencere kapatma",
-            "description": "Godot Launcher penceresini kapattığınızda ne olacağını seçin.",
+            "description": "Eldritch Launcher penceresini kapattığınızda ne olacağını seçin.",
             "closeToTray": "Sistem tepsisine küçült",
-            "quit": "Godot Launcher'dan çık"
+            "quit": "Eldritch Launcher'dan çık"
         },
         "projectLaunch": {
             "title": "Proje Başlatma Eylemi",
-            "description": "Bir proje başlattıktan sonra Godot Launcher'ın ne yapacağını seçin",
+            "description": "Bir proje başlattıktan sonra Eldritch Launcher'ın ne yapacağını seçin",
             "none": "Hiçbir şey",
             "minimize": "Simge durumuna küçült",
             "closeToTray": "Sistem tepsisine küçült"
@@ -77,7 +77,7 @@
     "general": {
         "language": {
             "label": "Dil",
-            "description": "Godot Launcher için dil seçin (Godot dilini değiştirmez)",
+            "description": "Eldritch Launcher için dil seçin (Godot dilini değiştirmez)",
             "system": "Sistem (Otomatik algıla)"
         }
     },
@@ -171,7 +171,7 @@
         "installation": {
             "drawerTitle": "{{tool}} ayarları",
             "title": "Kurulum",
-            "description": "Godot Launcher bu kurulumu algılar ve doğrular. {{tool}} aracını yüklemez veya güncellemez.",
+            "description": "Eldritch Launcher bu kurulumu algılar ve doğrular. {{tool}} aracını yüklemez veya güncellemez.",
             "status": "Durum",
             "path": "Yürütülebilir yol",
             "version": "Sürüm"
@@ -209,7 +209,7 @@
             },
             "installation": {
                 "title": "Kurulum",
-                "description": "Godot Launcher, her Git işleminden önce bu yürütülebilir dosyayı doğrular.",
+                "description": "Eldritch Launcher, her Git işleminden önce bu yürütülebilir dosyayı doğrular.",
                 "status": "Durum",
                 "path": "Yürütülebilir yol",
                 "version": "Sürüm"
@@ -227,7 +227,7 @@
                 },
                 "preset": {
                     "title": "Proje kimliği ön ayarı",
-                    "description": "Godot Launcher tarafından oluşturulan depolar için bir kimlik kaydedin. Proje oluşturma sırasında siz onu seçene veya otomatik olarak uygulayana kadar hiçbir etkisi yoktur.",
+                    "description": "Eldritch Launcher tarafından oluşturulan depolar için bir kimlik kaydedin. Proje oluşturma sırasında siz onu seçene veya otomatik olarak uygulayana kadar hiçbir etkisi yoktur.",
                     "nameHelp": "Yeni bir depo yerel Git kimliği için önerilen yazar adı.",
                     "emailHelp": "Yeni bir depo yerel Git kimliği için önerilen yazar e-postası.",
                     "automaticTitle": "Yeni kod depoları için otomatik olarak kullan",
@@ -257,10 +257,10 @@
     },
     "connections": {
         "title": "Bağlantıları yönet",
-        "overview": "Harici hizmetleri Godot Launcher'da kullanmak için bağlayın.",
+        "overview": "Harici hizmetleri Eldritch Launcher'da kullanmak için bağlayın.",
         "loading": "Bağlantılar yükleniyor...",
         "loadError": "Bağlantılar yüklenemedi.",
-        "genericDescription": "Bu hizmeti Godot Launcher'da kullanmak için bağlayın.",
+        "genericDescription": "Bu hizmeti Eldritch Launcher'da kullanmak için bağlayın.",
         "flow": {
             "reauthoriseDescription": "Yeniden yetkilendirilecek hesabı seçin, ardından GitHub bağlantısını yeniden kurmak için tarayıcınızda devam edin.",
             "connectAnotherAccount": "Başka bir hesap bağla",
@@ -278,7 +278,7 @@
             "accessDescription": "GitHub üzerindeki depo erişimini yönetin veya başka bir hesap ekleyin, ardından depo listesini yenileyin."
         },
         "github": {
-            "description": "Depolarınızı Godot Launcher'da kullanabilmek için GitHub'ı bağlayın.",
+            "description": "Depolarınızı Eldritch Launcher'da kullanabilmek için GitHub'ı bağlayın.",
             "accessNote": "GitHub uygulamasının hangi depolara erişebileceğini siz belirlersiniz.",
             "summary": "{{count}} bağlantı"
         },
@@ -315,12 +315,12 @@
         },
         "drawer": {
             "title": "GitHub bağlantıları",
-            "description": "Godot Launcher'ın kullanabildiği GitHub bağlantılarını yönetin.",
+            "description": "Eldritch Launcher'ın kullanabildiği GitHub bağlantılarını yönetin.",
             "connections": "Bağlantılar",
             "chooseConnection": "Bağlantıları seç",
             "chooseConnectionDescription": "Mevcut bir veya daha fazla GitHub App kurulumunu seçin ya da uygulamayı yeni bir yere yükleyin.",
             "finishSetup": "Kurulumu GitHub'da tamamlayın",
-            "finishSetupDescription": "Kurulumu tarayıcınızda tamamlayın. Godot Launcher beklemeye devam ederken buraya dönebilirsiniz.",
+            "finishSetupDescription": "Kurulumu tarayıcınızda tamamlayın. Eldritch Launcher beklemeye devam ederken buraya dönebilirsiniz.",
             "installations": "Uygulama kurulumları",
             "noInstallations": "Bu bağlantının henüz erişilebilir bir uygulama kurulumu yok.",
             "organization": "Kuruluş",
@@ -328,7 +328,7 @@
         },
         "disconnectConfirm": {
             "title": "{{connection}} bağlantısı kesilsin mi?",
-            "description": "Bu işlem bağlantıyı Godot Launcher'dan kaldırır. GitHub uygulamasını kaldırmaz veya proje uzak adreslerini değiştirmez.",
+            "description": "Bu işlem bağlantıyı Eldritch Launcher'dan kaldırır. GitHub uygulamasını kaldırmaz veya proje uzak adreslerini değiştirmez.",
             "finalDescription": "Bu işlem bağlantıyı bu cihazdan kaldırır. GitHub uygulamasını kaldırmaz; depo erişimini veya proje uzak adreslerini değiştirmez.",
             "revokeAllDevices": "Bu GitHub yetkilendirmesini tüm Godot Launcher cihazlarında da iptal et.",
             "revokeDetail": "Bu GitHub hesabına bağlı diğer Godot Launcher cihazlarının yeniden bağlanması gerekir.",
@@ -339,13 +339,13 @@
         },
         "credentialStorage": {
             "configure": "Depolamayı yapılandır",
-            "restartFailedTitle": "Godot Launcher yeniden başlatılamadı",
-            "restartFailed": "Seçiminiz kaydedildi. Kaydedilen seçimi uygulamak için Godot Launcher uygulamasını tamamen kapatıp yeniden açın.",
+            "restartFailedTitle": "Eldritch Launcher yeniden başlatılamadı",
+            "restartFailed": "Seçiminiz kaydedildi. Kaydedilen seçimi uygulamak için Eldritch Launcher uygulamasını tamamen kapatıp yeniden açın.",
             "restartNow": "Şimdi yeniden başlat",
             "notNow": "Şimdi değil",
             "linuxOnly": "Yalnızca Linux",
             "title": "Kimlik bilgisi depolama",
-            "description": "Godot Launcher'ın Linux'ta güvenli kimlik bilgisi depolamasına nasıl erişeceğini seçin. Secret Service, masaüstü oturumunuzda çalışan uyumlu bir anahtarlık gerektirir.",
+            "description": "Eldritch Launcher'ın Linux'ta güvenli kimlik bilgisi depolamasına nasıl erişeceğini seçin. Secret Service, masaüstü oturumunuzda çalışan uyumlu bir anahtarlık gerektirir.",
             "savedChoice": "Kaydedilmiş seçim",
             "automatic": "Otomatik",
             "secretService": "Secret Service",
@@ -353,14 +353,14 @@
             "save": "Seçimi kaydet",
             "saving": "Kaydediliyor...",
             "saveError": "Seçim kaydedilemedi. Daha önce kaydedilmiş seçiminiz değişmedi. Tekrar deneyin.",
-            "restart": "Kaydedilmiş seçimi uygulamak için sistem tepsisi işlemi dahil Godot Launcher'ı tamamen kapatın ve yeniden açın.",
+            "restart": "Kaydedilmiş seçimi uygulamak için sistem tepsisi işlemi dahil Eldritch Launcher'ı tamamen kapatın ve yeniden açın.",
             "restartPending": "Kaydedilmiş seçim, başlangıçta kullanılan seçimden farklı. Tam yeniden başlatma gerekli.",
             "override": "Bu oturumda kimlik bilgisi depolamasını bir başlatma bayrağı kontrol ediyor ({{backend}}). Kaydedilmiş seçimi kullanmak istiyorsanız yeniden başlatmadan önce bayrağı kaldırın.",
             "sessionChoice": "Başlangıçtaki seçim: {{choice}}",
             "activeBackend": "Etkin depolama arka ucu: {{backend}}",
             "available": "Güvenli depolama kullanılabilir.",
-            "unavailable": "Güvenli depolama kullanılamıyor. Uyumlu bir anahtarlık hizmetinin çalıştığını ve erişilebilir olduğunu kontrol edin, ardından Godot Launcher'ı tamamen yeniden başlatın.",
-            "selectionFailed": "Secret Service istendi ancak etkin arka uç değil. Uyumlu bir Secret Service anahtarlığının çalıştığını kontrol edin, ardından Godot Launcher'ı tamamen yeniden başlatın.",
+            "unavailable": "Güvenli depolama kullanılamıyor. Uyumlu bir anahtarlık hizmetinin çalıştığını ve erişilebilir olduğunu kontrol edin, ardından Eldritch Launcher'ı tamamen yeniden başlatın.",
+            "selectionFailed": "Secret Service istendi ancak etkin arka uç değil. Uyumlu bir Secret Service anahtarlığının çalıştığını kontrol edin, ardından Eldritch Launcher'ı tamamen yeniden başlatın.",
             "statusError": "Geçerli depolama durumu okunamadı.",
             "loading": "Depolama durumu okunuyor...",
             "summary": "Linux için güvenli kimlik bilgisi depolamasını seçin.",
@@ -377,7 +377,7 @@
     },
     "updates": {
         "title": "Güncellemeler",
-        "description": "Godot Launcher'ın güncellemeleri nasıl kontrol edeceğini yapılandırın",
+        "description": "Eldritch Launcher'ın güncellemeleri nasıl kontrol edeceğini yapılandırın",
         "autoCheck": "Güncellemeleri otomatik kontrol et",
         "betaChannel": "Beta güncellemeleri al",
         "betaChannelDescription": "GitHub’dan ön sürüm paketlerini indirir; bunlar resmi sürümlere göre daha az kararlı olabilir.",
@@ -385,8 +385,8 @@
         "downloadNow": "Güncellemeyi indir",
         "skipVersion": "Bu sürümü atla",
         "unskipVersion": "Atlanan güncellemeyi geri al",
-        "readyWithVersion": "{{version}} sürümü hazır, yüklemek için Godot Launcher'ı yeniden başlatın. <Button>Şimdi yeniden başlat</Button>",
-        "readyNoVersion": "Güncelleme hazır, yüklemek için Godot Launcher'ı yeniden başlatın. <Button>Şimdi yeniden başlat</Button>",
+        "readyWithVersion": "{{version}} sürümü hazır, yüklemek için Eldritch Launcher'ı yeniden başlatın. <Button>Şimdi yeniden başlat</Button>",
+        "readyNoVersion": "Güncelleme hazır, yüklemek için Eldritch Launcher'ı yeniden başlatın. <Button>Şimdi yeniden başlat</Button>",
         "manualWithVersion": "Sürüm {{version}} kullanılabilir, ancak bu rpm-ostree sisteminde otomatik kurulum desteklenmiyor. <Button>İndirme sayfasını aç</Button>",
         "manualNoVersion": "Yeni bir sürüm kullanılabilir, ancak bu rpm-ostree sisteminde otomatik kurulum desteklenmiyor. <Button>İndirme sayfasını aç</Button>"
     },
@@ -401,12 +401,12 @@
         "enableAction": "Sembolik bağlantıları etkinleştir",
         "disableAction": "Sembolik bağlantıları devre dışı bırak",
         "enableDescription": {
-            "line1": "Etkinleştirildiğinde, Godot Launcher her projeyi kopyalamak yerine kurulu editöre bağlar.",
+            "line1": "Etkinleştirildiğinde, Eldritch Launcher her projeyi kopyalamak yerine kurulu editöre bağlar.",
             "line2": "Bu disk kullanımını düşük tutar, ancak Windows yeni sembolik bağlantılar oluşturulduğunda yönetici onayı isteyebilir.",
             "line3": "Mevcut projeler, editör sürümleri değiştirilene veya yeniden yüklenene kadar mevcut yerel kopyalarını korur."
         },
         "disableDescription": {
-            "line1": "Yetki yükseltme istemlerinden kaçınmak için yerel kopyalara geri dönün. Godot Launcher, editör dosyalarını her projeye kopyalayacaktır.",
+            "line1": "Yetki yükseltme istemlerinden kaçınmak için yerel kopyalara geri dönün. Eldritch Launcher, editör dosyalarını her projeye kopyalayacaktır.",
             "line2": "Mevcut sembolik bağlantılar, editör sürümleri değiştirilene veya yeniden yüklenene kadar yerinde kalır."
         }
     }

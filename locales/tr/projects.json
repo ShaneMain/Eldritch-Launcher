@@ -11,10 +11,10 @@
             "missing-project": "Bu proje artık kullanılamıyor.",
             "missing-directory": "Proje klasörü artık kullanılamıyor.",
             "disabled": "Terminal devre dışı. Ayarlar > Araçlar > Terminal bölümünden etkinleştirin.",
-            "invalid-configuration": "Kayıtlı terminal ayarları Godot Launcher'ın bu sürümüyle uyumlu değil.",
+            "invalid-configuration": "Kayıtlı terminal ayarları Eldritch Launcher'ın bu sürümüyle uyumlu değil.",
             "unavailable": "Seçilen terminal bulunamadı. Ayarlar > Araçlar > Terminal bölümünden seçin.",
             "unsupported-directory": "Seçilen terminal bu proje klasörünü açamaz.",
-            "launch-failed": "Godot Launcher seçilen terminali açamadı. Yeniden deneyin veya başka bir terminal seçin."
+            "launch-failed": "Eldritch Launcher seçilen terminali açamadı. Yeniden deneyin veya başka bir terminal seçin."
         },
         "openSettings": "Terminal ayarlarını aç"
     },
@@ -22,15 +22,15 @@
     "emptyState": {
         "welcome": {
             "heading": "Bir proje ekleyin veya oluşturun",
-            "description": "Mevcut çalışmanızı Godot Launcher'a getirin veya yeni bir şeye başlayın.",
+            "description": "Mevcut çalışmanızı Eldritch Launcher'a getirin veya yeni bir şeye başlayın.",
             "newProject": {
                 "heading": "Yeni proje",
-                "description": "Bir Godot sürümü seçin.\nGerekirse Godot Launcher indirir.",
+                "description": "Bir Godot sürümü seçin.\nGerekirse Eldritch Launcher indirir.",
                 "action": "Proje oluştur"
             },
             "existingProject": {
                 "heading": "Mevcut proje",
-                "description": "Godot Launcher, her projenin ihtiyaç duyduğu\nGodot sürümünü bulur.",
+                "description": "Eldritch Launcher, her projenin ihtiyaç duyduğu\nGodot sürümünü bulur.",
                 "fromComputer": "Bu bilgisayardan",
                 "fromGitHub": "GitHub'dan",
                 "fromPublicGit": "Herkese açık Git URL'sinden",
@@ -40,7 +40,7 @@
         "addExistingProject": "Mevcut bir proje ekle",
         "withoutEditor": {
             "heading": "Bir proje başlatmak için Godot'yu kurun",
-            "description": "Godot Launcher'ın proje oluşturabilmesi veya çalıştırabilmesi için bir düzenleyici gerekir.",
+            "description": "Eldritch Launcher'ın proje oluşturabilmesi veya çalıştırabilmesi için bir düzenleyici gerekir.",
             "installEditor": "Bir düzenleyici kur",
             "installingDescription": "Düzenleyiciniz kuruluyor. Hazır olur olmaz bir proje oluşturabilirsiniz.",
             "installingEditor": "Düzenleyici kuruluyor..."
@@ -224,7 +224,7 @@
             },
             "submodules": {
                 "title": "Bu depo Git alt modülleri kullanıyor",
-                "description": "Godot Launcher yeniden taramadan önce anonim ve herkese açık HTTPS alt modüllerini başlatabilir. Bir alt modül gizliyse veya desteklenmeyen bir URL kullanıyorsa işlem durur.",
+                "description": "Eldritch Launcher yeniden taramadan önce anonim ve herkese açık HTTPS alt modüllerini başlatabilir. Bir alt modül gizliyse veya desteklenmeyen bir URL kullanıyorsa işlem durur.",
                 "preparing": "Alt modül başlatma hazırlanıyor...",
                 "initialise": "Alt modülleri başlat",
                 "continueWithoutSubmodules": "Alt modüller olmadan devam et",
@@ -260,7 +260,7 @@
                 "added": "Eklendi",
                 "skipped": "Atlandı",
                 "failed": "Başarısız",
-                "alreadyAdded": "Bu ada veya yola sahip bir proje zaten Godot Launcher'da bulunuyor.",
+                "alreadyAdded": "Bu ada veya yola sahip bir proje zaten Eldritch Launcher'da bulunuyor.",
                 "notAdded": "Proje eklenmedi."
             },
             "editorBatch": {
@@ -300,8 +300,8 @@
         },
         "conflicts": {
             "title": "Proje içe aktarımlarını incele",
-            "description": "Bir Godot Launcher adı seçin veya projeyi atlayın. Godot proje adları ve klasörler değişmez.",
-            "label": "Godot Launcher adı",
+            "description": "Bir Eldritch Launcher adı seçin veya projeyi atlayın. Godot proje adları ve klasörler değişmez.",
+            "label": "Eldritch Launcher adı",
             "name": "Bu proje adı zaten kullanılıyor. Farklı bir ad seçin veya bu projeyi atlayın.",
             "folder": "Bu klasör zaten kayıtlı veya seçili. Bu girdiyi atlayın.",
             "invalid": "Geçerli bir ad girin. Okunamayan proje dosyalarını atlayın.",
@@ -346,7 +346,7 @@
             "missingProjectFile": "Proje dosyası bulunamadı. Proje konumunu kontrol edin veya projeyi kaldırıp yeniden ekleyin.",
             "missingEditor": "Seçilen düzenleyici kullanılamıyor. Sürücüyü bağlayın veya başka bir düzenleyici seçin."
         },
-        "recoveredCodeEditorConfig": "Bazı kod düzenleyici yapılandırma dosyaları geçersizdi. Godot Launcher bunları yeniden oluşturdu ve özgün dosyaları .bad kopyaları olarak korudu.",
+        "recoveredCodeEditorConfig": "Bazı kod düzenleyici yapılandırma dosyaları geçersizdi. Eldritch Launcher bunları yeniden oluşturdu ve özgün dosyaları .bad kopyaları olarak korudu.",
         "codeEditorLaunch": {
             "title": "{{editor}} bulunamadı",
             "message": "Bu proje {{editor}} kullanacak şekilde yapılandırılmış. Godot yine de başlatılabilir, ancak betikleri bu düzenleyicide açmak başarısız olabilir.",
@@ -436,7 +436,7 @@
         "fields": {
             "name": {
                 "label": "Proje adı",
-                "help": "Godot Launcher'da gösterilen ad.",
+                "help": "Eldritch Launcher'da gösterilen ad.",
                 "placeholder": "Projem"
             },
             "path": {
@@ -466,7 +466,7 @@
             "renameLabel": "Godot projesini de yeniden adlandır",
             "loading": "Godot projesi denetleniyor...",
             "currentName": "Geçerli Godot proje adı: {{name}}",
-            "unavailable": "project.godot kullanılamıyor. Yalnızca Godot Launcher adı değiştirilebilir."
+            "unavailable": "project.godot kullanılamıyor. Yalnızca Eldritch Launcher adı değiştirilebilir."
         },
         "actions": {
             "installAndSave": "Yükle ve kaydet",

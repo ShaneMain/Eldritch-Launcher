@@ -39,7 +39,7 @@ test('isolates persisted preferences and Electron user data', async () => {
     );
     const preferences = JSON.parse(
         await fs.readFile(
-            path.join(fixtureHome, '.gd-launcher', 'prefs.json'),
+            path.join(fixtureHome, '.eldritch-launcher', 'prefs.json'),
             'utf-8',
         ),
     ) as UserPreferences;
@@ -54,7 +54,7 @@ test('isolates persisted preferences and Electron user data', async () => {
         path.join(fixtureHome, 'Godot', 'Editors'),
     );
     expect(preferences.config_location).toBe(
-        path.join(fixtureHome, '.gd-launcher'),
+        path.join(fixtureHome, '.eldritch-launcher'),
     );
 });
 

@@ -666,7 +666,7 @@ test('checks and confirms an exact empty repository after uncertain creation', a
         .click();
     await expect(
         recoveryDialog.getByText(
-            'GitHub contains this exact empty repository. Confirm that you want Godot Launcher to use it.',
+            'GitHub contains this exact empty repository. Confirm that you want Eldritch Launcher to use it.',
         ),
     ).toBeVisible();
     await expect(

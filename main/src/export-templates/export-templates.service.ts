@@ -2341,7 +2341,10 @@ export class ExportTemplatesService {
      * @param root - Canonical shared root.
      */
     private workParent(root: string): string {
-        return path.join(path.dirname(root), '.godot-launcher-template-work');
+        return path.join(
+            path.dirname(root),
+            '.eldritch-launcher-template-work',
+        );
     }
     /** Refuses a shared location redirected while a review was open.
      * @param work - Operation whose root was resolved during preparation.

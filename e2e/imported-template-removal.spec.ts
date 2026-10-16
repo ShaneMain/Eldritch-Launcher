@@ -22,7 +22,7 @@ test.setTimeout(90_000);
  * @param build - Build whose immutable contents are needed.
  */
 function contents(build: ImportedTemplateBuild) {
-    return path.join(home, '.gd-launcher', 'export-templates', 'imported', build.setId, build.directoryName);
+    return path.join(home, '.eldritch-launcher', 'export-templates', 'imported', build.setId, build.directoryName);
 }
 
 /** Launches Electron against the isolated project and template stores. */
@@ -39,10 +39,10 @@ async function projects(): Promise<ProjectDetails[]> {
 
 test.beforeEach(async () => {
     home = await createFixtureHome();
-    root = path.join(home, '.gd-launcher', 'godot', 'export_templates');
-    projectsFile = path.join(home, '.gd-launcher', 'projects.json');
-    registryFile = path.join(home, '.gd-launcher', 'export-templates', 'imported-templates.json');
-    const prefsFile = path.join(home, '.gd-launcher', 'prefs.json');
+    root = path.join(home, '.eldritch-launcher', 'godot', 'export_templates');
+    projectsFile = path.join(home, '.eldritch-launcher', 'projects.json');
+    registryFile = path.join(home, '.eldritch-launcher', 'export-templates', 'imported-templates.json');
+    const prefsFile = path.join(home, '.eldritch-launcher', 'prefs.json');
     const prefs = JSON.parse(await fs.readFile(prefsFile, 'utf8'));
     await fs.writeFile(prefsFile, JSON.stringify({ ...prefs, language: 'en', export_template_migration_offered: true }));
     const builds: ImportedTemplateBuild[] = [

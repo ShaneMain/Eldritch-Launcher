@@ -11,10 +11,10 @@
             "missing-project": "此项目已不可用。",
             "missing-directory": "项目文件夹已不可用。",
             "disabled": "终端已禁用。请在设置 > 工具 > 终端中启用。",
-            "invalid-configuration": "保存的终端设置与此版本的 Godot Launcher 不兼容。",
+            "invalid-configuration": "保存的终端设置与此版本的 Eldritch Launcher 不兼容。",
             "unavailable": "未找到所选终端。请在设置 > 工具 > 终端中选择。",
             "unsupported-directory": "所选终端无法打开此项目文件夹。",
-            "launch-failed": "Godot Launcher 无法打开所选终端。请重试或选择其他终端。"
+            "launch-failed": "Eldritch Launcher 无法打开所选终端。请重试或选择其他终端。"
         },
         "openSettings": "打开终端设置"
     },
@@ -22,15 +22,15 @@
     "emptyState": {
         "welcome": {
             "heading": "添加或创建项目",
-            "description": "将现有工作添加到 Godot Launcher，或开始新项目。",
+            "description": "将现有工作添加到 Eldritch Launcher，或开始新项目。",
             "newProject": {
                 "heading": "新建项目",
-                "description": "选择 Godot 版本。\n如有需要，Godot Launcher 会下载它。",
+                "description": "选择 Godot 版本。\n如有需要，Eldritch Launcher 会下载它。",
                 "action": "创建项目"
             },
             "existingProject": {
                 "heading": "现有项目",
-                "description": "Godot Launcher 会找到每个项目\n所需的 Godot 版本。",
+                "description": "Eldritch Launcher 会找到每个项目\n所需的 Godot 版本。",
                 "fromComputer": "从此电脑",
                 "fromGitHub": "从 GitHub",
                 "fromPublicGit": "从公共 Git URL",
@@ -40,7 +40,7 @@
         "addExistingProject": "添加现有项目",
         "withoutEditor": {
             "heading": "安装 Godot 以开始项目",
-            "description": "Godot Launcher 需要编辑器才能创建或运行项目。",
+            "description": "Eldritch Launcher 需要编辑器才能创建或运行项目。",
             "installEditor": "安装编辑器",
             "installingDescription": "编辑器正在安装。安装完成后即可创建项目。",
             "installingEditor": "正在安装编辑器..."
@@ -208,7 +208,7 @@
                 "addProjects": "添加所选项目（{{count}}）",
                 "cloneAndAdd": "克隆并添加项目",
                 "cancelImport": "取消导入",
-                "retryRegistration": "重试添加到 Godot Launcher",
+                "retryRegistration": "重试添加到 Eldritch Launcher",
                 "reviewAndRetry": "检查并重试",
                 "close": "关闭",
                 "done": "完成",
@@ -224,7 +224,7 @@
             },
             "submodules": {
                 "title": "此仓库使用 Git 子模块",
-                "description": "Godot Launcher 可以在重新扫描前初始化可匿名访问的公共 HTTPS 子模块。如果子模块为私有仓库或使用不受支持的 URL，操作将停止。",
+                "description": "Eldritch Launcher 可以在重新扫描前初始化可匿名访问的公共 HTTPS 子模块。如果子模块为私有仓库或使用不受支持的 URL，操作将停止。",
                 "preparing": "正在准备初始化子模块...",
                 "initialise": "初始化子模块",
                 "continueWithoutSubmodules": "不初始化子模块并继续",
@@ -260,7 +260,7 @@
                 "added": "已添加",
                 "skipped": "已跳过",
                 "failed": "失败",
-                "alreadyAdded": "Godot Launcher 中已有相同名称或路径的项目。",
+                "alreadyAdded": "Eldritch Launcher 中已有相同名称或路径的项目。",
                 "notAdded": "未添加该项目。"
             },
             "editorBatch": {
@@ -292,7 +292,7 @@
                 "discoveryLimitExceeded": "存储库已克隆，但规模过大或嵌套过深，无法安全扫描。",
                 "finaliseFailed": "已完成的克隆无法移动到其目的地。",
                 "cancelled": "进口被取消。",
-                "registration-failed": "存储库已克隆，但无法添加到 Godot Launcher。",
+                "registration-failed": "存储库已克隆，但无法添加到 Eldritch Launcher。",
                 "cloneFolderOpenFailed": "无法打开克隆文件夹。",
                 "cloneCleanupChanged": "导入后克隆已被更改或替换，因此未将其删除。",
                 "cloneCleanupFailed": "无法删除克隆。克隆已保留。"
@@ -300,8 +300,8 @@
         },
         "conflicts": {
             "title": "检查项目导入",
-            "description": "选择 Godot Launcher 中的名称或跳过项目。Godot 项目名称和文件夹保持不变。",
-            "label": "Godot Launcher 名称",
+            "description": "选择 Eldritch Launcher 中的名称或跳过项目。Godot 项目名称和文件夹保持不变。",
+            "label": "Eldritch Launcher 名称",
             "name": "此项目名称已被使用。请选择其他名称或跳过此项目。",
             "folder": "此文件夹已注册或已选择。请跳过此项。",
             "invalid": "请输入有效名称。无法读取的项目文件必须跳过。",
@@ -341,12 +341,12 @@
         "failedAddProject": "添加项目失败：{{error}}",
         "dropProjectFilesHere": "将 Godot 项目文件拖放到此处",
         "dropProjectFilesHelpPrefix": "拖放一个或多个",
-        "dropProjectFilesHelpSuffix": "文件以将其添加到 Godot Launcher。",
+        "dropProjectFilesHelpSuffix": "文件以将其添加到 Eldritch Launcher。",
         "invalidReasons": {
             "missingProjectFile": "未找到项目文件。请检查项目位置，或移除后重新添加项目。",
             "missingEditor": "所选编辑器不可用。请挂载驱动器或选择其他编辑器。"
         },
-        "recoveredCodeEditorConfig": "部分代码编辑器配置文件无效。Godot Launcher 已重新创建它们，并将原始文件保留为 .bad 副本。",
+        "recoveredCodeEditorConfig": "部分代码编辑器配置文件无效。Eldritch Launcher 已重新创建它们，并将原始文件保留为 .bad 副本。",
         "codeEditorLaunch": {
             "title": "找不到 {{editor}}",
             "message": "此项目已配置为使用 {{editor}}。Godot 仍可启动，但可能无法在此编辑器中打开脚本。",
@@ -436,7 +436,7 @@
         "fields": {
             "name": {
                 "label": "项目名称",
-                "help": "显示在 Godot Launcher 中的名称。",
+                "help": "显示在 Eldritch Launcher 中的名称。",
                 "placeholder": "我的项目"
             },
             "path": {
@@ -466,7 +466,7 @@
             "renameLabel": "同时重命名 Godot 项目",
             "loading": "正在检查 Godot 项目...",
             "currentName": "当前 Godot 项目名称：{{name}}",
-            "unavailable": "project.godot 不可用。只能更改 Godot Launcher 中的名称。"
+            "unavailable": "project.godot 不可用。只能更改 Eldritch Launcher 中的名称。"
         },
         "actions": {
             "installAndSave": "安装并保存",

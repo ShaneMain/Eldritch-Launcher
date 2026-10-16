@@ -34,8 +34,8 @@ vi.mock('react-i18next', () => ({
     useTranslation: () => ({
         t: (key: string, values?: { version?: string }) => {
             const messages: Record<string, string> = {
-                'app.update.panel.titleWithVersion': `Godot Launcher ${values?.version}`,
-                'app.update.panel.title': 'Godot Launcher update',
+                'app.update.panel.titleWithVersion': `Eldritch Launcher ${values?.version}`,
+                'app.update.panel.title': 'Eldritch Launcher update',
                 'app.update.panel.available':
                     'Review what has changed, then download when you are ready.',
                 'app.update.panel.installAfterDownload':
@@ -143,7 +143,7 @@ describe('AppUpdateContent', () => {
     it('offers exact release notes, download and skip for an available version', async () => {
         const content = render();
         const markup = renderToStaticMarkup(content);
-        expect(markup).toContain('Godot Launcher 1.12.1');
+        expect(markup).toContain('Eldritch Launcher 1.12.1');
         expect(markup).toContain(
             'Restart to install after the download finishes.',
         );
@@ -152,7 +152,7 @@ describe('AppUpdateContent', () => {
         await button(content, 'Download update').props.onClick?.();
         await button(content, 'Skip this version').props.onClick?.();
         expect(actions.openUpdateUrl).toHaveBeenCalledWith(
-            `${LAUNCHER_RELEASE_NOTES_URL}1.12.1/`,
+            `${LAUNCHER_RELEASE_NOTES_URL}1.12.1`,
         );
         expect(actions.downloadAppUpdate).toHaveBeenCalledOnce();
         expect(actions.skipAppUpdate).toHaveBeenCalledWith('1.12.1');
@@ -162,7 +162,7 @@ describe('AppUpdateContent', () => {
         'uses generic copy and omits version actions for %s',
         (version) => {
             const markup = renderToStaticMarkup(render({ version }));
-            expect(markup).toContain('Godot Launcher update');
+            expect(markup).toContain('Eldritch Launcher update');
             expect(markup).not.toContain('Read release notes');
             expect(markup).not.toContain('Skip this version');
             expect(markup).toContain('Download update');
@@ -288,7 +288,7 @@ describe('AppUpdateContent', () => {
             ).toBe(false);
             await button(downloading, 'Read release notes').props.onClick?.();
             expect(actions.openUpdateUrl).toHaveBeenCalledWith(
-                `${LAUNCHER_RELEASE_NOTES_URL}1.12.1/`,
+                `${LAUNCHER_RELEASE_NOTES_URL}1.12.1`,
             );
             expect(
                 renderToStaticMarkup(render({ type: 'downloading' })),

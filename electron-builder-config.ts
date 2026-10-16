@@ -11,12 +11,13 @@ expand(config());
 
 const currentYear = new Date().getFullYear();
 
-const linuxMetainfoFileName = 'org.godotlauncher.launcher.metainfo.xml';
+const linuxMetainfoFileName =
+    'io.github.shanemain.eldritch-launcher.metainfo.xml';
 const linuxMetainfoSource = `build-resources/linux/${linuxMetainfoFileName}`;
 const linuxMetainfoRelativePath = `usr/share/metainfo/${linuxMetainfoFileName}`;
 const linuxMetainfoPackagePath = `/${linuxMetainfoRelativePath}`;
 const linuxMetainfoMapping = `${linuxMetainfoSource}=${linuxMetainfoPackagePath}`;
-const bundledLinuxMetainfoPath = `/opt/Godot Launcher/${linuxMetainfoRelativePath}`;
+const bundledLinuxMetainfoPath = `/opt/Eldritch Launcher/${linuxMetainfoRelativePath}`;
 const { version } = require('./package.json');
 const isPrerelease =
     version.includes('beta') ||
@@ -35,11 +36,11 @@ console.log(
 );
 
 export default (<Configuration>{
-    appId: 'org.godotlauncher.launcher',
-    productName: 'Godot Launcher',
-    artifactName: 'Godot_Launcher-${version}-${os}_${arch}.${ext}',
+    appId: 'io.github.shanemain.eldritch-launcher',
+    productName: 'Eldritch Launcher',
+    artifactName: 'Eldritch_Launcher-${version}-${os}_${arch}.${ext}',
     copyright: `Copyright © 2024-${currentYear} ${'${author}'}`,
-    executableName: 'Godot Launcher',
+    executableName: 'eldritch-launcher',
 
     files: ['dist-electron', 'dist-react'],
     afterPack: async ({
@@ -78,18 +79,10 @@ export default (<Configuration>{
             arch: ['universal', 'arm64', 'x64'],
         },
         type: 'distribution',
-        hardenedRuntime: true,
-        gatekeeperAssess: false,
-        entitlements: 'build-resources/mac/entitlements.mac.plist',
-        entitlementsInherit: 'build-resources/mac/entitlements.mac.plist',
-
-        cscInstallerLink: process.env.CSC_LINK,
-        cscInstallerKeyPassword: process.env.CSC_KEY_PASSWORD,
-
-        cscLink: process.env.CSC_LINK,
-        cscKeyPassword: process.env.CSC_KEY_PASSWORD,
-
-        notarize: true,
+        // Unsigned build: no Developer ID, so no signing or notarization.
+        // Without a signature Squirrel.Mac cannot auto-update; the app
+        // falls back to the manual download flow on macOS.
+        identity: null,
     },
     linux: {
         icon: 'build-resources/linux/icon.png',
@@ -134,22 +127,10 @@ export default (<Configuration>{
         icon: 'build-resources/win/icon.ico',
         extraResources: [
             {
-                from: 'native/git-credentials-helper/windows-askpass/out/win32-${arch}/godot-launcher-git-askpass.exe',
-                to: 'git-credentials-helper/godot-launcher-git-askpass.exe',
+                from: 'native/git-credentials-helper/windows-askpass/out/win32-${arch}/eldritch-launcher-git-askpass.exe',
+                to: 'git-credentials-helper/eldritch-launcher-git-askpass.exe',
             },
         ],
-
-        // azureSignOptions: {
-        //     publisherName: process.env.WIN_SIGN_PUBLISHER_NAME,
-        //     endpoint: process.env.WIN_SIGN_ENDPOINT,
-        //     certificateProfileName:
-        //         process.env.WIN_SIGN_CERTIFICATE_PROFILE_NAME,
-        //     codeSigningAccountName:
-        //         process.env.WIN_SIGN_CODE_SIGNING_ACCOUNT_NAME,
-        //     timestampRfc3161: process.env.AZURE_TIMESTAMP_URL,
-        //     timestampDigest: process.env.AZURE_TIMESTAMP_DIGEST,
-        //     fileDigest: 'SHA256',
-        // },
 
         target: [
             {
@@ -175,8 +156,8 @@ export default (<Configuration>{
 
     publish: {
         provider: 'github',
-        owner: 'godotlauncher',
-        repo: 'launcher',
+        owner: 'ShaneMain',
+        repo: 'Eldritch-Launcher',
         releaseType: isPrerelease ? 'prerelease' : 'release',
         vPrefixedTagName: true,
         channel,

@@ -8,7 +8,7 @@ test('upgrades a legacy VS Code selection without retaining its flag', async () 
     const fixtureHome = await createFixtureHome();
     const projectsPath = path.join(
         fixtureHome,
-        '.gd-launcher',
+        '.eldritch-launcher',
         'projects.json',
     );
     const [sample] = JSON.parse(await fs.readFile(projectsPath, 'utf-8'));

@@ -36,14 +36,13 @@
             "help": "Pomoc",
             "settings": "Ustawienia",
             "connections": "Połączenia",
-            "new": "Nowość",
-            "joinCommunity": "Dołącz do społeczności"
+            "new": "Nowość"
         },
         "update": {
             "availableWithVersion": "Wersja {{version}} jest dostępna. <DownloadButton>Pobierz aktualizację</DownloadButton> lub <SkipButton>Pomiń tę wersję</SkipButton>",
             "availableNoVersion": "Nowa wersja jest dostępna. <DownloadButton>Pobierz aktualizację</DownloadButton>",
-            "readyWithVersion": "Wersja {{version}} jest gotowa, uruchom ponownie Godot Launcher, aby ją zainstalować. <RestartButton>Uruchom ponownie teraz</RestartButton>",
-            "readyNoVersion": "Aktualizacja jest gotowa, uruchom ponownie Godot Launcher, aby ją zainstalować. <RestartButton>Uruchom ponownie teraz</RestartButton>",
+            "readyWithVersion": "Wersja {{version}} jest gotowa, uruchom ponownie Eldritch Launcher, aby ją zainstalować. <RestartButton>Uruchom ponownie teraz</RestartButton>",
+            "readyNoVersion": "Aktualizacja jest gotowa, uruchom ponownie Eldritch Launcher, aby ją zainstalować. <RestartButton>Uruchom ponownie teraz</RestartButton>",
             "manualWithVersion": "Wersja {{version}} jest dostępna, ale automatyczna instalacja nie jest obsługiwana w tym systemie rpm-ostree. <ReleaseLink>Pobierz ręcznie</ReleaseLink> albo <SkipButton>Pomiń tę wersję</SkipButton>",
             "manualNoVersion": "Dostępna jest nowa wersja, ale automatyczna instalacja nie jest obsługiwana w tym systemie rpm-ostree. <ReleaseLink>Pobierz ręcznie</ReleaseLink>",
             "notification": {
@@ -55,10 +54,10 @@
                 "downloadingProgress": "Pobieranie {{percent}}%"
             },
             "panel": {
-                "titleWithVersion": "Godot Launcher {{version}}",
-                "title": "Aktualizacja Godot Launcher",
+                "titleWithVersion": "Eldritch Launcher {{version}}",
+                "title": "Aktualizacja Eldritch Launcher",
                 "installAfterDownload": "Uruchom ponownie po zakończeniu pobierania, aby zainstalować aktualizację.",
-                "ready": "Aktualizacja została pobrana. Uruchom ponownie Godot Launcher, aby ją zainstalować.",
+                "ready": "Aktualizacja została pobrana. Uruchom ponownie Eldritch Launcher, aby ją zainstalować.",
                 "manual": "Automatyczna instalacja nie jest obsługiwana na tym systemie rpm-ostree. Pobierz i zainstaluj aktualizację ręcznie.",
                 "readReleaseNotes": "Przeczytaj informacje o wydaniu",
                 "download": "Pobierz aktualizację",

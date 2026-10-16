@@ -48,14 +48,14 @@
     },
     "customEditor": {
         "selectManifestTitle": "Manifest für benutzerdefinierten Editor hinzufügen",
-        "manifestFilterName": "Godot-Launcher-Editor-Manifest",
+        "manifestFilterName": "Eldritch-Launcher-Editor-Manifest",
         "waitingForDialog": "Warten auf Dialog...",
         "replace": {
             "action": "Ersetzen",
             "title": "Benutzerdefinierten Editor ersetzen?",
             "message": "Ein benutzerdefinierter Editor mit dieser Version ist bereits registriert.",
             "versionLabel": "Version",
-            "detail": "Beim Ersetzen wird der Godot Launcher-Eintrag aktualisiert, um das ausgewählte Manifest zu verwenden. Deine Editor-Dateien werden nicht gelöscht."
+            "detail": "Beim Ersetzen wird der Eldritch Launcher-Eintrag aktualisiert, um das ausgewählte Manifest zu verwenden. Deine Editor-Dateien werden nicht gelöscht."
         },
         "drop": {
             "title": "Manifest ablegen, um benutzerdefinierten Editor hinzuzufügen",
@@ -73,7 +73,7 @@
                 },
                 "name": {
                     "label": "Anzeigename",
-                    "help": "Name, der in Godot Launcher für diesen benutzerdefinierten Editor angezeigt wird.",
+                    "help": "Name, der in Eldritch Launcher für diesen benutzerdefinierten Editor angezeigt wird.",
                     "placeholder": "Acme Godot 4.4 Benutzerdefinierter Editor"
                 },
                 "version": {
@@ -180,7 +180,7 @@
             "title": "Ausgewählte Editoren entfernen",
             "message": "Diese Editoren entfernen?",
             "managed": "Installierte Editordateien werden von deinem Gerät gelöscht. Du kannst sie später erneut installieren.",
-            "custom": "Benutzerdefinierte Editoren werden aus Godot Launcher entfernt. Ihre Dateien bleiben erhalten.",
+            "custom": "Benutzerdefinierte Editoren werden aus Eldritch Launcher entfernt. Ihre Dateien bleiben erhalten.",
             "used": "Projekte mit diesem Editor: {{names}}. Sie benötigen einen anderen Editor."
         },
         "results": {

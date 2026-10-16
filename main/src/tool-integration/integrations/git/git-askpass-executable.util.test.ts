@@ -34,7 +34,7 @@ describe('resolveWindowsGitAskPassExecutable', () => {
             path.resolve(
                 'resources',
                 'git-credentials-helper',
-                'godot-launcher-git-askpass.exe',
+                'eldritch-launcher-git-askpass.exe',
             ),
         );
         expect(fsMocks.lstat).toHaveBeenCalledWith(result);
@@ -56,7 +56,7 @@ describe('resolveWindowsGitAskPassExecutable', () => {
                 'windows-askpass',
                 'out',
                 'win32-arm64',
-                'godot-launcher-git-askpass.exe',
+                'eldritch-launcher-git-askpass.exe',
             ),
         );
     });

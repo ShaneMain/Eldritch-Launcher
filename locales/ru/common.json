@@ -36,14 +36,13 @@
             "help": "Помощь",
             "settings": "Настройки",
             "connections": "Подключения",
-            "new": "Новое",
-            "joinCommunity": "Присоединиться к сообществу"
+            "new": "Новое"
         },
         "update": {
             "availableWithVersion": "Версия {{version}} доступна. <DownloadButton>Скачать обновление</DownloadButton> или <SkipButton>Пропустить эту версию</SkipButton>",
             "availableNoVersion": "Доступна новая версия. <DownloadButton>Скачать обновление</DownloadButton>",
-            "readyWithVersion": "Версия {{version}} готова, перезапустите Godot Launcher для установки. <RestartButton>Перезапустить сейчас</RestartButton>",
-            "readyNoVersion": "Обновление готово, перезапустите Godot Launcher для установки. <RestartButton>Перезапустить сейчас</RestartButton>",
+            "readyWithVersion": "Версия {{version}} готова, перезапустите Eldritch Launcher для установки. <RestartButton>Перезапустить сейчас</RestartButton>",
+            "readyNoVersion": "Обновление готово, перезапустите Eldritch Launcher для установки. <RestartButton>Перезапустить сейчас</RestartButton>",
             "manualWithVersion": "Версия {{version}} доступна, но автоматическая установка не поддерживается в этой системе rpm-ostree. <ReleaseLink>Скачать вручную</ReleaseLink> или <SkipButton>Пропустить эту версию</SkipButton>",
             "manualNoVersion": "Доступна новая версия, но автоматическая установка не поддерживается в этой системе rpm-ostree. <ReleaseLink>Скачать вручную</ReleaseLink>",
             "notification": {
@@ -55,10 +54,10 @@
                 "downloadingProgress": "Загрузка {{percent}}%"
             },
             "panel": {
-                "titleWithVersion": "Godot Launcher {{version}}",
-                "title": "Обновление Godot Launcher",
+                "titleWithVersion": "Eldritch Launcher {{version}}",
+                "title": "Обновление Eldritch Launcher",
                 "installAfterDownload": "Перезапустите приложение после загрузки для установки.",
-                "ready": "Обновление загружено. Перезапустите Godot Launcher для установки.",
+                "ready": "Обновление загружено. Перезапустите Eldritch Launcher для установки.",
                 "manual": "Автоматическая установка не поддерживается в этой системе rpm-ostree. Загрузите и установите обновление вручную.",
                 "readReleaseNotes": "Прочитать примечания к выпуску",
                 "download": "Загрузить обновление",

@@ -117,7 +117,7 @@ async function finished(id: string): Promise<TemplateJob> {
 
 test.beforeEach(async () => {
     home = await createFixtureHome();
-    const prefsPath = path.join(home, '.gd-launcher', 'prefs.json');
+    const prefsPath = path.join(home, '.eldritch-launcher', 'prefs.json');
     const prefs = JSON.parse(await fs.readFile(prefsPath, 'utf8'));
     prefs.language = 'en';
     prefs.export_template_migration_offered = true;
@@ -174,10 +174,10 @@ test.beforeEach(async () => {
         process.platform === 'win32' ? 'junction' : 'dir',
     );
     await fs.writeFile(
-        path.join(home, '.gd-launcher', 'projects.json'),
+        path.join(home, '.eldritch-launcher', 'projects.json'),
         JSON.stringify(projects),
     );
-    root = path.join(home, '.gd-launcher', 'godot', 'export_templates');
+    root = path.join(home, '.eldritch-launcher', 'godot', 'export_templates');
     for (const id of [ids[1], ids[2]]) {
         await fs.mkdir(path.join(root, id), { recursive: true });
         await fs.writeFile(path.join(root, id, 'template'), `shared ${id}`);
@@ -568,7 +568,7 @@ test('metadata-only folders connect automatically without offering migration', a
         await fs.mkdir(local(index));
         await fs.writeFile(path.join(local(index), name), 'operating system metadata');
     }
-    const prefsPath = path.join(home, '.gd-launcher', 'prefs.json');
+    const prefsPath = path.join(home, '.eldritch-launcher', 'prefs.json');
     const prefs = JSON.parse(await fs.readFile(prefsPath, 'utf8'));
     prefs.export_template_migration_offered = false;
     await fs.writeFile(prefsPath, JSON.stringify(prefs));
@@ -784,7 +784,7 @@ test('recovery finishes a committed move with an older replaced link record', as
     }
     const journalPath = path.join(
         home,
-        '.gd-launcher',
+        '.eldritch-launcher',
         'export-templates',
         'version-migration.json',
     );
@@ -913,7 +913,7 @@ test('an unreadable recovery journal keeps Electron available and blocks new mig
     await app.close();
     const journal = path.join(
         home,
-        '.gd-launcher',
+        '.eldritch-launcher',
         'export-templates',
         'version-migration.json',
     );

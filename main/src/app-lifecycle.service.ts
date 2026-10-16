@@ -110,8 +110,8 @@ export class AppLifecycleService implements OnModuleInit, OnModuleDestroy {
             await dialog.showMessageBox({
                 type: 'error',
                 title: 'Unsupported platform',
-                message: 'Godot Launcher is not supported on this platform',
-                detail: `Godot Launcher is not supported on ${process.platform} platform. If you want to help us support this platform, see our contribution guide.`,
+                message: 'Eldritch Launcher is not supported on this platform',
+                detail: `Eldritch Launcher is not supported on ${process.platform} platform. If you want to help us support this platform, see our contribution guide.`,
                 buttons: ['OK'],
             });
             app.quit();

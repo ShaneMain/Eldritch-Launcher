@@ -4,7 +4,7 @@ import { APP_INTERNAL_NAME } from '../constants.js';
 import { configuration, resolveAppPaths } from './app-config.js';
 
 function argv(...args: string[]): string[] {
-    return ['/path/Godot Launcher', ...args];
+    return ['/path/Eldritch Launcher', ...args];
 }
 
 describe('configuration', () => {
@@ -28,7 +28,7 @@ describe('configuration', () => {
 
         expect(config).toEqual(
             expect.objectContaining({
-                appName: 'Godot Launcher',
+                appName: 'Eldritch Launcher',
                 isDev: true,
                 debugMode: true,
                 disableSandbox: true,

@@ -74,7 +74,7 @@ export class GitPushService {
             return { ok: false, reason: 'origin-failed' };
         }
         const supportDirectory = await fs.mkdtemp(
-            path.join(os.tmpdir(), 'godot-launcher-git-remote-check-'),
+            path.join(os.tmpdir(), 'eldritch-launcher-git-remote-check-'),
         );
         let credentialSession:
             | Awaited<ReturnType<GitCredentialSessionService['open']>>
@@ -148,7 +148,7 @@ export class GitPushService {
             return { ok: false, reason: 'local-repository-changed' };
         }
         const supportDirectory = await fs.mkdtemp(
-            path.join(os.tmpdir(), 'godot-launcher-git-push-'),
+            path.join(os.tmpdir(), 'eldritch-launcher-git-push-'),
         );
         let networkCredentialSession:
             | Awaited<ReturnType<GitCredentialSessionService['open']>>

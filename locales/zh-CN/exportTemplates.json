@@ -9,7 +9,7 @@
     "installedSize": "已安装文件大小",
     "openFolder": "打开文件夹",
     "refresh": "刷新",
-    "sharedNotice": "此处的更改也会影响在 Godot Launcher 外打开的 Godot。每个编辑器使用与其版本和类型匹配的模板。",
+    "sharedNotice": "此处的更改也会影响在 Eldritch Launcher 外打开的 Godot。每个编辑器使用与其版本和类型匹配的模板。",
     "scanIssues": "部分内容无法识别或读取。请检查文件夹中列出的项目。",
     "recovery": "中断的操作需要处理",
     "recoveryDetail": "请关闭 Godot。恢复原始文件，或在操作已完成时继续清理。",
@@ -307,7 +307,7 @@
     },
     "storage": {
         "title": "导出模板存储",
-        "overview": "选择 Godot Launcher 保存官方和已导入导出模板的位置。",
+        "overview": "选择 Eldritch Launcher 保存官方和已导入导出模板的位置。",
         "defaultGodotPath": "默认 Godot 模板路径",
         "defaultGodotPathHelp": "这是 Godot 的默认模板位置。移动存储位置时它保持不变。",
         "platform": "当前平台：{{platform}}",
@@ -361,7 +361,7 @@
             "editorRunning": "移动模板存储前，请关闭 Godot 编辑器并停止导出。"
         },
         "platformNote": "在 {{platform}} 上，Godot 默认的导出模板文件夹位于 {{path}}。",
-        "launcherNote": "移动模板后，请通过 Godot Launcher 打开项目，以继续使用已保存的模板选择。",
+        "launcherNote": "移动模板后，请通过 Eldritch Launcher 打开项目，以继续使用已保存的模板选择。",
         "importedNote": "选择导入的自定义模板的存储位置。",
         "preparingReview": "正在检查模板和可用空间...",
         "moveSummary_one": "即将把 {{count}} 个模板 ({{size}}) 移动到:",
@@ -372,7 +372,7 @@
         "spaceInsufficient": "可用空间不足。请选择其他文件夹。",
         "chooseAnother": "选择其他文件夹",
         "movingTitle": "正在移动导出模板",
-        "movingNote": "请保持 Godot Launcher 打开。项目连接将自动更新。",
+        "movingNote": "请保持 Eldritch Launcher 打开。项目连接将自动更新。",
         "finishedNote": "模板已移至新位置，项目可以继续使用这些模板。",
         "cancelledNote": "移动已取消。模板仍在原始位置。",
         "done": "完成",
@@ -400,7 +400,7 @@
             "done": "迁移结果"
         },
         "about": {
-            "intro": "旧项目将导出模板保存在各自的编辑器文件夹中。Godot Launcher 现在可以通过导出模板页面管理这些文件。",
+            "intro": "旧项目将导出模板保存在各自的编辑器文件夹中。Eldritch Launcher 现在可以通过导出模板页面管理这些文件。",
             "today": "现在",
             "before": "各项目编辑器文件夹中的模板",
             "after": "移动后",
@@ -498,7 +498,7 @@
         "finishLater": "稍后完成",
         "done": "完成",
         "openTemplates": "打开导出模板",
-        "keepOpen": "较大的移动操作可能需要一些时间。Godot Launcher 将保持打开，直到移动完成。",
+        "keepOpen": "较大的移动操作可能需要一些时间。Eldritch Launcher 将保持打开，直到移动完成。",
         "progress": "已完成 {{completed}} 个模板版本，共 {{total}} 个",
         "progressLabel": "已完成的模板版本",
         "status": {

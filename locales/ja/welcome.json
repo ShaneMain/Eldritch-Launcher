@@ -1,5 +1,5 @@
 {
-    "title": "Godot Launcher",
+    "title": "Eldritch Launcher",
     "steps": {
         "welcome": "ようこそ",
         "macos": "MacOS",
@@ -28,23 +28,23 @@
         "backCustomizeBehavior": "前へ：動作をカスタマイズ"
     },
     "welcomeStep": {
-        "title": "Godot Launcherをご利用いただきありがとうございます！",
-        "description": "Godot Launcherは、<strong>Godotエンジンの複数バージョンを管理</strong>し、<strong>各プロジェクトのエディタ設定を個別に保つ</strong>ことを簡単にします。",
+        "title": "Eldritch Launcherをご利用いただきありがとうございます！",
+        "description": "Eldritch Launcherは、<strong>Godotエンジンの複数バージョンを管理</strong>し、<strong>各プロジェクトのエディタ設定を個別に保つ</strong>ことを簡単にします。",
         "feedback": "これを使用することで、プロジェクトをサポートすることになります！フィードバックやバグを見つけた場合は、お知らせください。あなたのためにさらに良いものにしたいと思っています。",
         "enjoy": "楽しんで、ハッピーコーディング！"
     },
     "startStep": {
         "title": "準備完了！🚀",
-        "subtitle": "Godot Launcherの準備ができました！プロジェクトを管理し、すべての機能を探索できます。",
+        "subtitle": "Eldritch Launcherの準備ができました！プロジェクトを管理し、すべての機能を探索できます。",
         "whatsNext": "次のステップは？",
         "installTab": "<strong>インストール</strong>タブで最新のプレリリースをインストールして試してください。",
         "projectsTab": "<strong>プロジェクト</strong>タブでプロジェクトを素早く追加または作成します。",
         "settingsTab": "<strong>設定</strong>タブで好みに合わせてカスタマイズします。"
     },
     "customizeBehavior": {
-        "trayAvailabilityWarning": "このセッションではシステムトレイのサポートを確認できませんでした。Godot Launcher は非表示にならず、表示されたままになるか終了します。",
-        "trayCloseFallback": "システムトレイに閉じても、Godot Launcherは表示されたままになります。",
-        "trayStartFallback": "トレイで起動しても、Godot Launcherは通常どおり開きます。",
+        "trayAvailabilityWarning": "このセッションではシステムトレイのサポートを確認できませんでした。Eldritch Launcher は非表示にならず、表示されたままになるか終了します。",
+        "trayCloseFallback": "システムトレイに閉じても、Eldritch Launcherは表示されたままになります。",
+        "trayStartFallback": "トレイで起動しても、Eldritch Launcherは通常どおり開きます。",
         "afterLaunching": "プロジェクト起動後",
         "nothing": "何もしない",
         "minimize": "最小化",
@@ -74,22 +74,22 @@
     },
     "macosStep": {
         "title": "macOSに関する注意事項",
-        "intro": "Godot Launcherは各プロジェクトのエディタのコピーを作成します。",
+        "intro": "Eldritch Launcherは各プロジェクトのエディタのコピーを作成します。",
         "whyTitle": "なぜ？",
         "reason": "macOSでシンボリックリンクを作成することは権限によって制限されませんが、シンボリックリンクを通じてエディタを開くことは信頼性が低いことが判明しています。スムーズなエクスペリエンスを確保するため、代わりに各プロジェクト用の専用のエンジンコピーを提供します。Godotは約200MBしかありません（これは通常問題になりません）が、複数のプロジェクトはディスク使用量の増加につながる可能性があることに注意してください。",
         "dotnetNote": "注：.NETエディタを使用する場合は、<ButtonLink>Microsoft .NETウェブサイト</ButtonLink> <Icon />から.NET SDKをインストールする必要があります"
     },
     "windowsStep": {
         "title": "Windowsに関する注意事項",
-        "intro": "バージョン1.4.0から、Godot Launcherは各プロジェクトのエディタへの<code>シンボリックリンク</code>を作成できます。セットアップを簡単にするため、現在はデフォルトでローカルコピーにしています。ディスク使用量を減らしたい場合は、<strong>設定 → 動作 → エディタシンボリックリンク</strong>からいつでもシンボリックリンクを有効にできます。",
-        "change1": "Windowsでシンボリックリンクを作成するには管理者権限と昇格したコマンド実行が必要です。Godot Launcherは、シンボリックリンクの作成時にのみ権限を昇格します。",
+        "intro": "バージョン1.4.0から、Eldritch Launcherは各プロジェクトのエディタへの<code>シンボリックリンク</code>を作成できます。セットアップを簡単にするため、現在はデフォルトでローカルコピーにしています。ディスク使用量を減らしたい場合は、<strong>設定 → 動作 → エディタシンボリックリンク</strong>からいつでもシンボリックリンクを有効にできます。",
+        "change1": "Windowsでシンボリックリンクを作成するには管理者権限と昇格したコマンド実行が必要です。Eldritch Launcherは、シンボリックリンクの作成時にのみ権限を昇格します。",
         "change2": "UAC プロンプトは、PCで<code>管理者</code>でない場合、および<code>開発者モード</code>が有効でない場合にのみ表示されます。",
         "change3": "シンボリックリンクを試す準備はできていますか？時々の昇格プロンプトに対応できる準備ができたら、設定で<strong>エディタシンボリックリンク</strong>をオンに切り替えてください。",
         "dotnetNote": "注：.NETベースのエディタを使用する場合は、<ButtonLink>Microsoft .NETウェブサイト</ButtonLink> <Icon />から.NET SDKをインストールする必要があります"
     },
     "linuxStep": {
         "title": "Linuxに関する注意事項",
-        "intro": "Godot Launcherは各プロジェクトにシンボリックリンクを使用します",
+        "intro": "Eldritch Launcherは各プロジェクトにシンボリックリンクを使用します",
         "whyTitle": "なぜ？",
         "reason": "WindowsおよびmacOSバージョンとは異なり、Linuxバージョンはプロジェクトを起動するためにエディタへのシンボリックリンクを使用します。これによりディスク容量が節約され、プロジェクトごとの設定が可能になります。",
         "dotnetNote": "注：.NETエディタを使用する場合は、<ButtonLink>Microsoft .NETウェブサイト</ButtonLink> <Icon />から.NET SDKをインストールする必要があります"
@@ -105,16 +105,16 @@
         "reassurance": "これらのオプションは後から設定で変更できます。",
         "welcome": {
             "title": "ようこそ",
-            "description": "作業スタイルに合わせて Godot Launcher を設定しましょう。",
+            "description": "作業スタイルに合わせて Eldritch Launcher を設定しましょう。",
             "expectation": "いくつかの簡単な手順で、プロジェクトとエディターの保存先、コードエディター、起動時の動作を設定します。",
-            "benefitsLabel": "Godot Launcher でできること",
+            "benefitsLabel": "Eldritch Launcher でできること",
             "officialAndCustomEditors": "公式またはカスタムの Godot エディターをインストールして管理できます。",
             "projectSettings": "プロジェクトごとにエディターと設定を個別に管理できます。",
             "codeEditorIntegration": "検出されたコードエディターでプロジェクトのファイルを開けます。"
         },
         "appearance": {
             "title": "外観を選択",
-            "description": "Godot Launcher の外観を選択します。選択内容はすぐに適用されます。",
+            "description": "Eldritch Launcher の外観を選択します。選択内容はすぐに適用されます。",
             "preview": "外観は後から設定で変更できます。"
         },
         "setup": {
@@ -131,7 +131,7 @@
             "browseImportedTemplatesLocation": "インポートしたエクスポートテンプレートの保存先を参照",
             "movingImportedTemplates": "インポートしたエクスポートテンプレートを移動中: {{stage}}",
             "codeEditor": "デフォルトのコードエディター",
-            "codeEditorHelp": "Godot Launcher からスクリプトやファイルを開く際に使用します。後から変更できます。",
+            "codeEditorHelp": "Eldritch Launcher からスクリプトやファイルを開く際に使用します。後から変更できます。",
             "noCodeEditor": "なし",
             "detectingCodeEditors": "インストール済みのコードエディターを検出中...",
             "codeEditorDetectionFailed": "コードエディターを検出できませんでした。後から設定で追加できます。",
@@ -145,16 +145,16 @@
         },
         "preferences": {
             "title": "動作を設定",
-            "description": "プロジェクトを開いた後とコンピューターの起動時の Godot Launcher の動作を設定します。",
+            "description": "プロジェクトを開いた後とコンピューターの起動時の Eldritch Launcher の動作を設定します。",
             "afterLaunching": "プロジェクトの起動後",
-            "keepOpen": "Godot Launcher を開いたままにする",
-            "keepOpenHelp": "Godot Launcher のウィンドウを表示したままにします。",
-            "minimizeHelp": "Godot Launcher のウィンドウを最小化します。",
-            "closeToTrayHelp": "Godot Launcher のウィンドウを非表示にし、システムトレイからアクセスできるようにします。",
-            "closeToTrayFallback": "システムトレイを利用できない場合、Godot Launcher は開いたままになります。",
-            "trayUnavailable": "システムトレイの対応状況を確認できませんでした。トレイ操作の代わりに Godot Launcher のウィンドウを開いたままにします。",
+            "keepOpen": "Eldritch Launcher を開いたままにする",
+            "keepOpenHelp": "Eldritch Launcher のウィンドウを表示したままにします。",
+            "minimizeHelp": "Eldritch Launcher のウィンドウを最小化します。",
+            "closeToTrayHelp": "Eldritch Launcher のウィンドウを非表示にし、システムトレイからアクセスできるようにします。",
+            "closeToTrayFallback": "システムトレイを利用できない場合、Eldritch Launcher は開いたままになります。",
+            "trayUnavailable": "システムトレイの対応状況を確認できませんでした。トレイ操作の代わりに Eldritch Launcher のウィンドウを開いたままにします。",
             "startupTitle": "起動",
-            "startWithComputer": "コンピューターの起動時に Godot Launcher を起動する",
+            "startWithComputer": "コンピューターの起動時に Eldritch Launcher を起動する",
             "startInTray": "システムトレイで起動する",
             "startInTrayFallback": "システムトレイを利用できない場合は、通常のウィンドウで起動します。"
         },

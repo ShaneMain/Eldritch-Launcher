@@ -13,7 +13,7 @@ export const onboardingStepIds = [
 
 export type OnboardingStepId = (typeof onboardingStepIds)[number];
 
-export const ONBOARDING_STEP_STORAGE_KEY = 'godot-launcher.onboarding.step';
+export const ONBOARDING_STEP_STORAGE_KEY = 'eldritch-launcher.onboarding.step';
 
 export function parseOnboardingStepId(
     value: string | null | undefined,

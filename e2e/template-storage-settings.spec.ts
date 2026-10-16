@@ -137,7 +137,7 @@ function activeTemplates(project: ProjectDetails): string {
 
 test.beforeEach(async () => {
     fixtureHome = await fs.realpath(await createFixtureHome());
-    const config = path.join(fixtureHome, '.gd-launcher');
+    const config = path.join(fixtureHome, '.eldritch-launcher');
     officialRoot = path.join(config, 'godot', 'export_templates');
     importedRoot = path.join(config, 'export-templates');
     const preferencesFile = path.join(config, 'prefs.json');
@@ -385,7 +385,7 @@ test('moves both complete stores, preserves project links and survives restart',
     expect(
         JSON.parse(
             await fs.readFile(
-                path.join(fixtureHome, '.gd-launcher', 'projects.json'),
+                path.join(fixtureHome, '.eldritch-launcher', 'projects.json'),
                 'utf8',
             ),
         ).map((project: ProjectDetails) => project.exportTemplateBuilds),
@@ -798,7 +798,7 @@ test('an unavailable imported drive is reported without creating an empty replac
         '4.3.stable': build.id,
     };
     await fs.writeFile(
-        path.join(fixtureHome, '.gd-launcher', 'projects.json'),
+        path.join(fixtureHome, '.eldritch-launcher', 'projects.json'),
         JSON.stringify(projects),
     );
     await launch();
@@ -847,7 +847,7 @@ test('an unavailable imported drive is reported without creating an empty replac
 test('moves an empty official store and the fresh imported default', async () => {
     await app.close();
     await fs.writeFile(
-        path.join(fixtureHome, '.gd-launcher', 'projects.json'),
+        path.join(fixtureHome, '.eldritch-launcher', 'projects.json'),
         '[]',
     );
     await fs.rm(path.dirname(officialRoot), { recursive: true });
@@ -881,7 +881,7 @@ test('moves an empty official store and the fresh imported default', async () =>
 test('keeps an occupied imported default folder untouched and allows another location', async () => {
     await app.close();
     await fs.writeFile(
-        path.join(fixtureHome, '.gd-launcher', 'projects.json'),
+        path.join(fixtureHome, '.eldritch-launcher', 'projects.json'),
         '[]',
     );
     await fs.rm(importedRoot, { recursive: true });
@@ -1140,7 +1140,7 @@ async function useLinkedImportedDefault(): Promise<string> {
         process.platform === 'win32' ? 'junction' : 'dir',
     );
     await fs.writeFile(
-        path.join(fixtureHome, '.gd-launcher', 'template-storage.json'),
+        path.join(fixtureHome, '.eldritch-launcher', 'template-storage.json'),
         JSON.stringify({ imported: savedSource }),
     );
     const active = activeTemplates(projects[1]);
@@ -1253,7 +1253,7 @@ for (const outcome of ['complete', 'cancel', 'restart'] as const) {
                 .stat(
                     path.join(
                         fixtureHome,
-                        '.gd-launcher',
+                        '.eldritch-launcher',
                         'template-storage-move.json',
                     ),
                 )

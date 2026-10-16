@@ -108,7 +108,7 @@ describe('ProjectsModule', () => {
 /** Creates fixed configuration for the provider graph test. */
 function createConfig(): AppConfig {
     return {
-        appName: 'Godot Launcher',
+        appName: 'Eldritch Launcher',
         isDev: true,
         debugMode: false,
         disableSandbox: false,

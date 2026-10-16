@@ -22,7 +22,7 @@ vi.mock('react-i18next', () => {
             'Folder where the manifest will be written.',
         'installs:customEditor.creator.fields.name.label': 'Display name',
         'installs:customEditor.creator.fields.name.help':
-            'Name shown in Godot Launcher.',
+            'Name shown in Eldritch Launcher.',
         'installs:customEditor.creator.fields.name.placeholder':
             'Acme Godot 4.4 Custom Editor',
         'installs:customEditor.creator.fields.version.label':
@@ -105,7 +105,7 @@ describe('CustomEditorManifestDrawer', () => {
         expect(html).toContain('Prerelease');
         expect(html).toContain('godotlauncher-editor-manifest.json');
         expect(html).toContain(
-            'https://raw.githubusercontent.com/godotlauncher/launcher/main/schemas/v1/engine-manifest.json',
+            'https://raw.githubusercontent.com/ShaneMain/Eldritch-Launcher/main/schemas/v1/engine-manifest.json',
         );
         expect(html).toContain('&quot;platforms&quot;: []');
         expect(html).toContain(

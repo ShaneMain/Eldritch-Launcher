@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parseCliArgs } from './app-config.cli.js';
 
 function argv(...args: string[]): string[] {
-    return ['/path/Godot Launcher', ...args];
+    return ['/path/Eldritch Launcher', ...args];
 }
 
 function defaultElectronArgv(...args: string[]): string[] {
@@ -73,7 +73,7 @@ describe('parseCliArgs', () => {
     it('parses packaged app flags after an app path and separator', () => {
         const parsed = parseCliArgs(
             argv(
-                '/Applications/Godot Launcher.app/Contents/Resources/app.asar',
+                '/Applications/Eldritch Launcher.app/Contents/Resources/app.asar',
                 '--',
                 '--launcher-debug',
                 '--hidden',

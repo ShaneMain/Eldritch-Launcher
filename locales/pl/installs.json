@@ -48,7 +48,7 @@
     },
     "customEditor": {
         "selectManifestTitle": "Dodaj manifest edytora niestandardowego",
-        "manifestFilterName": "Manifest edytora Godot Launcher",
+        "manifestFilterName": "Manifest edytora Eldritch Launcher",
         "waitingForDialog": "Oczekiwanie na okno dialogowe...",
         "replace": {
             "action": "Zastąp",
@@ -73,7 +73,7 @@
                 },
                 "name": {
                     "label": "Nazwa wyświetlana",
-                    "help": "Nazwa pokazywana w Godot Launcher dla tego edytora niestandardowego.",
+                    "help": "Nazwa pokazywana w Eldritch Launcher dla tego edytora niestandardowego.",
                     "placeholder": "Acme Godot 4.4 Edytor niestandardowy"
                 },
                 "version": {
@@ -180,7 +180,7 @@
             "title": "Usuń wybrane edytory",
             "message": "Usunąć te edytory?",
             "managed": "Pliki zainstalowanych edytorów zostaną usunięte z urządzenia. Możesz zainstalować je ponownie później.",
-            "custom": "Edytory niestandardowe zostaną usunięte z Godot Launcher. Ich pliki zostaną zachowane.",
+            "custom": "Edytory niestandardowe zostaną usunięte z Eldritch Launcher. Ich pliki zostaną zachowane.",
             "used": "Projekty używające tego edytora: {{names}}. Będą potrzebować innego edytora."
         },
         "results": {

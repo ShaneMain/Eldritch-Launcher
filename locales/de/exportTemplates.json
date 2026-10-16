@@ -9,7 +9,7 @@
     "installedSize": "Größe der installierten Dateien",
     "openFolder": "Ordner öffnen",
     "refresh": "Aktualisieren",
-    "sharedNotice": "Änderungen betreffen auch Godot außerhalb von Godot Launcher. Jeder Editor nutzt die passende Version und Edition.",
+    "sharedNotice": "Änderungen betreffen auch Godot außerhalb von Eldritch Launcher. Jeder Editor nutzt die passende Version und Edition.",
     "scanIssues": "Einige Einträge konnten nicht erkannt oder gelesen werden. Prüfen Sie die aufgeführten Einträge im Ordner.",
     "recovery": "Ein unterbrochener Vorgang erfordert Ihre Aufmerksamkeit",
     "recoveryDetail": "Schließen Sie Godot. Stellen Sie Dateien wieder her oder schließen Sie die Bereinigung ab.",
@@ -307,7 +307,7 @@
     },
     "storage": {
         "title": "Speicher für Exportvorlagen",
-        "overview": "Wähle, wo Godot Launcher offizielle und importierte Exportvorlagen speichert.",
+        "overview": "Wähle, wo Eldritch Launcher offizielle und importierte Exportvorlagen speichert.",
         "defaultGodotPath": "Standardpfad für Godot-Vorlagen",
         "defaultGodotPathHelp": "Dies ist der Standardort für Godot-Vorlagen. Er bleibt beim Verschieben des Speichers unverändert.",
         "platform": "Aktuelle Plattform: {{platform}}",
@@ -333,7 +333,7 @@
         "retry": "Erneut versuchen",
         "recover": "Dateien wiederherstellen",
         "platformNote": "Unter {{platform}} befindet sich der Standardordner für Godot-Exportvorlagen unter {{path}}.",
-        "launcherNote": "Öffne deine Projekte nach dem Verschieben der Vorlagen mit Godot Launcher, damit deine gespeicherten Vorlagenauswahlen weiter verwendet werden.",
+        "launcherNote": "Öffne deine Projekte nach dem Verschieben der Vorlagen mit Eldritch Launcher, damit deine gespeicherten Vorlagenauswahlen weiter verwendet werden.",
         "importedNote": "Wähle, wo deine importierten benutzerdefinierten Vorlagen gespeichert werden.",
         "preparingReview": "Vorlagen und verfügbaren Speicherplatz werden geprüft...",
         "moveSummary_one": "Du wirst {{count}} Vorlage ({{size}}) verschieben nach:",
@@ -344,7 +344,7 @@
         "spaceInsufficient": "Es ist nicht genügend freier Speicherplatz vorhanden. Wähle einen anderen Ordner.",
         "chooseAnother": "Anderen Ordner wählen",
         "movingTitle": "Exportvorlagen werden verschoben",
-        "movingNote": "Lass Godot Launcher geöffnet. Deine Projektverbindungen werden automatisch aktualisiert.",
+        "movingNote": "Lass Eldritch Launcher geöffnet. Deine Projektverbindungen werden automatisch aktualisiert.",
         "finishedNote": "Deine Vorlagen befinden sich am neuen Speicherort und deine Projekte können sie verwenden.",
         "cancelledNote": "Das Verschieben wurde abgebrochen. Deine Vorlagen befinden sich weiterhin am ursprünglichen Speicherort.",
         "done": "Fertig",
@@ -400,7 +400,7 @@
             "done": "Ergebnisse der Migration"
         },
         "about": {
-            "intro": "Ältere Projekte speichern Exportvorlagen in ihren eigenen Editorordnern. Godot Launcher kann diese Dateien jetzt unter Exportvorlagen verwalten.",
+            "intro": "Ältere Projekte speichern Exportvorlagen in ihren eigenen Editorordnern. Eldritch Launcher kann diese Dateien jetzt unter Exportvorlagen verwalten.",
             "today": "Heute",
             "before": "Vorlagen im Editorordner jedes Projekts",
             "after": "Nach dem Verschieben",
@@ -498,7 +498,7 @@
         "finishLater": "Später abschliessen",
         "done": "Fertig",
         "openTemplates": "Exportvorlagen öffnen",
-        "keepOpen": "Große Verschiebevorgänge können eine Weile dauern. Godot Launcher bleibt geöffnet, bis der Vorgang abgeschlossen ist.",
+        "keepOpen": "Große Verschiebevorgänge können eine Weile dauern. Eldritch Launcher bleibt geöffnet, bis der Vorgang abgeschlossen ist.",
         "progress": "{{completed}} von {{total}} Vorlagenversionen abgeschlossen",
         "progressLabel": "Abgeschlossene Vorlagenversionen",
         "status": {

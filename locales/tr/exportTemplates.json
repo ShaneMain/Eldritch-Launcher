@@ -9,7 +9,7 @@
     "installedSize": "Yüklü dosya boyutu",
     "openFolder": "Klasörü aç",
     "refresh": "Yenile",
-    "sharedNotice": "Değişiklikler, Godot Launcher dışında açılan Godot'u da etkiler. Her düzenleyici kendi sürümüne ve türüne uygun şablonları kullanır.",
+    "sharedNotice": "Değişiklikler, Eldritch Launcher dışında açılan Godot'u da etkiler. Her düzenleyici kendi sürümüne ve türüne uygun şablonları kullanır.",
     "scanIssues": "Bazı öğeler tanınamadı veya okunamadı. Klasörde listelenen öğeleri inceleyin.",
     "recovery": "Kesintiye uğrayan bir işlem ilgilenmenizi gerektiriyor",
     "recoveryDetail": "Godot'u kapatın. Özgün dosyaları kurtarın veya işlem tamamlandıysa temizliği bitirin.",
@@ -307,7 +307,7 @@
     },
     "storage": {
         "title": "Dışa aktarma şablonu depolama alanı",
-        "overview": "Godot Launcher'ın resmi ve içe aktarılan dışa aktarma şablonlarını nerede saklayacağını seçin.",
+        "overview": "Eldritch Launcher'ın resmi ve içe aktarılan dışa aktarma şablonlarını nerede saklayacağını seçin.",
         "defaultGodotPath": "Varsayılan Godot şablon yolu",
         "defaultGodotPathHelp": "Bu, Godot'nun varsayılan şablon konumudur. Depolama taşındığında aynı kalır.",
         "platform": "Geçerli platform: {{platform}}",
@@ -361,7 +361,7 @@
             "editorRunning": "Şablon depolama alanını taşımadan önce Godot düzenleyicilerini kapatın ve dışa aktarmaları durdurun."
         },
         "platformNote": "{{platform}} üzerinde Godot'un varsayılan dışa aktarma şablonu klasörü {{path}} konumundadır.",
-        "launcherNote": "Şablonları taşıdıktan sonra kaydedilmiş şablon seçimlerinizi kullanmaya devam etmek için projelerinizi Godot Launcher ile açın.",
+        "launcherNote": "Şablonları taşıdıktan sonra kaydedilmiş şablon seçimlerinizi kullanmaya devam etmek için projelerinizi Eldritch Launcher ile açın.",
         "importedNote": "İçe aktardığınız özel şablonların saklanacağı yeri seçin.",
         "preparingReview": "Şablonlar ve kullanılabilir alan denetleniyor...",
         "moveSummary_one": "{{count}} şablonu ({{size}}) şuraya taşımak üzeresiniz:",
@@ -372,7 +372,7 @@
         "spaceInsufficient": "Yeterli boş alan yok. Başka bir klasör seçin.",
         "chooseAnother": "Başka bir klasör seç",
         "movingTitle": "Dışa aktarma şablonları taşınıyor",
-        "movingNote": "Godot Launcher uygulamasını açık tutun. Proje bağlantılarınız otomatik olarak güncellenecek.",
+        "movingNote": "Eldritch Launcher uygulamasını açık tutun. Proje bağlantılarınız otomatik olarak güncellenecek.",
         "finishedNote": "Şablonlarınız yeni konumunda ve projeleriniz bunları kullanmaya hazır.",
         "cancelledNote": "Taşıma iptal edildi. Şablonlarınız hâlâ önceki konumunda.",
         "done": "Bitti",
@@ -400,7 +400,7 @@
             "done": "Taşıma sonuçlarınız"
         },
         "about": {
-            "intro": "Eski projeler dışa aktarma şablonlarını kendi düzenleyici klasörlerinde saklar. Godot Launcher artık bu dosyaları Dışa Aktarma Şablonları bölümünden yönetebilir.",
+            "intro": "Eski projeler dışa aktarma şablonlarını kendi düzenleyici klasörlerinde saklar. Eldritch Launcher artık bu dosyaları Dışa Aktarma Şablonları bölümünden yönetebilir.",
             "today": "Bugün",
             "before": "Her projenin düzenleyici klasöründeki şablonlar",
             "after": "Taşımadan sonra",
@@ -498,7 +498,7 @@
         "finishLater": "Daha sonra tamamla",
         "done": "Bitti",
         "openTemplates": "Dışa Aktarma Şablonlarını Aç",
-        "keepOpen": "Büyük taşımalar zaman alabilir. Godot Launcher taşıma bitene kadar açık kalır.",
+        "keepOpen": "Büyük taşımalar zaman alabilir. Eldritch Launcher taşıma bitene kadar açık kalır.",
         "progress": "{{total}} şablon sürümünden {{completed}} tanesi tamamlandı",
         "progressLabel": "Tamamlanan şablon sürümleri",
         "status": {

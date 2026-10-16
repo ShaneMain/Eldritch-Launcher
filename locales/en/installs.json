@@ -48,14 +48,14 @@
     },
     "customEditor": {
         "selectManifestTitle": "Add Custom Editor Manifest",
-        "manifestFilterName": "Godot Launcher Editor Manifest",
+        "manifestFilterName": "Eldritch Launcher Editor Manifest",
         "waitingForDialog": "Waiting for dialog...",
         "replace": {
             "action": "Replace",
             "title": "Replace custom editor?",
             "message": "A custom editor with this version is already registered.",
             "versionLabel": "Version",
-            "detail": "Replacing it will update the editor record in Godot Launcher to use the selected manifest. Your editor files will not be deleted."
+            "detail": "Replacing it will update the editor record in Eldritch Launcher to use the selected manifest. Your editor files will not be deleted."
         },
         "drop": {
             "title": "Drop manifest to add custom editor",
@@ -73,7 +73,7 @@
                 },
                 "name": {
                     "label": "Display name",
-                    "help": "Name shown in Godot Launcher for this custom editor.",
+                    "help": "Name shown in Eldritch Launcher for this custom editor.",
                     "placeholder": "Acme Godot 4.4 Custom Editor"
                 },
                 "version": {
@@ -180,7 +180,7 @@
             "title": "Remove selected editors",
             "message": "Remove these editors?",
             "managed": "Installed editor files will be deleted from your device. You can install them again later.",
-            "custom": "Custom editors will be removed from Godot Launcher. Their files will be kept.",
+            "custom": "Custom editors will be removed from Eldritch Launcher. Their files will be kept.",
             "used": "Projects using this editor: {{names}}. They will need another editor."
         },
         "results": {

@@ -9,7 +9,7 @@
     "installedSize": "Daqs tal-fajls installati",
     "openFolder": "Iftaħ il-folder",
     "refresh": "Aġġorna",
-    "sharedNotice": "Il-bidliet jaffettwaw ukoll Godot miftuħ barra Godot Launcher. Kull editur juża l-verżjoni u l-edizzjoni korrispondenti.",
+    "sharedNotice": "Il-bidliet jaffettwaw ukoll Godot miftuħ barra Eldritch Launcher. Kull editur juża l-verżjoni u l-edizzjoni korrispondenti.",
     "scanIssues": "Xi elementi ma ġewx identifikati jew ma setgħux jinqraw. Iċċekkja l-elementi elenkati fil-folder.",
     "recovery": "Operazzjoni interrotta teħtieġ attenzjoni",
     "recoveryDetail": "Agħlaq Godot. Irkupra l-fajls oriġinali jew lesti t-tindif jekk l-operazzjoni diġà tlestiet.",
@@ -307,7 +307,7 @@
     },
     "storage": {
         "title": "Ħażna tal-mudelli tal-esportazzjoni",
-        "overview": "Agħżel fejn Godot Launcher iżomm il-mudelli tal-esportazzjoni uffiċjali u importati.",
+        "overview": "Agħżel fejn Eldritch Launcher iżomm il-mudelli tal-esportazzjoni uffiċjali u importati.",
         "defaultGodotPath": "Mogħdija awtomatika tal-mudelli ta' Godot",
         "defaultGodotPathHelp": "Din hija l-post awtomatiku tal-mudelli ta' Godot. Tibqa' l-istess meta l-ħażna tiġi mċaqalqa.",
         "platform": "Pjattaforma attwali: {{platform}}",
@@ -361,7 +361,7 @@
             "editorRunning": "Agħlaq l-edituri ta' Godot u waqqaf l-esportazzjonijiet qabel tmexxi l-ħażna tal-mudelli."
         },
         "platformNote": "Fuq {{platform}}, il-folder predefinit tal-mudelli ta' esportazzjoni ta' Godot jinsab f'{{path}}.",
-        "launcherNote": "Wara li tmexxi l-mudelli, iftaħ il-proġetti tiegħek b'Godot Launcher biex tibqa' tuża l-għażliet tal-mudelli ssejvjati tiegħek.",
+        "launcherNote": "Wara li tmexxi l-mudelli, iftaħ il-proġetti tiegħek b'Eldritch Launcher biex tibqa' tuża l-għażliet tal-mudelli ssejvjati tiegħek.",
         "importedNote": "Agħżel fejn jinħażnu l-mudelli personalizzati li importajt.",
         "preparingReview": "Qed jiġu ċċekkjati l-mudelli u l-ispazju disponibbli...",
         "moveSummary_one": "Se tmexxi {{count}} mudell ({{size}}) lejn:",
@@ -375,7 +375,7 @@
         "spaceInsufficient": "M’hemmx biżżejjed spazju ħieles. Agħżel folder ieħor.",
         "chooseAnother": "Agħżel folder ieħor",
         "movingTitle": "Qed jitmexxew il-mudelli ta' esportazzjoni",
-        "movingNote": "Żomm Godot Launcher miftuħ. Il-konnessjonijiet tal-proġetti tiegħek jiġu aġġornati awtomatikament.",
+        "movingNote": "Żomm Eldritch Launcher miftuħ. Il-konnessjonijiet tal-proġetti tiegħek jiġu aġġornati awtomatikament.",
         "finishedNote": "Il-mudelli tiegħek jinsabu fil-post il-ġdid u l-proġetti tiegħek lesti biex jużawhom.",
         "cancelledNote": "Iċ-ċaqliq ġie kkanċellat. Il-mudelli tiegħek għadhom fil-post oriġinali tagħhom.",
         "done": "Lest"
@@ -400,7 +400,7 @@
             "done": "Ir-riżultati tal-migrazzjoni tiegħek"
         },
         "about": {
-            "intro": "Proġetti eqdem iżommu l-mudelli tal-esportazzjoni fil-folders tal-editur tagħhom stess. Godot Launcher issa jista' jimmaniġġja dawn il-fajls minn Mudelli għall-esportazzjoni.",
+            "intro": "Proġetti eqdem iżommu l-mudelli tal-esportazzjoni fil-folders tal-editur tagħhom stess. Eldritch Launcher issa jista' jimmaniġġja dawn il-fajls minn Mudelli għall-esportazzjoni.",
             "today": "Illum",
             "before": "Mudelli fil-folder tal-editur ta' kull proġett",
             "after": "Wara ċ-ċaqliq",
@@ -498,7 +498,7 @@
         "finishLater": "Kompli aktar tard",
         "done": "Lest",
         "openTemplates": "Iftaħ il-Mudelli ta’ Esportazzjoni",
-        "keepOpen": "Ċaqliq kbir jista' jieħu ftit ħin. Godot Launcher jibqa' miftuħ sakemm jintemm iċ-ċaqliq.",
+        "keepOpen": "Ċaqliq kbir jista' jieħu ftit ħin. Eldritch Launcher jibqa' miftuħ sakemm jintemm iċ-ċaqliq.",
         "progress": "{{completed}} minn {{total}} verżjonijiet tal-mudelli lesti",
         "progressLabel": "Verżjonijiet tal-mudelli lesti",
         "status": {

@@ -16,7 +16,7 @@ export async function getMainWindow(
                     .windows()
                     .some((page) => page.url().startsWith(MAIN_WINDOW_URL)),
             {
-                message: 'Waiting for the Godot Launcher main window',
+                message: 'Waiting for the Eldritch Launcher main window',
                 timeout: 15_000,
             },
         )
@@ -26,7 +26,7 @@ export async function getMainWindow(
         .windows()
         .find((page) => page.url().startsWith(MAIN_WINDOW_URL));
     if (!mainWindow) {
-        throw new Error('Godot Launcher main window was not found');
+        throw new Error('Eldritch Launcher main window was not found');
     }
 
     return mainWindow;

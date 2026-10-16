@@ -1,5 +1,6 @@
-export const APP_INTERNAL_NAME: string = 'gd-launcher';
-export const LAUNCHER_DOWNLOAD_URL = 'https://godotlauncher.org/download/';
+export const APP_INTERNAL_NAME: string = 'eldritch-launcher';
+export const LAUNCHER_DOWNLOAD_URL =
+    'https://github.com/ShaneMain/Eldritch-Launcher/releases';
 export const MIN_VERSION: number = 4.0;
 
 export const CACHE_LENGTH = 1000 * 60 * 10; // 10 minutes

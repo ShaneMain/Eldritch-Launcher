@@ -48,14 +48,14 @@
     },
     "customEditor": {
         "selectManifestTitle": "新增自訂編輯器清單",
-        "manifestFilterName": "Godot Launcher 編輯器清單",
+        "manifestFilterName": "Eldritch Launcher 編輯器清單",
         "waitingForDialog": "正在等待對話框...",
         "replace": {
             "action": "取代",
             "title": "取代自訂編輯器？",
             "message": "已註冊此版本的自訂編輯器。",
             "versionLabel": "版本",
-            "detail": "取代後，Godot Launcher 記錄會更新為使用選取的清單。不會刪除你的編輯器檔案。"
+            "detail": "取代後，Eldritch Launcher 記錄會更新為使用選取的清單。不會刪除你的編輯器檔案。"
         },
         "drop": {
             "title": "拖放清單以新增自訂編輯器",
@@ -73,7 +73,7 @@
                 },
                 "name": {
                     "label": "顯示名稱",
-                    "help": "此自訂編輯器在 Godot Launcher 中顯示的名稱。",
+                    "help": "此自訂編輯器在 Eldritch Launcher 中顯示的名稱。",
                     "placeholder": "Acme Godot 4.4 自訂編輯器"
                 },
                 "version": {
@@ -180,7 +180,7 @@
             "title": "移除所選編輯器",
             "message": "移除這些編輯器？",
             "managed": "已安裝編輯器的檔案將從裝置中刪除。您可以稍後重新安裝。",
-            "custom": "自訂編輯器將從 Godot Launcher 中取消註冊。其檔案將保留。",
+            "custom": "自訂編輯器將從 Eldritch Launcher 中取消註冊。其檔案將保留。",
             "used": "使用此編輯器的專案：{{names}}。這些專案將需要其他編輯器。"
         },
         "results": {

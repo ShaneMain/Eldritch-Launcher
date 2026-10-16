@@ -1,18 +1,12 @@
 import { ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
-    COMMUNITY_DISCORD_URL,
-    COMMUNITY_PAGE_URL,
     GODOT_DOCS_URL,
     GODOT_PAGE_URL,
-    LAUNCHER_CONTRIBUTE_URL,
-    LAUNCHER_DOCS_URL,
     LAUNCHER_GITHUB_ISSUES_URL,
-    LAUNCHER_GITHUB_PROPOSALS_URL,
-    LAUNCHER_PAGE_URL,
+    LAUNCHER_GITHUB_URL,
     LAUNCHER_THIRD_PARTY_RAW_URL,
 } from '../app.constants';
-import IconDiscord from '../assets/icons/discord-symbol-blurple.svg';
 import { ContentDivider } from '../components/ui/content-divider.component';
 import { useApp } from '../hooks/app.hook';
 import { useAppNavigation } from '../hooks/app-navigation.hook';
@@ -63,8 +57,7 @@ export const HelpVIew: React.FC = () => {
         {
             title: t('launcher.title'),
             resources: [
-                { label: t('launcher.homePage'), url: LAUNCHER_PAGE_URL },
-                { label: t('launcher.docs'), url: LAUNCHER_DOCS_URL },
+                { label: t('launcher.homePage'), url: LAUNCHER_GITHUB_URL },
             ],
             changelog: true,
         },
@@ -118,7 +111,7 @@ export const HelpVIew: React.FC = () => {
                                         <HelpLink
                                             onClick={() =>
                                                 openExternalLink(
-                                                    `https://github.com/godotlauncher/launcher/blob/v${appVersion}/CHANGELOG.md`,
+                                                    `${LAUNCHER_GITHUB_URL}/blob/v${appVersion}/CHANGELOG.md`,
                                                 )
                                             }
                                         >
@@ -152,49 +145,11 @@ export const HelpVIew: React.FC = () => {
                             </section>
                         ))}
                     </div>
-                    <section className="flex flex-col items-start gap-3 rounded-md bg-base-200/40 p-4">
-                        <div className="flex w-full flex-wrap items-baseline gap-3">
-                            <h2 className="text-base font-semibold">
-                                {t('community.title')}
-                            </h2>
-                            <HelpLink
-                                onClick={() =>
-                                    openExternalLink(COMMUNITY_PAGE_URL)
-                                }
-                            >
-                                {t('community.learnMore')}
-                            </HelpLink>
-                        </div>
-                        <HelpLink
-                            button
-                            onClick={() =>
-                                openExternalLink(COMMUNITY_DISCORD_URL)
-                            }
-                        >
-                            <span className="inline-flex items-center gap-2">
-                                <img
-                                    src={IconDiscord}
-                                    className="size-5 shrink-0"
-                                    alt=""
-                                />
-                                {t('app.navigation.joinCommunity', {
-                                    ns: 'common',
-                                })}
-                            </span>
-                        </HelpLink>
-                    </section>
                     <section className="flex flex-col gap-3 rounded-md bg-base-200/40 p-4">
                         <div className="flex flex-wrap items-baseline gap-3">
                             <h2 className="text-base font-semibold">
                                 {t('contribute.title')}
                             </h2>
-                            <HelpLink
-                                onClick={() =>
-                                    openExternalLink(LAUNCHER_CONTRIBUTE_URL)
-                                }
-                            >
-                                {t('contribute.learnMore')}
-                            </HelpLink>
                         </div>
                         <p className="text-base-content/75">
                             {t('contribute.description')}
@@ -209,17 +164,6 @@ export const HelpVIew: React.FC = () => {
                                     }
                                 >
                                     {t('contribute.reportBug')}
-                                </HelpLink>
-                            </li>
-                            <li>
-                                <HelpLink
-                                    onClick={() =>
-                                        openExternalLink(
-                                            LAUNCHER_GITHUB_PROPOSALS_URL,
-                                        )
-                                    }
-                                >
-                                    {t('contribute.suggestion')}
                                 </HelpLink>
                             </li>
                         </ul>

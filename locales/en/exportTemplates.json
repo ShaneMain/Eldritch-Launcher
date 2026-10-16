@@ -9,10 +9,10 @@
     "installedSize": "Installed file size",
     "openFolder": "Open folder",
     "refresh": "Refresh",
-    "sharedNotice": "Changes here also affect Godot editors opened outside Godot Launcher. Each editor uses its matching version and edition.",
+    "sharedNotice": "Changes here also affect Godot editors opened outside Eldritch Launcher. Each editor uses its matching version and edition.",
     "storage": {
         "title": "Export Template Storage",
-        "overview": "Choose where Godot Launcher keeps official and imported export templates.",
+        "overview": "Choose where Eldritch Launcher keeps official and imported export templates.",
         "defaultGodotPath": "Default Godot template path",
         "defaultGodotPathHelp": "This is Godot's default template location. It stays the same when storage is moved.",
         "platform": "Current platform: {{platform}}",
@@ -66,7 +66,7 @@
             "editorRunning": "Close Godot editors and exports before moving template storage."
         },
         "platformNote": "On {{platform}}, Godot's default export template folder is {{path}}.",
-        "launcherNote": "After moving templates, open your projects with Godot Launcher to keep using your saved template choices.",
+        "launcherNote": "After moving templates, open your projects with Eldritch Launcher to keep using your saved template choices.",
         "importedNote": "Choose where your imported custom templates are stored.",
         "preparingReview": "Checking templates and available space...",
         "moveSummary_one": "You are about to move {{count}} template ({{size}}) to:",
@@ -77,7 +77,7 @@
         "spaceInsufficient": "There is not enough free space. Choose another folder.",
         "chooseAnother": "Choose another folder",
         "movingTitle": "Moving export templates",
-        "movingNote": "Please keep Godot Launcher open. Your project connections will be updated automatically.",
+        "movingNote": "Please keep Eldritch Launcher open. Your project connections will be updated automatically.",
         "finishedNote": "Your templates are in their new location and your projects are ready to use them.",
         "cancelledNote": "The move was cancelled. Your templates are still in their original location.",
         "done": "Done",
@@ -400,7 +400,7 @@
             "done": "Your migration results"
         },
         "about": {
-            "intro": "Older projects keep export templates in their own editor folders. Godot Launcher can now manage those files from Export Templates.",
+            "intro": "Older projects keep export templates in their own editor folders. Eldritch Launcher can now manage those files from Export Templates.",
             "today": "Today",
             "before": "Templates in each project's editor folder",
             "after": "After the move",
@@ -498,7 +498,7 @@
         "finishLater": "Finish later",
         "done": "Done",
         "openTemplates": "Open Export Templates",
-        "keepOpen": "Large moves can take a while. Godot Launcher stays open until the move finishes.",
+        "keepOpen": "Large moves can take a while. Eldritch Launcher stays open until the move finishes.",
         "progress": "{{completed}} of {{total}} template versions finished",
         "progressLabel": "Template versions finished",
         "status": {

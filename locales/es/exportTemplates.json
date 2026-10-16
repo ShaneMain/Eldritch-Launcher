@@ -9,7 +9,7 @@
     "installedSize": "Tamaño de archivos instalados",
     "openFolder": "Abrir carpeta",
     "refresh": "Actualizar",
-    "sharedNotice": "Los cambios también afectan a Godot abierto fuera de Godot Launcher. Cada editor utiliza su versión y edición correspondientes.",
+    "sharedNotice": "Los cambios también afectan a Godot abierto fuera de Eldritch Launcher. Cada editor utiliza su versión y edición correspondientes.",
     "scanIssues": "Algunos elementos no se reconocen o no se pueden leer. Revisa los elementos indicados en la carpeta.",
     "recovery": "Una operación interrumpida necesita atención",
     "recoveryDetail": "Cierra Godot. Recupera los archivos originales o termina la limpieza si la operación ya se completó.",
@@ -307,7 +307,7 @@
     },
     "storage": {
         "title": "Almacenamiento de plantillas de exportación",
-        "overview": "Elige dónde guarda Godot Launcher las plantillas de exportación oficiales e importadas.",
+        "overview": "Elige dónde guarda Eldritch Launcher las plantillas de exportación oficiales e importadas.",
         "defaultGodotPath": "Ruta predeterminada de plantillas de Godot",
         "defaultGodotPathHelp": "Esta es la ubicación predeterminada de las plantillas de Godot. No cambia al mover el almacenamiento.",
         "platform": "Plataforma actual: {{platform}}",
@@ -333,7 +333,7 @@
         "retry": "Reintentar",
         "recover": "Recuperar archivos",
         "platformNote": "En {{platform}}, la carpeta predeterminada de plantillas de exportación de Godot es {{path}}.",
-        "launcherNote": "Después de mover las plantillas, abre tus proyectos con Godot Launcher para seguir usando las selecciones de plantillas guardadas.",
+        "launcherNote": "Después de mover las plantillas, abre tus proyectos con Eldritch Launcher para seguir usando las selecciones de plantillas guardadas.",
         "importedNote": "Elige dónde se almacenan tus plantillas personalizadas importadas.",
         "preparingReview": "Comprobando las plantillas y el espacio disponible...",
         "moveSummary_one": "Estás a punto de mover {{count}} plantilla ({{size}}) a:",
@@ -344,7 +344,7 @@
         "spaceInsufficient": "No hay suficiente espacio libre. Elige otra carpeta.",
         "chooseAnother": "Elegir otra carpeta",
         "movingTitle": "Moviendo plantillas de exportación",
-        "movingNote": "Mantén Godot Launcher abierto. Las conexiones de tus proyectos se actualizarán automáticamente.",
+        "movingNote": "Mantén Eldritch Launcher abierto. Las conexiones de tus proyectos se actualizarán automáticamente.",
         "finishedNote": "Tus plantillas están en su nueva ubicación y tus proyectos están listos para usarlas.",
         "cancelledNote": "El traslado se canceló. Tus plantillas siguen en su ubicación original.",
         "done": "Listo",
@@ -400,7 +400,7 @@
             "done": "Resultados de la migración"
         },
         "about": {
-            "intro": "Los proyectos antiguos guardan las plantillas de exportación en sus propias carpetas del editor. Godot Launcher ahora puede gestionar esos archivos desde Plantillas de exportación.",
+            "intro": "Los proyectos antiguos guardan las plantillas de exportación en sus propias carpetas del editor. Eldritch Launcher ahora puede gestionar esos archivos desde Plantillas de exportación.",
             "today": "Hoy",
             "before": "Plantillas en la carpeta del editor de cada proyecto",
             "after": "Después del traslado",
@@ -498,7 +498,7 @@
         "finishLater": "Terminar más tarde",
         "done": "Listo",
         "openTemplates": "Abrir plantillas de exportación",
-        "keepOpen": "Los traslados grandes pueden tardar. Godot Launcher permanecerá abierto hasta que termine el traslado.",
+        "keepOpen": "Los traslados grandes pueden tardar. Eldritch Launcher permanecerá abierto hasta que termine el traslado.",
         "progress": "{{completed}} de {{total}} versiones de plantillas completadas",
         "progressLabel": "Versiones de plantillas completadas",
         "status": {

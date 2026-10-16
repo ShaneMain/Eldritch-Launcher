@@ -48,14 +48,14 @@
     },
     "customEditor": {
         "selectManifestTitle": "カスタムエディタのマニフェストを追加",
-        "manifestFilterName": "Godot Launcher エディタマニフェスト",
+        "manifestFilterName": "Eldritch Launcher エディタマニフェスト",
         "waitingForDialog": "ダイアログを待機中...",
         "replace": {
             "action": "置き換える",
             "title": "カスタムエディタを置き換えますか？",
             "message": "このバージョンのカスタムエディタは既に登録されています。",
             "versionLabel": "バージョン",
-            "detail": "置き換えると、選択したマニフェストを使うようにGodot Launcherの記録が更新されます。エディタファイルは削除されません。"
+            "detail": "置き換えると、選択したマニフェストを使うようにEldritch Launcherの記録が更新されます。エディタファイルは削除されません。"
         },
         "drop": {
             "title": "マニフェストをドロップしてカスタムエディタを追加",
@@ -73,7 +73,7 @@
                 },
                 "name": {
                     "label": "表示名",
-                    "help": "このカスタムエディタに Godot Launcher で表示される名前。",
+                    "help": "このカスタムエディタに Eldritch Launcher で表示される名前。",
                     "placeholder": "Acme Godot 4.4 カスタムエディタ"
                 },
                 "version": {
@@ -180,7 +180,7 @@
             "title": "選択したエディターを削除",
             "message": "これらのエディターを削除しますか？",
             "managed": "インストール済みエディターのファイルはデバイスから削除されます。後で再インストールできます。",
-            "custom": "カスタムエディターは Godot Launcher から登録解除されます。ファイルは保持されます。",
+            "custom": "カスタムエディターは Eldritch Launcher から登録解除されます。ファイルは保持されます。",
             "used": "このエディターを使用するプロジェクト: {{names}}。別のエディターが必要になります。"
         },
         "results": {

@@ -37,7 +37,7 @@
     "tray": {
         "recentProjects": "Recent Projects",
         "invalidProject": "{{project}} (Invalid)",
-        "showGodotLauncher": "Show Godot Launcher",
+        "showGodotLauncher": "Show Eldritch Launcher",
         "quit": "Quit"
     }
 }

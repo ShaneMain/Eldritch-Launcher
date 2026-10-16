@@ -1,5 +1,5 @@
 {
-    "title": "Godot Launcher",
+    "title": "Eldritch Launcher",
     "steps": {
         "welcome": "歡迎",
         "macos": "macOS",
@@ -28,23 +28,23 @@
         "backCustomizeBehavior": "返回：自訂行為"
     },
     "welcomeStep": {
-        "title": "感謝使用 Godot Launcher！",
-        "description": "Godot Launcher 可讓您輕鬆<strong>管理多個 Godot 引擎版本</strong>，並為每個專案分別保留<strong>編輯器設定</strong>。",
+        "title": "感謝使用 Eldritch Launcher！",
+        "description": "Eldritch Launcher 可讓您輕鬆<strong>管理多個 Godot 引擎版本</strong>，並為每個專案分別保留<strong>編輯器設定</strong>。",
         "feedback": "您的使用就是對本專案的支持！若您有任何回饋或發現問題，請告訴我們，我們很樂意為您改進。",
         "enjoy": "祝您使用愉快，開發順利！"
     },
     "startStep": {
         "title": "一切就緒！ 🚀",
-        "subtitle": "Godot Launcher 已準備就緒！您現在可以管理專案並探索所有功能。",
+        "subtitle": "Eldritch Launcher 已準備就緒！您現在可以管理專案並探索所有功能。",
         "whatsNext": "接下來？",
         "installTab": "在 <strong>安裝</strong> 分頁中安裝並體驗最新預先釋出版本。",
         "projectsTab": "在 <strong>專案</strong> 分頁中快速新增或建立專案。",
         "settingsTab": "在 <strong>設定</strong> 分頁中依照喜好自訂體驗。"
     },
     "customizeBehavior": {
-        "trayAvailabilityWarning": "無法確認此工作階段是否支援系統匣。Godot Launcher 將保持顯示或結束，而不會隱藏。",
-        "trayCloseFallback": "關閉至系統匣時，Godot Launcher 將保持顯示。",
-        "trayStartFallback": "在系統匣中啟動時，Godot Launcher 將正常開啟。",
+        "trayAvailabilityWarning": "無法確認此工作階段是否支援系統匣。Eldritch Launcher 將保持顯示或結束，而不會隱藏。",
+        "trayCloseFallback": "關閉至系統匣時，Eldritch Launcher 將保持顯示。",
+        "trayStartFallback": "在系統匣中啟動時，Eldritch Launcher 將正常開啟。",
         "afterLaunching": "啟動專案後",
         "nothing": "不執行任何操作",
         "minimize": "最小化",
@@ -74,22 +74,22 @@
     },
     "macosStep": {
         "title": "macOS 說明",
-        "intro": "Godot Launcher 會為每個專案建立一份編輯器的副本。",
+        "intro": "Eldritch Launcher 會為每個專案建立一份編輯器的副本。",
         "whyTitle": "為什麼？",
         "reason": "在 macOS 上建立符號連結不受權限限制，但透過符號連結開啟編輯器並不穩定。為了確保良好體驗，我們改為為每個專案提供專用的引擎副本。雖然 Godot 約 200MB（通常不成問題），但請注意多個專案仍可能增加磁碟用量。",
         "dotnetNote": "注意：若您使用 .NET 編輯器，需從 <ButtonLink>Microsoft .NET 網站</ButtonLink> 安裝 .NET SDK <Icon />"
     },
     "windowsStep": {
         "title": "Windows 說明",
-        "intro": "自 1.4.0 版起，Godot Launcher 可為每個專案建立指向編輯器的 <code>符號連結</code>。為簡化設定，現預設使用本機副本。當您想節省磁碟空間，可於 <strong>設定 → 行為 → 編輯器符號連結</strong> 隨時啟用。",
-        "change1": "在 Windows 建立符號連結需要系統管理員權限與提升的命令執行權限。Godot Launcher 現在僅在建立符號連結時提升權限。",
+        "intro": "自 1.4.0 版起，Eldritch Launcher 可為每個專案建立指向編輯器的 <code>符號連結</code>。為簡化設定，現預設使用本機副本。當您想節省磁碟空間，可於 <strong>設定 → 行為 → 編輯器符號連結</strong> 隨時啟用。",
+        "change1": "在 Windows 建立符號連結需要系統管理員權限與提升的命令執行權限。Eldritch Launcher 現在僅在建立符號連結時提升權限。",
         "change2": "只有在您不是電腦上的 <code>系統管理員</code> 且未啟用 <code>開發人員模式</code> 時才會看到 UAC 提示。",
         "change3": "準備好嘗試符號連結了嗎？當您可以接受偶發的權限提升提示時，在設定中開啟 <strong>編輯器符號連結</strong>。",
         "dotnetNote": "注意：若您使用 .NET 系列編輯器，需從 <ButtonLink>Microsoft .NET 網站</ButtonLink> 安裝 .NET SDK <Icon />"
     },
     "linuxStep": {
         "title": "Linux 說明",
-        "intro": "Godot Launcher 為每個專案使用符號連結",
+        "intro": "Eldritch Launcher 為每個專案使用符號連結",
         "whyTitle": "為什麼？",
         "reason": "不同於 Windows 與 macOS，Linux 透過指向編輯器的符號連結來啟動專案。這可節省磁碟空間，並讓每個專案擁有獨立設定。",
         "dotnetNote": "注意：若您使用 .NET 編輯器，需從 <ButtonLink>Microsoft .NET 網站</ButtonLink> 安裝 .NET SDK <Icon />"
@@ -105,16 +105,16 @@
         "reassurance": "您可以稍後在設定中變更這些選項。",
         "welcome": {
             "title": "歡迎",
-            "description": "依照您的工作方式設定 Godot Launcher。",
+            "description": "依照您的工作方式設定 Eldritch Launcher。",
             "expectation": "只需幾個簡短步驟，即可選擇專案和編輯器的儲存位置、連接程式碼編輯器並設定您偏好的啟動行為。",
-            "benefitsLabel": "Godot Launcher 能幫您做什麼",
+            "benefitsLabel": "Eldritch Launcher 能幫您做什麼",
             "officialAndCustomEditors": "安裝和管理官方或自訂 Godot 編輯器。",
             "projectSettings": "為每個專案個別管理編輯器選擇和設定。",
             "codeEditorIntegration": "在偵測到的程式碼編輯器中開啟專案檔案。"
         },
         "appearance": {
             "title": "選擇外觀",
-            "description": "選擇 Godot Launcher 的外觀。您的選擇將立即生效。",
+            "description": "選擇 Eldritch Launcher 的外觀。您的選擇將立即生效。",
             "preview": "您可以稍後在設定中變更外觀。"
         },
         "setup": {
@@ -131,7 +131,7 @@
             "browseImportedTemplatesLocation": "瀏覽匯入的匯出範本位置",
             "movingImportedTemplates": "正在移動匯入的匯出範本: {{stage}}",
             "codeEditor": "預設程式碼編輯器",
-            "codeEditorHelp": "用於從 Godot Launcher 開啟指令碼和檔案。您可以稍後變更。",
+            "codeEditorHelp": "用於從 Eldritch Launcher 開啟指令碼和檔案。您可以稍後變更。",
             "noCodeEditor": "無",
             "detectingCodeEditors": "正在偵測已安裝的程式碼編輯器...",
             "codeEditorDetectionFailed": "無法偵測程式碼編輯器。您可以稍後在設定中配置。",
@@ -145,16 +145,16 @@
         },
         "preferences": {
             "title": "選擇偏好設定",
-            "description": "設定 Godot Launcher 在開啟專案後和電腦啟動時的行為。",
+            "description": "設定 Eldritch Launcher 在開啟專案後和電腦啟動時的行為。",
             "afterLaunching": "啟動專案後",
-            "keepOpen": "保持 Godot Launcher 開啟",
-            "keepOpenHelp": "保持 Godot Launcher 視窗可見。",
-            "minimizeHelp": "最小化 Godot Launcher 視窗。",
-            "closeToTrayHelp": "隱藏 Godot Launcher 視窗，仍可透過系統匣存取。",
-            "closeToTrayFallback": "如果系統匣無法使用，Godot Launcher 將保持開啟。",
-            "trayUnavailable": "無法確認系統匣支援情況。系統匣操作將安全地改為保持 Godot Launcher 視窗開啟。",
+            "keepOpen": "保持 Eldritch Launcher 開啟",
+            "keepOpenHelp": "保持 Eldritch Launcher 視窗可見。",
+            "minimizeHelp": "最小化 Eldritch Launcher 視窗。",
+            "closeToTrayHelp": "隱藏 Eldritch Launcher 視窗，仍可透過系統匣存取。",
+            "closeToTrayFallback": "如果系統匣無法使用，Eldritch Launcher 將保持開啟。",
+            "trayUnavailable": "無法確認系統匣支援情況。系統匣操作將安全地改為保持 Eldritch Launcher 視窗開啟。",
             "startupTitle": "啟動",
-            "startWithComputer": "電腦啟動時啟動 Godot Launcher",
+            "startWithComputer": "電腦啟動時啟動 Eldritch Launcher",
             "startInTray": "啟動至系統匣",
             "startInTrayFallback": "如果系統匣無法使用，將以一般視窗啟動。"
         },

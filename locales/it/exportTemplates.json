@@ -9,7 +9,7 @@
     "installedSize": "Dimensione dei file installati",
     "openFolder": "Apri cartella",
     "refresh": "Aggiorna",
-    "sharedNotice": "Le modifiche interessano anche Godot aperto senza Godot Launcher. Ogni editor usa la versione e l'edizione corrispondenti.",
+    "sharedNotice": "Le modifiche interessano anche Godot aperto senza Eldritch Launcher. Ogni editor usa la versione e l'edizione corrispondenti.",
     "scanIssues": "Alcuni elementi non sono riconosciuti o leggibili. Controlla gli elementi elencati nella cartella.",
     "recovery": "Un'operazione interrotta richiede attenzione",
     "recoveryDetail": "Chiudi Godot. Ripristina i file originali o completa la pulizia se l'operazione è già terminata.",
@@ -307,7 +307,7 @@
     },
     "storage": {
         "title": "Archiviazione dei modelli di esportazione",
-        "overview": "Scegli dove Godot Launcher conserva i modelli di esportazione ufficiali e importati.",
+        "overview": "Scegli dove Eldritch Launcher conserva i modelli di esportazione ufficiali e importati.",
         "defaultGodotPath": "Percorso predefinito dei modelli Godot",
         "defaultGodotPathHelp": "Questa è la posizione predefinita dei modelli Godot. Rimane invariata quando l'archiviazione viene spostata.",
         "platform": "Piattaforma corrente: {{platform}}",
@@ -333,7 +333,7 @@
         "retry": "Riprova",
         "recover": "Recupera file",
         "platformNote": "Su {{platform}}, la cartella predefinita dei modelli di esportazione Godot è {{path}}.",
-        "launcherNote": "Dopo aver spostato i modelli, apri i progetti con Godot Launcher per continuare a usare le selezioni salvate.",
+        "launcherNote": "Dopo aver spostato i modelli, apri i progetti con Eldritch Launcher per continuare a usare le selezioni salvate.",
         "importedNote": "Scegli dove sono archiviati i modelli personalizzati importati.",
         "preparingReview": "Controllo dei modelli e dello spazio disponibile...",
         "moveSummary_one": "Stai per spostare {{count}} modello ({{size}}) in:",
@@ -344,7 +344,7 @@
         "spaceInsufficient": "Non c'è abbastanza spazio libero. Scegli un'altra cartella.",
         "chooseAnother": "Scegli un'altra cartella",
         "movingTitle": "Spostamento dei modelli di esportazione",
-        "movingNote": "Tieni Godot Launcher aperto. Le connessioni dei progetti verranno aggiornate automaticamente.",
+        "movingNote": "Tieni Eldritch Launcher aperto. Le connessioni dei progetti verranno aggiornate automaticamente.",
         "finishedNote": "I modelli sono nella nuova posizione e i progetti sono pronti a usarli.",
         "cancelledNote": "Lo spostamento è stato annullato. I modelli sono ancora nella posizione originale.",
         "done": "Fatto",
@@ -400,7 +400,7 @@
             "done": "Risultati della migrazione"
         },
         "about": {
-            "intro": "I progetti più vecchi conservano i modelli di esportazione nelle proprie cartelle dell'editor. Godot Launcher ora può gestire questi file da Modelli di esportazione.",
+            "intro": "I progetti più vecchi conservano i modelli di esportazione nelle proprie cartelle dell'editor. Eldritch Launcher ora può gestire questi file da Modelli di esportazione.",
             "today": "Oggi",
             "before": "Modelli nella cartella dell'editor di ogni progetto",
             "after": "Dopo lo spostamento",
@@ -498,7 +498,7 @@
         "finishLater": "Completa più tardi",
         "done": "Fatto",
         "openTemplates": "Apri modelli di esportazione",
-        "keepOpen": "Gli spostamenti grandi possono richiedere tempo. Godot Launcher rimane aperto fino al termine dello spostamento.",
+        "keepOpen": "Gli spostamenti grandi possono richiedere tempo. Eldritch Launcher rimane aperto fino al termine dello spostamento.",
         "progress": "{{completed}} versioni dei modelli completate su {{total}}",
         "progressLabel": "Versioni dei modelli completate",
         "status": {

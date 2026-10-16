@@ -48,14 +48,14 @@
     },
     "customEditor": {
         "selectManifestTitle": "Żid manifest tal-editur personalizzat",
-        "manifestFilterName": "Manifest tal-editur ta’ Godot Launcher",
+        "manifestFilterName": "Manifest tal-editur ta’ Eldritch Launcher",
         "waitingForDialog": "Qed nistennew id-djalogu...",
         "replace": {
             "action": "Ibdel",
             "title": "Tissostitwixxi l-editur personalizzat?",
             "message": "Editur personalizzat b’din il-verżjoni diġà huwa rreġistrat.",
             "versionLabel": "Verżjoni",
-            "detail": "Is-sostituzzjoni taġġorna r-rekord f'Godot Launcher biex juża l-manifest magħżul. Il-fajls tal-editur tiegħek ma jitħassrux."
+            "detail": "Is-sostituzzjoni taġġorna r-rekord f'Eldritch Launcher biex juża l-manifest magħżul. Il-fajls tal-editur tiegħek ma jitħassrux."
         },
         "drop": {
             "title": "Waqqa’ l-manifest biex iżżid editur personalizzat",
@@ -73,7 +73,7 @@
                 },
                 "name": {
                     "label": "Isem għall-wiri",
-                    "help": "Isem muri f’Godot Launcher għal dan l-editur personalizzat.",
+                    "help": "Isem muri f’Eldritch Launcher għal dan l-editur personalizzat.",
                     "placeholder": "Editur personalizzat Acme Godot 4.4"
                 },
                 "version": {
@@ -180,7 +180,7 @@
             "title": "Neħħi l-edituri magħżula",
             "message": "Trid tneħħi dawn l-edituri?",
             "managed": "Il-fajls tal-edituri installati jitħassru mill-apparat tiegħek. Tista' terġa' tinstallahom aktar tard.",
-            "custom": "L-edituri personalizzati jitneħħew minn Godot Launcher. Il-fajls tagħhom jinżammu.",
+            "custom": "L-edituri personalizzati jitneħħew minn Eldritch Launcher. Il-fajls tagħhom jinżammu.",
             "used": "Proġetti li jużaw dan l-editur: {{names}}. Se jkollhom bżonn editur ieħor."
         },
         "results": {

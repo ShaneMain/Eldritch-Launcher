@@ -871,7 +871,7 @@ describe('template migration recovery', () => {
             const root = path.resolve('fixture-shared');
             const parent = path.join(
                 path.dirname(root),
-                '.godot-launcher-template-work',
+                '.eldritch-launcher-template-work',
             );
             const id = '11111111-1111-1111-1111-111111111111';
             const directory = path.join(parent, id);
@@ -1731,7 +1731,7 @@ describe('complete package fallback', () => {
             expect.any(AbortSignal),
         );
         expect(fs.promises.rm).toHaveBeenCalledWith(
-            expect.stringContaining('.godot-launcher-template-work'),
+            expect.stringContaining('.eldritch-launcher-template-work'),
             { recursive: true, force: true },
         );
     });

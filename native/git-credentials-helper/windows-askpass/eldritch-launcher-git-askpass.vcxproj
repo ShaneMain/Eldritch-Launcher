@@ -14,8 +14,8 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{B1789530-F077-4E2E-882B-A72A750F9C23}</ProjectGuid>
-    <RootNamespace>GodotLauncherGitAskpass</RootNamespace>
-    <ProjectName>godot-launcher-git-askpass</ProjectName>
+    <RootNamespace>EldritchLauncherGitAskpass</RootNamespace>
+    <ProjectName>eldritch-launcher-git-askpass</ProjectName>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -44,7 +44,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <TargetName>godot-launcher-git-askpass</TargetName>
+    <TargetName>eldritch-launcher-git-askpass</TargetName>
     <IntDir>$(ProjectDir)build\$(Platform)\$(Configuration)\</IntDir>
     <GeneratedIncludeDirectory>$(IntDir)generated\</GeneratedIncludeDirectory>
     <PackageJsonPath>$(ProjectDir)..\..\..\package.json</PackageJsonPath>

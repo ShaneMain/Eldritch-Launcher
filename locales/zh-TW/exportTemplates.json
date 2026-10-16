@@ -9,7 +9,7 @@
     "installedSize": "已安裝檔案大小",
     "openFolder": "開啟資料夾",
     "refresh": "重新整理",
-    "sharedNotice": "此處的變更也會影響在 Godot Launcher 外開啟的 Godot。每個編輯器使用符合其版本和類型的範本。",
+    "sharedNotice": "此處的變更也會影響在 Eldritch Launcher 外開啟的 Godot。每個編輯器使用符合其版本和類型的範本。",
     "scanIssues": "部分內容無法辨識或讀取。請檢查資料夾中列出的項目。",
     "recovery": "中斷的操作需要處理",
     "recoveryDetail": "請關閉 Godot。還原原始檔案，或在操作已完成時繼續清理。",
@@ -307,7 +307,7 @@
     },
     "storage": {
         "title": "匯出範本儲存空間",
-        "overview": "選擇 Godot Launcher 儲存官方和已匯入匯出範本的位置。",
+        "overview": "選擇 Eldritch Launcher 儲存官方和已匯入匯出範本的位置。",
         "defaultGodotPath": "預設 Godot 範本路徑",
         "defaultGodotPathHelp": "這是 Godot 的預設範本位置。移動儲存空間時不會改變。",
         "platform": "目前平台：{{platform}}",
@@ -361,7 +361,7 @@
             "editorRunning": "移動範本儲存空間前，請關閉 Godot 編輯器並停止匯出。"
         },
         "platformNote": "在 {{platform}} 上，Godot 預設的匯出範本資料夾位於 {{path}}。",
-        "launcherNote": "移動範本後，請透過 Godot Launcher 開啟專案，以繼續使用已儲存的範本選擇。",
+        "launcherNote": "移動範本後，請透過 Eldritch Launcher 開啟專案，以繼續使用已儲存的範本選擇。",
         "importedNote": "選擇匯入的自訂範本的儲存位置。",
         "preparingReview": "正在檢查範本與可用空間...",
         "moveSummary_one": "即將把 {{count}} 個範本 ({{size}}) 移至:",
@@ -372,7 +372,7 @@
         "spaceInsufficient": "可用空間不足。請選擇其他資料夾。",
         "chooseAnother": "選擇其他資料夾",
         "movingTitle": "正在移動匯出範本",
-        "movingNote": "請保持 Godot Launcher 開啟。專案連結將自動更新。",
+        "movingNote": "請保持 Eldritch Launcher 開啟。專案連結將自動更新。",
         "finishedNote": "範本已移至新位置，專案可以繼續使用這些範本。",
         "cancelledNote": "移動已取消。範本仍在原始位置。",
         "done": "完成",
@@ -400,7 +400,7 @@
             "done": "移轉結果"
         },
         "about": {
-            "intro": "舊專案將匯出範本儲存在各自的編輯器資料夾中。Godot Launcher 現在可以透過匯出範本頁面管理這些檔案。",
+            "intro": "舊專案將匯出範本儲存在各自的編輯器資料夾中。Eldritch Launcher 現在可以透過匯出範本頁面管理這些檔案。",
             "today": "現在",
             "before": "各專案編輯器資料夾中的範本",
             "after": "移動後",
@@ -498,7 +498,7 @@
         "finishLater": "稍後完成",
         "done": "完成",
         "openTemplates": "開啟匯出範本",
-        "keepOpen": "較大的移動操作可能需要一些時間。Godot Launcher 將保持開啟，直到移動完成。",
+        "keepOpen": "較大的移動操作可能需要一些時間。Eldritch Launcher 將保持開啟，直到移動完成。",
         "progress": "已完成 {{completed}} 個範本版本，共 {{total}} 個",
         "progressLabel": "已完成的範本版本",
         "status": {

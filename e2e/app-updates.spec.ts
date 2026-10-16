@@ -10,7 +10,7 @@ let electronApp: ElectronApplication;
 let page: Page;
 let fixtureHome: string;
 const offeredVersion = '99.0.0-beta.2';
-const notesUrl = `https://docs.godotlauncher.org/release-notes/${offeredVersion}/`;
+const notesUrl = `https://github.com/ShaneMain/Eldritch-Launcher/releases/tag/v${offeredVersion}`;
 
 type UpdateFixtureState = {
     checks: unknown[];

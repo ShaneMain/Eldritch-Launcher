@@ -3,7 +3,6 @@ import {
     Blocks,
     Cable,
     CircleHelp,
-    ExternalLink,
     FileOutput,
     HardDrive,
     Images,
@@ -23,7 +22,6 @@ import {
     useNavigate,
     useParams,
 } from 'react-router';
-import { COMMUNITY_DISCORD_URL } from './app.constants';
 import { shouldShowAppLoading } from './app.model';
 import {
     appRoutePaths,
@@ -32,7 +30,6 @@ import {
     isSettingsTab,
     type SettingsTab,
 } from './app.routes';
-import IconDiscord from './assets/icons/discord-symbol-blurple.svg';
 import { AppUpdateNotification } from './components/app-update-notification.component';
 import { LoadingRocket } from './components/loading-rocket.component';
 import { MenuDivider } from './components/ui/menu-divider.component';
@@ -61,7 +58,7 @@ function App() {
     const version = import.meta.env.VITE_APP_VERSION;
 
     useEffect(() => {
-        document.title = `Godot Launcher ${version}`;
+        document.title = `Eldritch Launcher ${version}`;
     }, []);
 
     const loading = shouldShowAppLoading({
@@ -403,29 +400,6 @@ function MainLayout() {
                 <div className="pt-2">
                     <MenuDivider />
                     <ul className="menu w-full gap-1 text-base">
-                        <li>
-                            <button
-                                type="button"
-                                data-testid="btnDiscord"
-                                data-external-link=""
-                                className="relative"
-                                onClick={() =>
-                                    openExternalLink(COMMUNITY_DISCORD_URL)
-                                }
-                            >
-                                <img
-                                    src={IconDiscord}
-                                    alt="Discord"
-                                    className="size-5"
-                                />
-                                {t('app.navigation.joinCommunity')}
-                                <ExternalLink
-                                    className="size-3.5 shrink-0 justify-self-end opacity-45"
-                                    aria-hidden="true"
-                                />
-                            </button>
-                        </li>
-
                         <li>
                             <NavLink
                                 to={appRoutePaths.help}

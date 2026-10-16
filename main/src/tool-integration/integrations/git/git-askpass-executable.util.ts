@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
-const HELPER_FILE_NAME = 'godot-launcher-git-askpass.exe';
+const HELPER_FILE_NAME = 'eldritch-launcher-git-askpass.exe';
 
 export type GitAskPassExecutableLocation = {
     architecture: NodeJS.Architecture;

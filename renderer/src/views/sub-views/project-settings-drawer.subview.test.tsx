@@ -15,7 +15,7 @@ vi.mock('react-i18next', () => {
         'projects:editProject.drawerTitle': 'Settings for {{project}}',
         'projects:editProject.fields.name.label': 'Project name',
         'projects:editProject.fields.name.help':
-            'Name shown in Godot Launcher.',
+            'Name shown in Eldritch Launcher.',
         'projects:editProject.fields.name.placeholder': 'My Project',
         'projects:editProject.fields.path.label': 'Project folder',
         'projects:editProject.pinned.label': 'Pinned',

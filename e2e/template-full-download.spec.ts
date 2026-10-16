@@ -17,9 +17,9 @@ test.setTimeout(60_000);
 
 test.beforeAll(async () => {
     home = await createFixtureHome();
-    root = path.join(home,'.gd-launcher','godot','export_templates');
+    root = path.join(home,'.eldritch-launcher','godot','export_templates');
     directory = path.join(root,'4.6.stable');
-    const cataloguePath = path.join(home,'.gd-launcher','editor-catalog.json');
+    const cataloguePath = path.join(home,'.eldritch-launcher','editor-catalog.json');
     const catalogue = JSON.parse(await fs.readFile(cataloguePath,'utf8')) as {providers:Record<string,{templateMetadataRefreshed:boolean;releases:EditorCatalogRelease[]}>};
     const packages: {url:string;bytes:string}[] = [];
     for (const provider of Object.values(catalogue.providers)) {
@@ -32,11 +32,11 @@ test.beforeAll(async () => {
         }
     }
     await fs.writeFile(cataloguePath,JSON.stringify(catalogue));
-    const prefsPath=path.join(home,'.gd-launcher','prefs.json');
+    const prefsPath=path.join(home,'.eldritch-launcher','prefs.json');
     const prefs=JSON.parse(await fs.readFile(prefsPath,'utf8'));
     prefs.language='en'; prefs.export_template_migration_offered=true;
     await fs.writeFile(prefsPath,JSON.stringify(prefs));
-    await fs.writeFile(path.join(home,'.gd-launcher','projects.json'),'[]');
+    await fs.writeFile(path.join(home,'.eldritch-launcher','projects.json'),'[]');
     const env={...process.env,HOME:home,USERPROFILE:home,APPDATA:path.join(home,'AppData','Roaming'),LOCALAPPDATA:path.join(home,'AppData','Local'),XDG_CONFIG_HOME:path.join(home,'.config'),XDG_DATA_HOME:path.join(home,'.local','share'),GODOT_LAUNCHER_E2E_FIXTURES:'1',GODOT_LAUNCHER_E2E_HOME_DIR:home};
     delete env.ELECTRON_RUN_AS_NODE;
     app=await _electron.launch({args:['.',`--user-data-dir=${path.join(home,'electron-user-data')}`],env});
@@ -97,7 +97,7 @@ async function openFallback() {
 
 /** Confirms failure or cancellation removed only the private operation staging. */
 async function stagingClean() {
-    const work=path.join(path.dirname(root),'.godot-launcher-template-work');
+    const work=path.join(path.dirname(root),'.eldritch-launcher-template-work');
     await expect.poll(async()=>await fs.readdir(work).catch(()=>[])).toEqual([]);
 }
 

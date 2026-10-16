@@ -48,14 +48,14 @@
     },
     "customEditor": {
         "selectManifestTitle": "Ajouter un manifeste d’éditeur personnalisé",
-        "manifestFilterName": "Manifeste d’éditeur Godot Launcher",
+        "manifestFilterName": "Manifeste d’éditeur Eldritch Launcher",
         "waitingForDialog": "En attente de la boîte de dialogue...",
         "replace": {
             "action": "Remplacer",
             "title": "Remplacer l’éditeur personnalisé ?",
             "message": "Un éditeur personnalisé avec cette version est déjà enregistré.",
             "versionLabel": "Version",
-            "detail": "Le remplacement mettra à jour l’enregistrement de Godot Launcher pour utiliser le manifeste sélectionné. Vos fichiers d’éditeur ne seront pas supprimés."
+            "detail": "Le remplacement mettra à jour l’enregistrement de Eldritch Launcher pour utiliser le manifeste sélectionné. Vos fichiers d’éditeur ne seront pas supprimés."
         },
         "drop": {
             "title": "Déposez le manifeste pour ajouter l’éditeur personnalisé",
@@ -73,7 +73,7 @@
                 },
                 "name": {
                     "label": "Nom affiché",
-                    "help": "Nom affiché dans Godot Launcher pour cet éditeur personnalisé.",
+                    "help": "Nom affiché dans Eldritch Launcher pour cet éditeur personnalisé.",
                     "placeholder": "Éditeur personnalisé Acme Godot 4.4"
                 },
                 "version": {
@@ -180,7 +180,7 @@
             "title": "Supprimer les éditeurs sélectionnés",
             "message": "Supprimer ces éditeurs ?",
             "managed": "Les fichiers des éditeurs installés seront supprimés de votre appareil. Vous pourrez les réinstaller plus tard.",
-            "custom": "Les éditeurs personnalisés seront retirés de Godot Launcher. Leurs fichiers seront conservés.",
+            "custom": "Les éditeurs personnalisés seront retirés de Eldritch Launcher. Leurs fichiers seront conservés.",
             "used": "Projets utilisant cet éditeur : {{names}}. Ils auront besoin d'un autre éditeur."
         },
         "results": {

@@ -25,7 +25,7 @@ const helperPath = path.join(
     projectDirectory,
     'out',
     `win32-${requestedArch}`,
-    'godot-launcher-git-askpass.exe',
+    'eldritch-launcher-git-askpass.exe',
 );
 const username = 'x-access-token';
 const password = 'dummy-token-for-native-askpass-test';
@@ -53,7 +53,7 @@ try {
     const spacedHelper = path.join(
         temporaryDirectory,
         'path with spaces - Żółw',
-        'godot-launcher-git-askpass.exe',
+        'eldritch-launcher-git-askpass.exe',
     );
     await copyFileWithParents(helperPath, spacedHelper);
     await testCredentialHelper(spacedHelper);

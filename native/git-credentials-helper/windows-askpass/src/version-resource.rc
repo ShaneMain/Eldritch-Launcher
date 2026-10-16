@@ -14,13 +14,13 @@ BEGIN
     BEGIN
         BLOCK "080904B0"
         BEGIN
-            VALUE "CompanyName", "Godot Launcher\0"
-            VALUE "FileDescription", "Godot Launcher Git credential helper\0"
+            VALUE "CompanyName", "Eldritch Launcher\0"
+            VALUE "FileDescription", "Eldritch Launcher Git credential helper\0"
             VALUE "FileVersion", LAUNCHER_VERSION_STRING
-            VALUE "InternalName", "godot-launcher-git-askpass\0"
-            VALUE "LegalCopyright", "Copyright (c) 2024-2026 Mario Debono - godotlauncher.org\0"
-            VALUE "OriginalFilename", "godot-launcher-git-askpass.exe\0"
-            VALUE "ProductName", "Godot Launcher\0"
+            VALUE "InternalName", "eldritch-launcher-git-askpass\0"
+            VALUE "LegalCopyright", "Copyright (c) 2024-2026 Mario Debono, ShaneMain\0"
+            VALUE "OriginalFilename", "eldritch-launcher-git-askpass.exe\0"
+            VALUE "ProductName", "Eldritch Launcher\0"
             VALUE "ProductVersion", LAUNCHER_VERSION_STRING
         END
     END

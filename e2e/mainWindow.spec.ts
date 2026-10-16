@@ -42,7 +42,7 @@ test('Can navigate the main window', async () => {
                 message: 'Waiting for window title to include full version',
                 timeout: 15_000,
             })
-            .toBe(`Godot Launcher ${version}`);
+            .toBe(`Eldritch Launcher ${version}`);
         await expect(mainPage.getByTestId('btnProjects')).toBeVisible({
             timeout: 15_000,
         });

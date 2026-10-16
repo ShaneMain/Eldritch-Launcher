@@ -9,7 +9,7 @@
     "installedSize": "Taille des fichiers installés",
     "openFolder": "Ouvrir le dossier",
     "refresh": "Actualiser",
-    "sharedNotice": "Les modifications affectent aussi Godot ouvert sans Godot Launcher. Chaque éditeur utilise la version et l'édition correspondantes.",
+    "sharedNotice": "Les modifications affectent aussi Godot ouvert sans Eldritch Launcher. Chaque éditeur utilise la version et l'édition correspondantes.",
     "scanIssues": "Certains éléments sont inconnus ou illisibles. Consultez les éléments indiqués dans le dossier.",
     "recovery": "Une opération interrompue nécessite votre attention",
     "recoveryDetail": "Fermez Godot. Restaurez les fichiers ou terminez le nettoyage si l'opération a réussi.",
@@ -307,7 +307,7 @@
     },
     "storage": {
         "title": "Stockage des modèles d'exportation",
-        "overview": "Choisissez où Godot Launcher conserve les modèles d'exportation officiels et importés.",
+        "overview": "Choisissez où Eldritch Launcher conserve les modèles d'exportation officiels et importés.",
         "defaultGodotPath": "Chemin par défaut des modèles Godot",
         "defaultGodotPathHelp": "Il s'agit de l'emplacement par défaut des modèles Godot. Il reste identique lorsque le stockage est déplacé.",
         "platform": "Plateforme actuelle : {{platform}}",
@@ -333,7 +333,7 @@
         "retry": "Réessayer",
         "recover": "Récupérer les fichiers",
         "platformNote": "Sous {{platform}}, le dossier par défaut des modèles d'exportation Godot est {{path}}.",
-        "launcherNote": "Après avoir déplacé les modèles, ouvrez vos projets avec Godot Launcher pour continuer à utiliser vos choix de modèles enregistrés.",
+        "launcherNote": "Après avoir déplacé les modèles, ouvrez vos projets avec Eldritch Launcher pour continuer à utiliser vos choix de modèles enregistrés.",
         "importedNote": "Choisissez où vos modèles personnalisés importés sont stockés.",
         "preparingReview": "Vérification des modèles et de l'espace disponible...",
         "moveSummary_one": "Vous êtes sur le point de déplacer {{count}} modèle ({{size}}) vers :",
@@ -344,7 +344,7 @@
         "spaceInsufficient": "L'espace libre est insuffisant. Choisissez un autre dossier.",
         "chooseAnother": "Choisir un autre dossier",
         "movingTitle": "Déplacement des modèles d'exportation",
-        "movingNote": "Gardez Godot Launcher ouvert. Les connexions de vos projets seront mises à jour automatiquement.",
+        "movingNote": "Gardez Eldritch Launcher ouvert. Les connexions de vos projets seront mises à jour automatiquement.",
         "finishedNote": "Vos modèles sont dans leur nouvel emplacement et vos projets sont prêts à les utiliser.",
         "cancelledNote": "Le déplacement a été annulé. Vos modèles sont toujours dans leur emplacement d'origine.",
         "done": "Terminé",
@@ -400,7 +400,7 @@
             "done": "Résultats de la migration"
         },
         "about": {
-            "intro": "Les anciens projets conservent les modèles d'exportation dans leurs propres dossiers d'éditeur. Godot Launcher peut désormais gérer ces fichiers depuis Modèles d'exportation.",
+            "intro": "Les anciens projets conservent les modèles d'exportation dans leurs propres dossiers d'éditeur. Eldritch Launcher peut désormais gérer ces fichiers depuis Modèles d'exportation.",
             "today": "Aujourd'hui",
             "before": "Modèles dans le dossier d'éditeur de chaque projet",
             "after": "Après le déplacement",
@@ -498,7 +498,7 @@
         "finishLater": "Terminer plus tard",
         "done": "Terminé",
         "openTemplates": "Ouvrir les modèles d’exportation",
-        "keepOpen": "Les déplacements volumineux peuvent prendre du temps. Godot Launcher reste ouvert jusqu'à la fin du déplacement.",
+        "keepOpen": "Les déplacements volumineux peuvent prendre du temps. Eldritch Launcher reste ouvert jusqu'à la fin du déplacement.",
         "progress": "{{completed}} versions de modèles terminées sur {{total}}",
         "progressLabel": "Versions de modèles terminées",
         "status": {

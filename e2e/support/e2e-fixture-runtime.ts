@@ -275,7 +275,7 @@ export async function writeJson(file: string, data: unknown): Promise<void> {
  * @returns A promise that resolves after all fixture files are written.
  */
 export async function seedLauncherData(homeDir: string): Promise<void> {
-    const configDir = path.join(homeDir, '.gd-launcher');
+    const configDir = path.join(homeDir, '.eldritch-launcher');
     await fs.mkdir(configDir, { recursive: true });
     await writeJson(path.join(configDir, 'projects.json'), SAMPLE_PROJECTS);
     await writeJson(
@@ -1027,7 +1027,7 @@ export async function prepareOnboardingFixture(
     );
     await page.evaluate((onboardingStep) => {
         localStorage.setItem(
-            'godot-launcher.onboarding.step',
+            'eldritch-launcher.onboarding.step',
             onboardingStep,
         );
     }, step);

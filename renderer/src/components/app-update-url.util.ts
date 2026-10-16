@@ -16,5 +16,5 @@ export function getAppReleaseNotesUrl(
     ) {
         return undefined;
     }
-    return `${LAUNCHER_RELEASE_NOTES_URL}${encodeURIComponent(version)}/`;
+    return `${LAUNCHER_RELEASE_NOTES_URL}${encodeURIComponent(version)}`;
 }

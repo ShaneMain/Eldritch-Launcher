@@ -9,7 +9,7 @@
     "installedSize": "Rozmiar zainstalowanych plików",
     "openFolder": "Otwórz folder",
     "refresh": "Odśwież",
-    "sharedNotice": "Zmiany dotyczą też edytorów Godot uruchomionych poza Godot Launcher. Każdy edytor używa odpowiedniej wersji i edycji.",
+    "sharedNotice": "Zmiany dotyczą też edytorów Godot uruchomionych poza Eldritch Launcher. Każdy edytor używa odpowiedniej wersji i edycji.",
     "scanIssues": "Niektóre wpisy są nieznane lub nieczytelne. Sprawdź wymienione wpisy w folderze.",
     "recovery": "Przerwana operacja wymaga uwagi",
     "recoveryDetail": "Zamknij Godot. Przywróć oryginalne pliki lub dokończ czyszczenie po zakończonej operacji.",
@@ -307,7 +307,7 @@
     },
     "storage": {
         "title": "Przechowywanie szablonów eksportu",
-        "overview": "Wybierz, gdzie Godot Launcher przechowuje oficjalne i zaimportowane szablony eksportu.",
+        "overview": "Wybierz, gdzie Eldritch Launcher przechowuje oficjalne i zaimportowane szablony eksportu.",
         "defaultGodotPath": "Domyślna ścieżka szablonów Godot",
         "defaultGodotPathHelp": "To jest domyślna lokalizacja szablonów Godot. Nie zmienia się po przeniesieniu magazynu.",
         "platform": "Bieżąca platforma: {{platform}}",
@@ -361,7 +361,7 @@
             "editorRunning": "Przed przeniesieniem magazynu szablonów zamknij edytory Godot i zatrzymaj eksporty."
         },
         "platformNote": "Na platformie {{platform}} domyślny folder szablonów eksportu Godot to {{path}}.",
-        "launcherNote": "Po przeniesieniu szablonów otwieraj projekty przez Godot Launcher, aby nadal korzystać z zapisanych wyborów szablonów.",
+        "launcherNote": "Po przeniesieniu szablonów otwieraj projekty przez Eldritch Launcher, aby nadal korzystać z zapisanych wyborów szablonów.",
         "importedNote": "Wybierz miejsce przechowywania zaimportowanych szablonów niestandardowych.",
         "preparingReview": "Sprawdzanie szablonów i dostępnego miejsca...",
         "moveSummary_one": "Zamierzasz przenieść {{count}} szablon ({{size}}) do:",
@@ -374,7 +374,7 @@
         "spaceInsufficient": "Za mało wolnego miejsca. Wybierz inny folder.",
         "chooseAnother": "Wybierz inny folder",
         "movingTitle": "Przenoszenie szablonów eksportu",
-        "movingNote": "Pozostaw Godot Launcher otwarty. Połączenia projektów zostaną zaktualizowane automatycznie.",
+        "movingNote": "Pozostaw Eldritch Launcher otwarty. Połączenia projektów zostaną zaktualizowane automatycznie.",
         "finishedNote": "Szablony znajdują się w nowej lokalizacji, a projekty są gotowe do ich użycia.",
         "cancelledNote": "Przenoszenie anulowano. Szablony nadal znajdują się w pierwotnej lokalizacji.",
         "done": "Gotowe",
@@ -400,7 +400,7 @@
             "done": "Wyniki migracji"
         },
         "about": {
-            "intro": "Starsze projekty przechowują szablony eksportu we własnych folderach edytora. Godot Launcher może teraz zarządzać tymi plikami w sekcji Szablony eksportu.",
+            "intro": "Starsze projekty przechowują szablony eksportu we własnych folderach edytora. Eldritch Launcher może teraz zarządzać tymi plikami w sekcji Szablony eksportu.",
             "today": "Dzisiaj",
             "before": "Szablony w folderze edytora każdego projektu",
             "after": "Po przeniesieniu",
@@ -498,7 +498,7 @@
         "finishLater": "Dokończ później",
         "done": "Gotowe",
         "openTemplates": "Otwórz szablony eksportu",
-        "keepOpen": "Duże przeniesienia mogą potrwać. Godot Launcher pozostanie otwarty do zakończenia przenoszenia.",
+        "keepOpen": "Duże przeniesienia mogą potrwać. Eldritch Launcher pozostanie otwarty do zakończenia przenoszenia.",
         "progress": "Ukończone wersje szablonów: {{completed}} z {{total}}",
         "progressLabel": "Ukończone wersje szablonów",
         "status": {
