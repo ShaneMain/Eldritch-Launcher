@@ -53,4 +53,6 @@ export type UserPreferences = {
     linux_credential_storage?: LinuxCredentialStoragePreference;
     language?: string;
     skipped_app_update_version?: string;
+    /** Minutes between automatic project Git status refreshes; 0 disables them. */
+    project_git_status_refresh_minutes?: number;
 };

@@ -27,6 +27,7 @@ import { PublicGitSourceService } from './public-git-source.service.js';
     ],
     exports: [
         GitToolConfigurationService,
+        GitCredentialSessionService,
         GitService,
         GitPushService,
         GitSubmoduleService,

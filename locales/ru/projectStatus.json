@@ -1,3 +1,35 @@
 {
-    "title": "Project status"
+    "title": "Project status",
+    "git": {
+        "upToDate": "Up to date",
+        "behind": "Commits behind: {{n}}",
+        "ahead": "Commits ahead: {{n}}",
+        "noUpstream": "No upstream",
+        "detached": "Detached",
+        "authRequired": "Auth required",
+        "offline": "Offline",
+        "error": "Git error",
+        "tracking": "{{branch}} → {{upstream}}",
+        "checkedAt": "Checked {{time}}",
+        "stale": "Could not fetch; counts are from the last successful fetch.",
+        "descriptions": {
+            "no-upstream": "The branch {{branch}} does not track a remote branch.",
+            "detached": "HEAD is detached; check out a branch to compare it with its upstream.",
+            "auth-required": "The remote needs credentials. Connect GitHub in Connections settings.",
+            "offline": "The remote could not be reached.",
+            "error": "Git could not check the upstream."
+        },
+        "refreshHint": "Click to check again.",
+        "openConnections": "Click to open Connections settings.",
+        "refreshing": "Checking remote…",
+        "refreshAll": "Refresh Git status of all projects"
+    },
+    "settings": {
+        "refreshInterval": {
+            "title": "Git status refresh",
+            "description": "How often projects fetch their upstream branch to show commits behind and ahead. Status also refreshes when the window gains focus.",
+            "off": "Off (on focus and manual only)",
+            "minutes": "Every {{minutes}} minutes"
+        }
+    }
 }

@@ -30,6 +30,7 @@ vi.mock('@mariodebono/di-electron/renderer', () => {
         'projects-updated': 'subscribeProjects',
         'releases-updated': 'subscribeReleases',
         'release-install-progress': 'subscribeReleaseInstallProgress',
+        'project-git-status-updated': 'subscribeProjectGitStatus',
     } as const;
 
     function getLegacyElectronApi(): LegacyElectronApi {
@@ -79,6 +80,7 @@ vi.mock('@mariodebono/di-electron/renderer', () => {
             git: createBridgeNamespace('git'),
             gitLfs: createBridgeNamespace('gitLfs'),
             projects: createBridgeNamespace('projects'),
+            projectGitStatus: createBridgeNamespace('projectGitStatus'),
             toolIntegration: createBridgeNamespace('toolIntegration'),
         }),
         createRendererEvents: () => ({
@@ -88,6 +90,9 @@ vi.mock('@mariodebono/di-electron/renderer', () => {
             ) => {
                 const subscribe =
                     getLegacyElectronApi()[subscriptionMethods[channel]];
+                if (typeof subscribe !== 'function') {
+                    return;
+                }
                 const unsubscribe = subscribe((...args: unknown[]) => {
                     listener(...args);
                 });
