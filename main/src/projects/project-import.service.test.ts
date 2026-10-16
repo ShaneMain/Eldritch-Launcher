@@ -70,6 +70,7 @@ vi.mock('../utils/godot.utils.js', () => godotUtilsMocks);
 const projectLauncherConfigMocks = vi.hoisted(() => ({
     readProjectLauncherConfig: vi.fn(),
     writeProjectLauncherConfig: vi.fn(),
+    getProjectLauncherFork: vi.fn(() => undefined),
     getReleaseBaseVersion: vi.fn((release) => {
         if (release.base_version) return release.base_version;
         return release.version.match(/(\d+\.\d+)/)?.[1] ?? '0.0';

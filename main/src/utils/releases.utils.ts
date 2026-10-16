@@ -153,6 +153,11 @@ export type DownloadReleaseAssetOptions = {
     idleTimeoutMs?: number;
     signal?: AbortSignal;
     onProgress?: (progress: DownloadReleaseAssetProgress) => void;
+    /**
+     * Credential-free URL to fetch instead of `asset.download_url`, such as
+     * the signed location resolved for a private fork asset.
+     */
+    url?: string;
 };
 
 function getDownloadErrorMessage(error: unknown): string {
@@ -278,7 +283,7 @@ export async function downloadReleaseAsset(
     let res: Response;
     try {
         resetIdleTimeout();
-        res = await fetch(asset.download_url, {
+        res = await fetch(options.url ?? asset.download_url, {
             signal: controller.signal,
         });
     } catch (error) {

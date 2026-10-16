@@ -19,6 +19,18 @@ export type ReleaseSummary = {
     prerelease: boolean;
     assets: AssetSummary[];
     tag?: string;
+    /** Present when the release is a build published by a fork source. */
+    fork?: ForkBuildIdentity;
+};
+
+/** Identifies one exact build of a fork engine source. */
+export type ForkBuildIdentity = {
+    /** Configured engine source ID. */
+    sourceId: string;
+    /** GitHub `owner/repo` that publishes the build. */
+    source: string;
+    /** Full 40-hex engine commit. */
+    revision: string;
 };
 
 export type AssetSummary = {
@@ -30,7 +42,7 @@ export type AssetSummary = {
     mono: boolean;
 };
 
-export type EditorChannel = 'official' | 'custom';
+export type EditorChannel = 'official' | 'custom' | 'fork';
 export type EditorFlavor = 'gdscript' | 'dotnet' | (string & {});
 export type CustomEngineManifestPlatformName = 'windows' | 'linux' | 'macos';
 export type CustomEngineManifestArch = 'x64' | 'arm64' | 'universal';
@@ -75,6 +87,8 @@ export type InstalledRelease = {
     source?: 'official' | 'custom';
     manifest_path?: string;
     managed_by_launcher?: boolean;
+    /** Exact fork build for launcher-installed fork editors and fork pins. */
+    fork?: ForkBuildIdentity;
 };
 
 export type InstallReleaseResult = BackendResult & {

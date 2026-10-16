@@ -7,26 +7,32 @@ import type {
     EditorCatalogQuery,
     EditorCatalogRelease,
     EditorCatalogResult,
+    EngineSource,
     GetEditorCatalogOptions,
 } from '@shared/contracts';
 import logger from 'electron-log';
 import type { AppConfig } from '../config/index.js';
-import {
-    EDITOR_CATALOG_CACHE_TTL_MS,
-    EDITOR_CATALOG_PROVIDER_IDS,
-} from './editor-catalog.constants.js';
+import { EDITOR_CATALOG_CACHE_TTL_MS } from './editor-catalog.constants.js';
 import {
     compareEditorReleases,
     createEmptyEditorCatalog,
+    createEmptyProviderState,
 } from './editor-catalog.schema.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { EditorCatalogStore } from './editor-catalog.store.js';
 import type {
     EditorCatalogFile,
+    EditorCatalogProviderState,
+    EditorCatalogRefreshFailure,
     FetchedEditorCatalogProvider,
 } from './editor-catalog.types.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
+import { EngineSourcesService } from './engine-sources.service.js';
+// biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { GithubEditorCatalogAdapter } from './github-editor-catalog.adapter.js';
+import { EngineSourceAuthError } from './github-source.errors.js';
+// biome-ignore lint/style/useImportType: Required for DI constructor metadata
+import { GithubSourceAccessService } from './github-source-access.service.js';
 
 /** Reads, refreshes, and filters the editor catalog. */
 @Injectable()
@@ -39,15 +45,20 @@ export class EditorCatalogService {
      * @param store - The store used for cached catalog data.
      * @param githubAdapter - The adapter used to read GitHub releases.
      * @param configService - Runtime application configuration.
+     * @param sources - Built-in and configured engine sources.
+     * @param access - GitHub credential access for refreshes.
      */
     constructor(
         private readonly store: EditorCatalogStore,
         private readonly githubAdapter: GithubEditorCatalogAdapter,
         private readonly configService: ConfigService<AppConfig>,
+        private readonly sources: EngineSourcesService,
+        private readonly access: GithubSourceAccessService,
     ) {}
 
     /**
      * Gets releases from the cache and refreshes stale data by default.
+     * An unreadable cache is rebuilt from GitHub.
      *
      * @param options - Optional refresh and filter settings.
      * @returns The matching releases and provider status.
@@ -55,19 +66,36 @@ export class EditorCatalogService {
     async getCatalog(
         options: GetEditorCatalogOptions = {},
     ): Promise<EditorCatalogResult> {
-        const catalog = await this.store.read();
-        if (this.configService.get('e2eFixtures')) {
-            return this.createResult(catalog, options.query);
+        const sources = await this.sources.list();
+        let catalog: EditorCatalogFile;
+        try {
+            catalog = await this.store.read();
+        } catch (error) {
+            logger.error('Editor catalog cache is unreadable', error);
+            if (
+                this.configService.get('e2eFixtures') ||
+                options.refreshIfStale === false
+            ) {
+                return this.createResult(
+                    createEmptyEditorCatalog(),
+                    sources,
+                    options.query,
+                );
+            }
+            return this.refresh(sources, sources, options.query);
         }
-        const staleProviders = EDITOR_CATALOG_PROVIDER_IDS.filter(
-            (providerId) => this.isStale(catalog, providerId),
+        if (this.configService.get('e2eFixtures')) {
+            return this.createResult(catalog, sources, options.query);
+        }
+        const staleSources = sources.filter((source) =>
+            isStale(catalog, source.id),
         );
 
-        if (options.refreshIfStale !== false && staleProviders.length > 0) {
-            return this.refresh(staleProviders, options.query);
+        if (options.refreshIfStale !== false && staleSources.length > 0) {
+            return this.refresh(sources, staleSources, options.query);
         }
 
-        return this.createResult(catalog, options.query);
+        return this.createResult(catalog, sources, options.query);
     }
 
     /**
@@ -90,40 +118,73 @@ export class EditorCatalogService {
     async refreshCatalog(
         query?: EditorCatalogQuery,
     ): Promise<EditorCatalogResult> {
+        const sources = await this.sources.list();
         if (this.configService.get('e2eFixtures')) {
-            return this.createResult(await this.store.read(), query);
+            return this.createResult(await this.store.read(), sources, query);
         }
-        return this.refresh([...EDITOR_CATALOG_PROVIDER_IDS], query);
+        return this.refresh(sources, sources, query);
     }
 
     /**
-     * Shares one active refresh between callers.
+     * Refreshes one provider and returns the full catalog.
      *
-     * @param providerIds - The providers to refresh.
+     * @param providerId - The provider to refresh.
+     * @returns The catalog after the refresh.
+     */
+    async refreshProvider(
+        providerId: EditorCatalogProviderId,
+    ): Promise<EditorCatalogResult> {
+        const sources = await this.sources.list();
+        const source = sources.find((candidate) => candidate.id === providerId);
+        if (!source || this.configService.get('e2eFixtures')) {
+            return this.createResult(await this.store.read(), sources);
+        }
+        return this.refresh(sources, [source]);
+    }
+
+    /**
+     * Removes cached releases of a provider that is no longer configured.
+     *
+     * @param providerId - The provider whose cache should be dropped.
+     * @returns A promise that ends when the cache is updated.
+     */
+    async removeProvider(providerId: EditorCatalogProviderId): Promise<void> {
+        await this.store.update((current) => {
+            const { [providerId]: _removed, ...providers } = current.providers;
+            return { ...current, providers };
+        });
+    }
+
+    /**
+     * Refreshes sources and builds the filtered result.
+     *
+     * @param sources - Every configured source.
+     * @param refreshSources - The sources to refresh.
      * @param query - Optional filters for the returned releases.
      * @returns The refreshed releases and provider status.
      */
     private async refresh(
-        providerIds: EditorCatalogProviderId[],
+        sources: EngineSource[],
+        refreshSources: EngineSource[],
         query?: EditorCatalogQuery,
     ): Promise<EditorCatalogResult> {
-        const outcome = await this.refreshProviders(providerIds);
-        return this.createResult(outcome.catalog, query, outcome.errors);
+        const catalog = await this.refreshProviders(refreshSources);
+        return this.createResult(catalog, sources, query);
     }
 
     /**
-     * Shares the active refresh and queues provider IDs it does not cover.
+     * Shares the active refresh and queues sources it does not cover.
      *
-     * @param providerIds - The providers the caller needs refreshed.
-     * @returns The updated catalog and relevant provider errors.
+     * @param sources - The sources the caller needs refreshed.
+     * @returns The updated catalog.
      */
     private async refreshProviders(
-        providerIds: EditorCatalogProviderId[],
-    ): Promise<RefreshOutcome> {
+        sources: EngineSource[],
+    ): Promise<EditorCatalogFile> {
         if (!this.activeRefresh) {
             const activeRefresh: ActiveRefresh = {
-                providerIds: new Set(providerIds),
-                promise: this.runRefresh(providerIds),
+                providerIds: new Set(sources.map((source) => source.id)),
+                promise: this.runRefresh(sources),
             };
             activeRefresh.promise = activeRefresh.promise.finally(() => {
                 if (this.activeRefresh === activeRefresh) {
@@ -134,42 +195,24 @@ export class EditorCatalogService {
         }
 
         const activeRefresh = this.activeRefresh;
-        const missingProviderIds = providerIds.filter(
-            (providerId) => !activeRefresh.providerIds.has(providerId),
+        const missingSources = sources.filter(
+            (source) => !activeRefresh.providerIds.has(source.id),
         );
-        const outcome = await activeRefresh.promise;
-        const errors = new Map<EditorCatalogProviderId, string>();
-        for (const providerId of providerIds) {
-            const message = outcome.errors.get(providerId);
-            if (message !== undefined) {
-                errors.set(providerId, message);
-            }
-        }
-
-        if (missingProviderIds.length > 0) {
-            const missingOutcome =
-                await this.refreshProviders(missingProviderIds);
-            for (const [providerId, message] of missingOutcome.errors) {
-                errors.set(providerId, message);
-            }
-            return {
-                catalog: missingOutcome.catalog,
-                errors,
-            };
-        }
-
-        return { catalog: outcome.catalog, errors };
+        const catalog = await activeRefresh.promise;
+        return missingSources.length > 0
+            ? this.refreshProviders(missingSources)
+            : catalog;
     }
 
     /**
-     * Fetches provider updates and stores successful results.
+     * Fetches provider updates and stores successful results and failures.
      *
-     * @param providerIds - The providers to fetch.
-     * @returns The updated catalog and any provider errors.
+     * @param sources - The sources to fetch.
+     * @returns The updated catalog.
      */
     private async runRefresh(
-        providerIds: EditorCatalogProviderId[],
-    ): Promise<RefreshOutcome> {
+        sources: EngineSource[],
+    ): Promise<EditorCatalogFile> {
         let catalog: EditorCatalogFile;
         let catalogReadable = true;
         try {
@@ -181,104 +224,173 @@ export class EditorCatalogService {
         }
 
         const integrityRefreshProviderIds = new Set(
-            providerIds.filter((providerId) =>
-                providerNeedsIntegrityRefresh(catalog.providers[providerId]),
-            ),
+            sources
+                .filter((source) =>
+                    providerNeedsIntegrityRefresh(
+                        providerState(catalog, source.id),
+                    ),
+                )
+                .map((source) => source.id),
         );
 
-        const refreshResults = await Promise.allSettled(
-            providerIds.map((providerId) =>
-                this.githubAdapter.fetchProvider(
-                    providerId,
-                    integrityRefreshProviderIds.has(providerId)
-                        ? null
-                        : catalog.providers[providerId].lastPublishedAt,
+        const refreshResults = await this.access.withToken((token) =>
+            Promise.allSettled(
+                sources.map((source) =>
+                    this.fetchSource(
+                        source,
+                        integrityRefreshProviderIds.has(source.id)
+                            ? null
+                            : providerState(catalog, source.id).lastPublishedAt,
+                        token,
+                    ),
                 ),
             ),
         );
         const updates: FetchedEditorCatalogProvider[] = [];
-        const errors = new Map<EditorCatalogProviderId, string>();
+        const failures = new Map<
+            EditorCatalogProviderId,
+            EditorCatalogRefreshFailure
+        >();
 
         refreshResults.forEach((result, index) => {
-            const providerId = providerIds[index];
+            const source = sources[index];
             if (result.status === 'fulfilled') {
                 updates.push(result.value);
                 return;
             }
 
-            const message = getErrorMessage(result.reason);
-            errors.set(providerId, message);
+            failures.set(source.id, {
+                state:
+                    result.reason instanceof EngineSourceAuthError
+                        ? 'auth-required'
+                        : 'error',
+                message: getErrorMessage(result.reason),
+            });
             logger.error(
-                `Failed to refresh editor catalog provider ${providerId}`,
+                `Failed to refresh editor catalog provider ${source.id}`,
                 result.reason,
             );
         });
 
-        if (updates.length > 0) {
-            const applyUpdates = (current: EditorCatalogFile) =>
-                mergeProviderUpdates(
-                    current,
-                    updates,
-                    Date.now(),
-                    integrityRefreshProviderIds,
-                );
-            catalog = catalogReadable
-                ? await this.store.update(applyUpdates)
-                : await this.store.replace(applyUpdates(catalog));
-        }
+        const applyUpdates = (current: EditorCatalogFile) =>
+            mergeProviderUpdates(
+                current,
+                updates,
+                failures,
+                Date.now(),
+                integrityRefreshProviderIds,
+            );
+        return catalogReadable
+            ? this.store.update(applyUpdates)
+            : this.store.replace(applyUpdates(catalog));
+    }
 
-        return { catalog, errors };
+    /**
+     * Fetches one source with the optional token. Official sources retry
+     * anonymously when the token is refused, because they never need it.
+     *
+     * @param source - The source to fetch.
+     * @param publishedAfter - Pagination boundary.
+     * @param token - Optional GitHub bearer token.
+     * @returns Fetched provider data.
+     */
+    private async fetchSource(
+        source: EngineSource,
+        publishedAfter: string | null,
+        token: string | null,
+    ): Promise<FetchedEditorCatalogProvider> {
+        if (source.requiresAuth && !token) {
+            throw new EngineSourceAuthError(`${source.owner}/${source.repo}`);
+        }
+        try {
+            return await this.githubAdapter.fetchProvider(
+                source,
+                publishedAfter,
+                token,
+            );
+        } catch (error) {
+            if (
+                source.kind === 'official' &&
+                token &&
+                error instanceof EngineSourceAuthError
+            ) {
+                return this.githubAdapter.fetchProvider(
+                    source,
+                    publishedAfter,
+                    null,
+                );
+            }
+            throw error;
+        }
     }
 
     /**
      * Builds the catalog result returned to callers.
      *
      * @param catalog - The stored catalog data.
+     * @param sources - The configured sources to include.
      * @param query - Optional release filters.
-     * @param refreshErrors - Errors from the latest provider refresh.
      * @returns Matching releases and provider status.
      */
     private createResult(
         catalog: EditorCatalogFile,
+        sources: EngineSource[],
         query?: EditorCatalogQuery,
-        refreshErrors: Map<EditorCatalogProviderId, string> = new Map(),
     ): EditorCatalogResult {
-        const releases = EDITOR_CATALOG_PROVIDER_IDS.flatMap(
-            (providerId) => catalog.providers[providerId].releases,
-        )
+        const releases = sources
+            .flatMap((source) => providerState(catalog, source.id).releases)
             .filter((release) => matchesQuery(release, query))
             .sort(compareEditorReleases);
-        const providers: EditorCatalogProviderStatus[] =
-            EDITOR_CATALOG_PROVIDER_IDS.map((providerId) => ({
-                id: providerId,
-                lastFetchedAt: catalog.providers[providerId].lastFetchedAt,
-                isStale: this.isStale(catalog, providerId),
-                ...(refreshErrors.has(providerId)
-                    ? { refreshError: refreshErrors.get(providerId) }
-                    : {}),
-            }));
+        const providers: EditorCatalogProviderStatus[] = sources.map(
+            (source) => {
+                const state = providerState(catalog, source.id);
+                return {
+                    id: source.id,
+                    lastFetchedAt: state.lastFetchedAt,
+                    isStale: isStale(catalog, source.id),
+                    state: state.lastFailure?.state ?? 'ok',
+                    ...(state.lastFailure
+                        ? { refreshError: state.lastFailure.message }
+                        : {}),
+                };
+            },
+        );
 
         return { releases, providers };
     }
+}
 
-    /**
-     * Checks whether one provider should be refreshed.
-     *
-     * @param catalog - The stored catalog data.
-     * @param providerId - The provider to check.
-     * @returns True when the provider data is stale.
-     */
-    private isStale(
-        catalog: EditorCatalogFile,
-        providerId: EditorCatalogProviderId,
-    ): boolean {
-        const lastFetchedAt = catalog.providers[providerId].lastFetchedAt;
-        return (
-            lastFetchedAt === null ||
-            lastFetchedAt + EDITOR_CATALOG_CACHE_TTL_MS < Date.now() ||
-            providerNeedsIntegrityRefresh(catalog.providers[providerId])
-        );
-    }
+/**
+ * Gets the cached state of one provider, or an empty state.
+ *
+ * @param catalog - The stored catalog data.
+ * @param providerId - The provider to read.
+ * @returns The cached provider state.
+ */
+function providerState(
+    catalog: EditorCatalogFile,
+    providerId: EditorCatalogProviderId,
+): EditorCatalogProviderState {
+    return catalog.providers[providerId] ?? createEmptyProviderState();
+}
+
+/**
+ * Checks whether one provider should be refreshed.
+ *
+ * @param catalog - The stored catalog data.
+ * @param providerId - The provider to check.
+ * @returns True when the provider data is stale.
+ */
+function isStale(
+    catalog: EditorCatalogFile,
+    providerId: EditorCatalogProviderId,
+): boolean {
+    const state = providerState(catalog, providerId);
+    return (
+        state.lastFetchedAt === null ||
+        state.lastFetchedAt + EDITOR_CATALOG_CACHE_TTL_MS < Date.now() ||
+        providerNeedsIntegrityRefresh(state)
+    );
 }
 
 /**
@@ -288,7 +400,7 @@ export class EditorCatalogService {
  * @returns Whether the provider needs one complete metadata refresh.
  */
 function providerNeedsIntegrityRefresh(
-    provider: EditorCatalogFile['providers'][EditorCatalogProviderId],
+    provider: EditorCatalogProviderState,
 ): boolean {
     return (
         provider.integrityMetadataRefreshed !== true ||
@@ -297,10 +409,11 @@ function providerNeedsIntegrityRefresh(
 }
 
 /**
- * Merges fetched provider data into the stored catalog.
+ * Merges fetched provider data and refresh failures into the stored catalog.
  *
  * @param catalog - The current catalog.
  * @param updates - The provider updates to merge.
+ * @param failures - Providers whose refresh failed.
  * @param fetchedAt - The time when the updates were fetched.
  * @param integrityRefreshProviderIds - Providers fetched from the beginning.
  * @returns A catalog containing the provider updates.
@@ -308,12 +421,13 @@ function providerNeedsIntegrityRefresh(
 function mergeProviderUpdates(
     catalog: EditorCatalogFile,
     updates: FetchedEditorCatalogProvider[],
+    failures: ReadonlyMap<EditorCatalogProviderId, EditorCatalogRefreshFailure>,
     fetchedAt: number,
     integrityRefreshProviderIds: ReadonlySet<EditorCatalogProviderId>,
 ): EditorCatalogFile {
     const providers = { ...catalog.providers };
     for (const update of updates) {
-        const current = providers[update.providerId];
+        const current = providerState(catalog, update.providerId);
         const releasesById = new Map(
             [...current.releases, ...update.releases].map((release) => [
                 release.id,
@@ -332,20 +446,20 @@ function mergeProviderUpdates(
             releases: [...releasesById.values()],
         };
     }
+    for (const [providerId, lastFailure] of failures) {
+        providers[providerId] = {
+            ...providerState(catalog, providerId),
+            lastFailure,
+        };
+    }
 
     return { ...catalog, providers };
 }
 
-/** Result of refreshing one or more catalog providers. */
-type RefreshOutcome = {
-    catalog: EditorCatalogFile;
-    errors: Map<EditorCatalogProviderId, string>;
-};
-
 /** One active provider refresh shared by concurrent callers. */
 type ActiveRefresh = {
     providerIds: Set<EditorCatalogProviderId>;
-    promise: Promise<RefreshOutcome>;
+    promise: Promise<EditorCatalogFile>;
 };
 
 /**

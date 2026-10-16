@@ -11,7 +11,10 @@ import {
     getProjectNameFromParsed,
     parseGodotProjectFile,
 } from '../utils/godotProject.utils.js';
-import { readProjectLauncherConfig } from '../utils/projectLauncherConfig.utils.js';
+import {
+    getProjectLauncherFork,
+    readProjectLauncherConfig,
+} from '../utils/projectLauncherConfig.utils.js';
 
 const MAX_DISCOVERY_DEPTH = 12;
 const MAX_DISCOVERY_ENTRIES = 10_000;
@@ -181,12 +184,14 @@ export class ProjectDiscoveryService {
             const launcherConfig =
                 await readProjectLauncherConfig(projectDirectory);
             if (launcherConfig) {
+                const fork = getProjectLauncherFork(launcherConfig);
                 return {
                     kind: 'exact',
                     channel: launcherConfig.editor.channel,
                     flavor: launcherConfig.editor.flavor,
                     baseVersion: launcherConfig.editor.base_version,
                     version: launcherConfig.editor.version,
+                    ...(fork ? { fork } : {}),
                 };
             }
         } catch {

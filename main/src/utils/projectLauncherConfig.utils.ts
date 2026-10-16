@@ -3,9 +3,11 @@ import * as path from 'node:path';
 import type {
     EditorChannel,
     EditorFlavor,
+    ForkBuildIdentity,
     InstalledRelease,
 } from '@shared/contracts';
 import { PROJECT_LAUNCHER_CONFIG_FILENAME } from '../constants.js';
+import { forkSourceId } from '../editor-catalog/editor-catalog.constants.js';
 
 export type ProjectLauncherConfig = {
     config: {
@@ -20,8 +22,16 @@ export type ProjectLauncherConfig = {
         flavor: EditorFlavor;
         base_version: string;
         version: string;
+        /** `channel=fork` only: GitHub `owner/repo` publishing the build. */
+        source?: string;
+        /** `channel=fork` only: full 40-hex engine revision. */
+        revision?: string;
     };
 };
+
+const FORK_SOURCE_PATTERN =
+    /^[A-Za-z0-9][A-Za-z0-9._-]*\/[A-Za-z0-9][A-Za-z0-9._-]*$/;
+const FORK_REVISION_PATTERN = /^[0-9a-f]{40}$/;
 
 export type ProjectLauncherConfigInput = {
     release: InstalledRelease;
@@ -64,7 +74,7 @@ function parseIni(content: string): IniDocument {
 }
 
 function isEditorChannel(value: string | undefined): value is EditorChannel {
-    return value === 'official' || value === 'custom';
+    return value === 'official' || value === 'custom' || value === 'fork';
 }
 
 function isEditorFlavor(value: string | undefined): value is EditorFlavor {
@@ -72,9 +82,29 @@ function isEditorFlavor(value: string | undefined): value is EditorFlavor {
 }
 
 export function getReleaseChannel(
-    release: Pick<InstalledRelease, 'source'>,
+    release: Pick<InstalledRelease, 'source' | 'fork'>,
 ): EditorChannel {
+    if (release.fork) {
+        return 'fork';
+    }
     return release.source === 'custom' ? 'custom' : 'official';
+}
+
+/**
+ * Gets the exact fork build pinned by project metadata.
+ *
+ * @param config - Parsed project metadata.
+ * @returns The pinned fork build, or undefined for other channels.
+ */
+export function getProjectLauncherFork(
+    config: ProjectLauncherConfig,
+): ForkBuildIdentity | undefined {
+    const { channel, source, revision } = config.editor;
+    if (channel !== 'fork' || !source || !revision) {
+        return undefined;
+    }
+    const [owner, repo] = source.split('/');
+    return { sourceId: forkSourceId(owner, repo), source, revision };
 }
 
 export function getReleaseFlavor(
@@ -128,6 +158,12 @@ export function createProjectLauncherConfig(
             flavor: getReleaseFlavor(release),
             base_version: getReleaseBaseVersion(release),
             version: release.version,
+            ...(release.fork
+                ? {
+                      source: release.fork.source,
+                      revision: release.fork.revision,
+                  }
+                : {}),
         },
     };
 }
@@ -153,6 +189,12 @@ export function serializeProjectLauncherConfig(
         `flavor=${config.editor.flavor}`,
         `base_version=${config.editor.base_version}`,
         `version=${config.editor.version}`,
+        ...(config.editor.channel === 'fork'
+            ? [
+                  `source=${config.editor.source}`,
+                  `revision=${config.editor.revision}`,
+              ]
+            : []),
         '',
     ].join('\n');
 }
@@ -185,6 +227,18 @@ export function parseProjectLauncherConfig(
         return null;
     }
 
+    const source = ini.editor.source;
+    const revision = ini.editor.revision?.toLowerCase();
+    if (
+        channel === 'fork' &&
+        (!source ||
+            !FORK_SOURCE_PATTERN.test(source) ||
+            !revision ||
+            !FORK_REVISION_PATTERN.test(revision))
+    ) {
+        return null;
+    }
+
     const projectName = parseLauncherProjectName(ini.launcher?.project_name);
     return {
         config: {
@@ -199,6 +253,7 @@ export function parseProjectLauncherConfig(
             flavor,
             base_version: baseVersion,
             version: editorVersion,
+            ...(channel === 'fork' ? { source, revision } : {}),
         },
     };
 }

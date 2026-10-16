@@ -23,6 +23,7 @@ import {
     removeProjectEditorWindows,
     setProjectEditorReleaseWindows,
 } from './godot.utils.windows.js';
+import { getReleaseTemplateIdentity } from './template-identity.util.js';
 
 // Default project definitions for different editor versions
 export const DEFAULT_PROJECT_DEFINITION: ProjectDefinition = new Map([
@@ -185,7 +186,7 @@ export async function SetProjectEditorRelease(
         release,
         exportTemplateMode,
         selections,
-        `${release.version.replace('-', '.')}${release.mono ? '.mono' : ''}`,
+        getReleaseTemplateIdentity(release),
     );
     const scFilePath = path.resolve(projectEditorPath, '._sc_');
 

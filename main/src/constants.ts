@@ -15,6 +15,7 @@ export const INSTALLED_RELEASES_FILENAME = 'installed-releases.json';
 export const PRERELEASES_FILENAME = 'prereleases.json';
 export const MIGRATIONS_FILENAME = 'migrations.json';
 export const EDITOR_CATALOG_FILENAME = 'editor-catalog.json';
+export const ENGINE_SOURCES_FILENAME = 'engine-sources.json';
 export const TOOL_INTEGRATIONS_FILENAME = 'tool-integrations.json';
 export const APP_INTEGRATIONS_FILENAME = 'app-integrations.json';
 export const APP_INTEGRATION_SECRETS_FILENAME = 'app-integration-secrets.json';

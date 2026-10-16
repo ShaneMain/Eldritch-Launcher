@@ -13,6 +13,7 @@ import logger from 'electron-log';
 import { getCurrentAppConfig } from '../config/current-app-config.js';
 import type { ProjectsStore } from '../projects/projects.store.js';
 import { isPortablePathSegment } from '../utils/portable-path.util.js';
+import { getReleaseTemplateIdentity } from '../utils/template-identity.util.js';
 import {
     importedTemplateDefaultRoot,
     importedTemplateFiles,
@@ -1105,7 +1106,7 @@ export class TemplateStorageService {
         for (const project of await this.projects.list()) {
             if (!project.launch_path || project.release.source === 'custom')
                 continue;
-            const identity = `${project.release.version.replace('-', '.')}${project.release.mono ? '.mono' : ''}`;
+            const identity = getReleaseTemplateIdentity(project.release);
             if (!isTemplateIdentity(identity)) continue;
             const link = path.join(
                 path.dirname(project.launch_path),

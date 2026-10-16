@@ -4,6 +4,7 @@ import type { EditorCatalogRelease, ProjectDetails } from '@shared/contracts';
 import { shell } from 'electron';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { EditorCatalogService } from '../editor-catalog/editor-catalog.service.js';
+import type { EngineSourcesService } from '../editor-catalog/engine-sources.service.js';
 import type { ProjectsStore } from '../projects/projects.store.js';
 import { ExportTemplatesService } from './export-templates.service.js';
 import { readImportedTemplates } from './imported-templates.store.js';
@@ -90,6 +91,9 @@ vi.mock('@mariodebono/di', () => ({ Injectable: () => () => undefined }));
 vi.mock('../editor-catalog/editor-catalog.service.js', () => ({
     EditorCatalogService: class {},
 }));
+vi.mock('../editor-catalog/engine-sources.service.js', () => ({
+    EngineSourcesService: class {},
+}));
 vi.mock('../projects/projects.store.js', () => ({ ProjectsStore: class {} }));
 vi.mock('@mariodebono/di-electron', () => ({
     AppReady: () => () => {},
@@ -172,6 +176,10 @@ beforeEach(() => {
         {
             extract: extractTemplateArchive,
         } as unknown as TemplateArchiveAdapter,
+        {
+            resolveDownloadUrl: async (url: string) => url,
+            findAssetSource: async () => undefined,
+        } as unknown as EngineSourcesService,
     );
 });
 

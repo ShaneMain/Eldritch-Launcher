@@ -19,6 +19,9 @@ import { ArchivesService } from '../archives/archives.service.js';
 import { getUserPreferences } from '../commands/userPreferences.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { EditorCatalogService } from '../editor-catalog/editor-catalog.service.js';
+// biome-ignore lint/style/useImportType: Required for DI constructor metadata
+import { EngineSourcesService } from '../editor-catalog/engine-sources.service.js';
+import { EngineSourceAuthError } from '../editor-catalog/github-source.errors.js';
 import { t } from '../i18n/index.js';
 import {
     isSafePathSegment,
@@ -28,6 +31,7 @@ import {
     EditorInstallValidationError,
     validateExtractedEditor,
 } from '../utils/editor-install-containment.util.js';
+import { findExtractedEditor } from '../utils/extracted-editor-locator.util.js';
 import {
     DEFAULT_PROJECT_DEFINITION,
     getProjectDefinition,
@@ -71,7 +75,7 @@ class EditorInstallCancelledError extends Error {
     }
 }
 
-/** Owns official editor install, reinstall, queue, and cancellation workflows. */
+/** Owns official and fork editor install, reinstall, queue, and cancellation workflows. */
 @Injectable()
 export class EditorInstallService {
     private nextJobId = 0;
@@ -84,10 +88,11 @@ export class EditorInstallService {
      * Creates the editor install service.
      *
      * @param installedEditors - Installed-editor persistence and validation.
-     * @param editorCatalog - Official editor catalogue source.
+     * @param editorCatalog - Editor catalogue source.
      * @param projectRepair - Temporary project repair boundary.
      * @param progressService - Non-fatal progress publisher.
      * @param archives - Shared archive extraction boundary.
+     * @param engineSources - Configured fork sources and their credentials.
      */
     constructor(
         private readonly installedEditors: InstalledEditorService,
@@ -95,6 +100,7 @@ export class EditorInstallService {
         private readonly projectRepair: EditorProjectRepairAdapter,
         private readonly progressService: EditorInstallProgressService,
         private readonly archives: ArchivesService,
+        private readonly engineSources: EngineSourcesService,
     ) {}
 
     /**
@@ -407,11 +413,45 @@ export class EditorInstallService {
                 };
             }
 
+            const forkSource = release.fork
+                ? (await this.engineSources.listForks()).find(
+                      (source) =>
+                          `${source.owner}/${source.repo}`.toLowerCase() ===
+                          release.fork?.source.toLowerCase(),
+                  )
+                : undefined;
+            if (release.fork && !forkSource) {
+                throw new Error(
+                    t('engineSources:errors.sourceUnavailable', {
+                        source: release.fork.source,
+                    }),
+                );
+            }
             const integrity = await resolveArchiveIntegrity(asset, {
                 expectedReleaseTag: release.tag ?? release.version,
                 timeoutMs: DOWNLOAD_IDLE_TIMEOUT_MS,
                 signal: job.controller.signal,
+                trustedForkRepositories: forkSource ? [forkSource] : [],
             });
+            this.throwIfCancelled(job);
+
+            let downloadUrl: string;
+            try {
+                downloadUrl = await this.engineSources.resolveDownloadUrl(
+                    asset.download_url,
+                    job.controller.signal,
+                );
+            } catch (error) {
+                if (error instanceof EngineSourceAuthError) {
+                    throw new Error(
+                        t('engineSources:errors.authRequired', {
+                            source: error.source,
+                        }),
+                        { cause: error },
+                    );
+                }
+                throw error;
+            }
             this.throwIfCancelled(job);
 
             await fs.promises.rm(downloadPath, {
@@ -429,6 +469,7 @@ export class EditorInstallService {
             let lastDownloadProgressAt = Date.now();
             await downloadReleaseAsset(asset, archivePath, {
                 integrity,
+                url: downloadUrl,
                 idleTimeoutMs: DOWNLOAD_IDLE_TIMEOUT_MS,
                 signal: job.controller.signal,
                 onProgress: ({ receivedBytes, totalBytes }) => {
@@ -500,6 +541,7 @@ export class EditorInstallService {
                 prerelease: release.prerelease,
                 published_at: release.published_at,
                 valid: true,
+                ...(release.fork ? { fork: release.fork } : {}),
             };
 
             this.publish(job, 'registering', { percent: 95 });
@@ -553,6 +595,8 @@ export class EditorInstallService {
     }
 
     /** Extracts one archive and resolves its platform-specific editor paths.
+     * Fork builds and `.tar.gz` archives locate the editor from the
+     * extracted contents instead of the archive name.
      * @param job - Install identity and edition.
      * @param asset - Selected platform archive.
      * @param archivePath - Downloaded archive path.
@@ -564,11 +608,16 @@ export class EditorInstallService {
         archivePath: string,
         rootReleasePath: string,
     ): Promise<{ editorPath: string; releasePath: string }> {
-        if (path.extname(asset.name) !== '.zip') {
+        const tarGz = asset.name.endsWith('.tar.gz');
+        if (!tarGz && path.extname(asset.name) !== '.zip') {
             throw new Error(t('installEditor:errors.unsupportedFileExtension'));
         }
         try {
-            await this.archives.extractZip(archivePath, rootReleasePath);
+            if (tarGz) {
+                await this.archives.extractTarGz(archivePath, rootReleasePath);
+            } else {
+                await this.archives.extractZip(archivePath, rootReleasePath);
+            }
         } catch (error) {
             throw new Error(t('installEditor:errors.unsafeArchive'), {
                 cause: error,
@@ -577,7 +626,21 @@ export class EditorInstallService {
 
         let releasePath = rootReleasePath;
         let editorPath: string;
-        if (os.platform() === 'win32') {
+        if (job.release.fork || tarGz) {
+            const found = await findExtractedEditor(
+                rootReleasePath,
+                os.platform(),
+            );
+            if (!found) {
+                throw new Error(
+                    t('installEditor:errors.invalidExtractedEditor'),
+                );
+            }
+            editorPath = found;
+            if (os.platform() !== 'darwin') {
+                releasePath = path.dirname(found);
+            }
+        } else if (os.platform() === 'win32') {
             if (job.mono) {
                 releasePath = path.resolve(
                     rootReleasePath,
@@ -681,6 +744,15 @@ export class EditorInstallService {
                     mono: variant.flavor === 'dotnet',
                 })),
             ),
+            ...(release.fork
+                ? {
+                      fork: {
+                          sourceId: release.fork.sourceId,
+                          source: release.fork.source,
+                          revision: release.fork.revision,
+                      },
+                  }
+                : {}),
         };
     }
 

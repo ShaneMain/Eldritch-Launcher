@@ -1,4 +1,8 @@
-import type { EditorChannel, EditorFlavor } from '../releases/index.js';
+import type {
+    EditorChannel,
+    EditorFlavor,
+    ForkBuildIdentity,
+} from '../releases/index.js';
 
 export type RemoteProjectImportRequest = {
     parentDirectory: string;
@@ -54,6 +58,8 @@ export type RemoteDetectedProjectEditor =
           flavor: EditorFlavor;
           baseVersion: string;
           version: string;
+          /** Fork pins only: exact source and build revision. */
+          fork?: ForkBuildIdentity;
       }
     | {
           kind: 'stable-base';

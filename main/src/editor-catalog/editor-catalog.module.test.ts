@@ -8,6 +8,7 @@ vi.mock('@mariodebono/di-electron', () => ({
     createIpcHandleTyped: () => () => () => undefined,
 }));
 
+import { AppIntegrationsModule } from '../app-integrations/app-integrations.module.js';
 import type { AppConfig } from '../config/index.js';
 import { EDITOR_CATALOG_MODULE_OPTIONS } from './editor-catalog.constants.js';
 import { EditorCatalogModule } from './editor-catalog.module.js';
@@ -29,7 +30,13 @@ describe('EditorCatalogModule', () => {
                     useFactory: (configService: ConfigService<AppConfig>) => ({
                         directory: configService.getOrThrow('paths.configDir'),
                         fileName: 'editor-catalog.json',
+                        sourcesFileName: 'engine-sources.json',
                     }),
+                }),
+                AppIntegrationsModule.forRoot({
+                    directory: '/config',
+                    metadataFileName: 'app-integrations.json',
+                    secretsFileName: 'app-integration-secrets.json',
                 }),
             ],
         })
@@ -49,6 +56,7 @@ describe('EditorCatalogModule', () => {
         ).toEqual({
             directory: '/config',
             fileName: 'editor-catalog.json',
+            sourcesFileName: 'engine-sources.json',
         });
         await application.destroyAsync();
     });
@@ -58,6 +66,7 @@ describe('EditorCatalogModule', () => {
             EditorCatalogModule.forRoot({
                 directory: '  ',
                 fileName: 'editor-catalog.json',
+                sourcesFileName: 'engine-sources.json',
             }),
         ).toThrow('Editor catalog directory must not be empty');
     });
@@ -67,8 +76,19 @@ describe('EditorCatalogModule', () => {
             EditorCatalogModule.forRoot({
                 directory: '/config',
                 fileName: '  ',
+                sourcesFileName: 'engine-sources.json',
             }),
         ).toThrow('Editor catalog file name must not be empty');
+    });
+
+    it('rejects an empty engine sources file name', () => {
+        expect(() =>
+            EditorCatalogModule.forRoot({
+                directory: '/config',
+                fileName: 'editor-catalog.json',
+                sourcesFileName: ' ',
+            }),
+        ).toThrow('Engine sources file name must not be empty');
     });
 });
 

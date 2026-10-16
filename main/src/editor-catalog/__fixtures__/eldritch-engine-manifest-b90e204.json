@@ -1,0 +1,36 @@
+{
+    "schema": "godot.native-attenuation-build/1",
+    "upstreamBase": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "revision": "b90e2049efff97732d8dffa8af3f4ea48fb140d9",
+    "version": "4.7.2.stable.mono.custom_build.b90e2049e",
+    "platform": "linuxbsd",
+    "arch": "x86_64",
+    "mono": true,
+    "sourceDateEpoch": 1792044138,
+    "artifacts": [
+        {
+            "file": "godot-native-attenuation-b90e2049efff97732d8dffa8af3f4ea48fb140d9-linux-x86_64-mono-editor.tar.gz",
+            "sha256": "43da0be9ccd1d3fe69e01cbf63b8e3828e1fd9aaaa86efde96f3f5209c1d60e7",
+            "bytes": 355242645
+        },
+        {
+            "file": "godot-native-attenuation-b90e2049efff97732d8dffa8af3f4ea48fb140d9-linux-x86_64-mono-templates.tpz",
+            "sha256": "1b8f84ed53813acbb109ac96f5a625e0d67f11e59774f3d0dc11ee40ad7a38af",
+            "bytes": 374649783
+        }
+    ],
+    "binaries": [
+        {
+            "file": "godot.linuxbsd.editor.x86_64.llvm.mono",
+            "sha256": "420c0277faa75a2dd4ad5b7161ddb20d893e487ff33d36b1424df897604cf852"
+        },
+        {
+            "file": "godot.linuxbsd.template_debug.x86_64.llvm.mono",
+            "sha256": "7b3a0acf18f509cd7ad0e6bf9b2e172a6d23a20483da2f31f8e50f7706a83966"
+        },
+        {
+            "file": "godot.linuxbsd.template_release.x86_64.llvm.mono",
+            "sha256": "e2296dcf77c430fc5f1aca98767cb66ecd62edd03b1bc8209d140ac7c82a6801"
+        }
+    ]
+}

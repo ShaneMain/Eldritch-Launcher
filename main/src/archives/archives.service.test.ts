@@ -4,10 +4,12 @@ import extractZip from '@electron-internal/extract-zip';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ArchivesService } from './archives.service.js';
 import { extractCheckedZip } from './checked-zip.adapter.js';
+import { extractTarGz } from './tar-gz.adapter.js';
 
 vi.mock('@electron-internal/extract-zip', () => ({ default: vi.fn() }));
 vi.mock('@mariodebono/di', () => ({ Injectable: () => () => undefined }));
 vi.mock('./checked-zip.adapter.js', () => ({ extractCheckedZip: vi.fn() }));
+vi.mock('./tar-gz.adapter.js', () => ({ extractTarGz: vi.fn() }));
 vi.mock('node:fs', () => ({ promises: { lstat: vi.fn(), readdir: vi.fn() } }));
 const service = new ArchivesService();
 const archive = path.resolve('editor.zip');
@@ -68,6 +70,19 @@ describe('archive service', () => {
             service.extractCheckedZip(archive, destination, options),
         ).resolves.toBe(manifest);
         expect(extractCheckedZip).toHaveBeenCalledWith(
+            archive,
+            destination,
+            options,
+        );
+    });
+    it('delegates tar.gz extraction with cancellation and returns its manifest', async () => {
+        const manifest = { entries: [] };
+        vi.mocked(extractTarGz).mockResolvedValue(manifest);
+        const options = { signal: new AbortController().signal };
+        await expect(
+            service.extractTarGz(archive, destination, options),
+        ).resolves.toBe(manifest);
+        expect(extractTarGz).toHaveBeenCalledWith(
             archive,
             destination,
             options,

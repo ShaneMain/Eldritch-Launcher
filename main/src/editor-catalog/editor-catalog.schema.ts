@@ -1,14 +1,15 @@
 import { z } from 'zod';
 import {
-    EDITOR_CATALOG_PROVIDER_IDS,
     EDITOR_CATALOG_SCHEMA_VERSION,
+    OFFICIAL_ENGINE_SOURCE_IDS,
 } from './editor-catalog.constants.js';
 import type {
     EditorCatalogFile,
     EditorCatalogProviderState,
 } from './editor-catalog.types.js';
 
-const EditorCatalogProviderIdSchema = z.enum(EDITOR_CATALOG_PROVIDER_IDS);
+const EditorCatalogProviderIdSchema = z.string().min(1);
+const Sha40Schema = z.string().regex(/^[0-9a-f]{40}$/);
 const EditorCatalogFlavorSchema = z.enum(['gdscript', 'dotnet']);
 const EditorCatalogPlatformSchema = z.enum(['win32', 'darwin', 'linux']);
 const EditorCatalogArchitectureSchema = z.enum(['x64', 'arm64', 'ia32', 'arm']);
@@ -61,8 +62,17 @@ export const EditorCatalogReleaseSchema = z.object({
                 sizeBytes: z.number().nonnegative(),
                 digest: z.string().optional(),
                 checksumManifestUrl: z.url().optional(),
+                templateIdentity: z.string().min(1).optional(),
             }),
         )
+        .optional(),
+    fork: z
+        .object({
+            sourceId: EditorCatalogProviderIdSchema,
+            source: z.string().regex(/^[^/\s]+\/[^/\s]+$/),
+            revision: Sha40Schema,
+            upstreamBase: Sha40Schema,
+        })
         .optional(),
 });
 
@@ -71,6 +81,12 @@ const EditorCatalogProviderStateSchema = z.object({
     templateMetadataRefreshed: z.boolean().optional().default(false),
     lastFetchedAt: z.number().int().nonnegative().nullable(),
     lastPublishedAt: z.iso.datetime().nullable(),
+    lastFailure: z
+        .object({
+            state: z.enum(['auth-required', 'error']),
+            message: z.string(),
+        })
+        .optional(),
     releases: z.array(EditorCatalogReleaseSchema),
 });
 
@@ -84,17 +100,19 @@ export const EditorCatalogFileSchema = z.object({
 });
 
 /**
- * Creates a catalog with empty provider data.
+ * Creates a catalog with empty official provider data.
  *
  * @returns A valid empty catalog.
  */
 export function createEmptyEditorCatalog(): EditorCatalogFile {
     return {
         schemaVersion: EDITOR_CATALOG_SCHEMA_VERSION,
-        providers: {
-            'official-stable': createEmptyProviderState(),
-            'official-prerelease': createEmptyProviderState(),
-        },
+        providers: Object.fromEntries(
+            OFFICIAL_ENGINE_SOURCE_IDS.map((providerId) => [
+                providerId,
+                createEmptyProviderState(),
+            ]),
+        ),
     };
 }
 
@@ -110,11 +128,16 @@ export function normalizeEditorCatalog(value: unknown): EditorCatalogFile {
     return EditorCatalogFileSchema.parse({
         ...catalog,
         providers: Object.fromEntries(
-            EDITOR_CATALOG_PROVIDER_IDS.map((providerId) => [
+            [
+                ...new Set([
+                    ...OFFICIAL_ENGINE_SOURCE_IDS,
+                    ...Object.keys(catalog.providers),
+                ]),
+            ].map((providerId) => [
                 providerId,
                 normalizeProviderState(
                     providerId,
-                    catalog.providers[providerId],
+                    catalog.providers[providerId] ?? createEmptyProviderState(),
                 ),
             ]),
         ),
@@ -126,7 +149,7 @@ export function normalizeEditorCatalog(value: unknown): EditorCatalogFile {
  *
  * @returns Empty provider data.
  */
-function createEmptyProviderState(): EditorCatalogProviderState {
+export function createEmptyProviderState(): EditorCatalogProviderState {
     return {
         integrityMetadataRefreshed: false,
         templateMetadataRefreshed: false,
@@ -144,7 +167,7 @@ function createEmptyProviderState(): EditorCatalogProviderState {
  * @returns Normalized provider data.
  */
 function normalizeProviderState(
-    providerId: (typeof EDITOR_CATALOG_PROVIDER_IDS)[number],
+    providerId: string,
     state: EditorCatalogProviderState,
 ): EditorCatalogProviderState {
     const releasesById = new Map(
@@ -158,6 +181,7 @@ function normalizeProviderState(
         templateMetadataRefreshed: state.templateMetadataRefreshed ?? false,
         lastFetchedAt: state.lastFetchedAt,
         lastPublishedAt: state.lastPublishedAt,
+        ...(state.lastFailure ? { lastFailure: state.lastFailure } : {}),
         releases: [...releasesById.values()].sort(compareEditorReleases),
     };
 }
@@ -185,7 +209,9 @@ function normalizeRelease(
 }
 
 /**
- * Compares two releases so newer versions come first.
+ * Compares two releases so newer versions come first. Releases with the same
+ * version parts, such as fork builds of one Godot version, are ordered by
+ * publication time.
  *
  * @param a - The first release.
  * @param b - The second release.
@@ -210,7 +236,11 @@ export function compareEditorReleases(
         return channelDifference;
     }
 
-    return b.versionParts.iteration - a.versionParts.iteration;
+    return (
+        b.versionParts.iteration - a.versionParts.iteration ||
+        (b.publishedAt ? Date.parse(b.publishedAt) : 0) -
+            (a.publishedAt ? Date.parse(a.publishedAt) : 0)
+    );
 }
 
 /**

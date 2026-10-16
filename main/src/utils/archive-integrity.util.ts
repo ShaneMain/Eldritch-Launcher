@@ -18,6 +18,17 @@ export type ResolveArchiveIntegrityOptions = {
     expectedReleaseTag: string;
     timeoutMs?: number;
     signal?: AbortSignal;
+    /**
+     * Configured fork repositories whose release asset API URLs are trusted.
+     * Fork assets must carry a GitHub SHA-256 digest.
+     */
+    trustedForkRepositories?: readonly TrustedForkRepository[];
+};
+
+/** One configured fork repository trusted for release asset downloads. */
+export type TrustedForkRepository = {
+    owner: string;
+    repo: string;
 };
 
 /**
@@ -55,7 +66,7 @@ export function isSafePathSegment(value: string): boolean {
 /**
  * Resolves required integrity metadata for an editor archive.
  *
- * @param asset - The selected official editor asset.
+ * @param asset - The selected official or configured fork editor asset.
  * @param options - Expected release identity and request timeout.
  * @returns The digest that must match the downloaded archive.
  */
@@ -63,6 +74,26 @@ export async function resolveArchiveIntegrity(
     asset: AssetSummary,
     options: ResolveArchiveIntegrityOptions,
 ): Promise<ArchiveIntegrity> {
+    const githubDigest = normalizeGithubAssetDigest(asset.digest);
+    if (
+        isTrustedForkAssetUrl(
+            asset.download_url,
+            options.trustedForkRepositories ?? [],
+        )
+    ) {
+        if (!githubDigest) {
+            throw new Error(
+                t('engineSources:errors.integrityUnavailable', {
+                    name: asset.name,
+                }),
+            );
+        }
+        return {
+            algorithm: 'sha256',
+            digest: githubDigest.slice('sha256:'.length),
+        };
+    }
+
     const assetSource = parseOfficialReleaseAssetUrl(
         asset.download_url,
         asset.name,
@@ -71,7 +102,6 @@ export async function resolveArchiveIntegrity(
         throw new Error(t('installEditor:errors.archiveIntegrityUnavailable'));
     }
 
-    const githubDigest = normalizeGithubAssetDigest(asset.digest);
     if (githubDigest) {
         return {
             algorithm: 'sha256',
@@ -105,6 +135,48 @@ export async function resolveArchiveIntegrity(
     }
 
     return { algorithm: 'sha512', digest };
+}
+
+/**
+ * Checks whether a URL is an exact GitHub release asset API URL of one of
+ * the configured fork repositories.
+ *
+ * @param value - The candidate download URL.
+ * @param repositories - Configured fork repositories.
+ * @returns Whether the URL belongs to a configured fork source.
+ */
+export function isTrustedForkAssetUrl(
+    value: string,
+    repositories: readonly TrustedForkRepository[],
+): boolean {
+    try {
+        const url = new URL(value);
+        const segments = url.pathname.split('/').filter(Boolean);
+        if (
+            url.protocol !== 'https:' ||
+            url.host !== 'api.github.com' ||
+            url.username ||
+            url.password ||
+            url.search ||
+            url.hash ||
+            segments.length !== 6 ||
+            segments[0] !== 'repos' ||
+            segments[3] !== 'releases' ||
+            segments[4] !== 'assets' ||
+            !/^\d+$/.test(segments[5])
+        ) {
+            return false;
+        }
+        const owner = decodeURIComponent(segments[1]).toLowerCase();
+        const repo = decodeURIComponent(segments[2]).toLowerCase();
+        return repositories.some(
+            (repository) =>
+                repository.owner.toLowerCase() === owner &&
+                repository.repo.toLowerCase() === repo,
+        );
+    } catch {
+        return false;
+    }
 }
 
 /** Identifies one validated official GitHub release asset URL. */

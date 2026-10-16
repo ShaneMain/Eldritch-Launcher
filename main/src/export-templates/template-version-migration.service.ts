@@ -10,6 +10,7 @@ import type {
     TemplateMigrationVersionStatus,
 } from '@shared/contracts';
 import type { ProjectsStore } from '../projects/projects.store.js';
+import { getReleaseTemplateIdentity } from '../utils/template-identity.util.js';
 import {
     importedTemplateFiles,
     importedTemplateRoot,
@@ -280,7 +281,7 @@ export class TemplateVersionMigrationService {
             !project ||
             project.launch_path !== journal.launchPath ||
             project.release.source === 'custom' ||
-            `${project.release.version.replace('-', '.')}${project.release.mono ? '.mono' : ''}` !==
+            getReleaseTemplateIdentity(project.release) !==
                 journal.editorSetId ||
             (await fs.promises.realpath(local)) !== journal.localRealPath
         )
@@ -866,8 +867,7 @@ export class TemplateVersionMigrationService {
             !project ||
             project.release.source === 'custom' ||
             project.launch_path !== source.launchPath ||
-            `${project.release.version.replace('-', '.')}${project.release.mono ? '.mono' : ''}` !==
-                source.setId
+            getReleaseTemplateIdentity(project.release) !== source.setId
         )
             throw new Error('exportTemplates:errors.changed');
         this.assertProject(project, expected);

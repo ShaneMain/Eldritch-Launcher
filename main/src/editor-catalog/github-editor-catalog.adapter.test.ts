@@ -1,9 +1,17 @@
+import type { EngineSource } from '@shared/contracts';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { EDITOR_CATALOG_PROVIDER_IDS } from './editor-catalog.constants.js';
+import {
+    OFFICIAL_ENGINE_SOURCE_IDS,
+    OFFICIAL_ENGINE_SOURCES,
+} from './editor-catalog.constants.js';
 import { GithubEditorCatalogAdapter } from './github-editor-catalog.adapter.js';
 import { githubReleasePageSchema } from './github-editor-catalog.schema.js';
+import { GithubSourceAccessService } from './github-source-access.service.js';
 
 vi.mock('@mariodebono/di', () => ({ Injectable: () => () => undefined }));
+vi.mock('../app-integrations/app-integrations.service.js', () => ({
+    AppIntegrationsService: class {},
+}));
 vi.mock('./github-editor-catalog.schema.js', () => ({
     githubReleasePageSchema: { parse: vi.fn((value) => value) },
 }));
@@ -11,12 +19,40 @@ vi.mock('./github-editor-catalog.schema.js', () => ({
 vi.mock('electron-log', () => ({
     default: {
         debug: vi.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
     },
 }));
 
 afterEach(() => {
     vi.unstubAllGlobals();
 });
+
+/** Built-in source for the official stable repository. */
+const STABLE = sourceFor('official-stable');
+
+/**
+ * Finds one built-in official source.
+ *
+ * @param id - Official source ID.
+ * @returns The source definition.
+ */
+function sourceFor(id: string): EngineSource {
+    return OFFICIAL_ENGINE_SOURCES.find(
+        (source) => source.id === id,
+    ) as EngineSource;
+}
+
+/**
+ * Creates an adapter that sends requests through the stubbed global fetch.
+ *
+ * @returns A catalog adapter.
+ */
+function createAdapter(): GithubEditorCatalogAdapter {
+    return new GithubEditorCatalogAdapter(
+        new GithubSourceAccessService({} as never),
+    );
+}
 
 describe('GithubEditorCatalogAdapter', () => {
     it('stops fetching when response validation fails', async () => {
@@ -29,10 +65,7 @@ describe('GithubEditorCatalogAdapter', () => {
         });
 
         await expect(
-            new GithubEditorCatalogAdapter().fetchProvider(
-                'official-stable',
-                null,
-            ),
+            createAdapter().fetchProvider(STABLE, null, null),
         ).rejects.toThrow('invalid release response');
         expect(fetchMock).toHaveBeenCalledOnce();
     });
@@ -50,10 +83,7 @@ describe('GithubEditorCatalogAdapter', () => {
         const response = { ...release, assets: [...release.assets, template] };
         vi.stubGlobal('fetch', createPagedFetchMock([[response]]));
 
-        const result = await new GithubEditorCatalogAdapter().fetchProvider(
-            'official-stable',
-            null,
-        );
+        const result = await createAdapter().fetchProvider(STABLE, null, null);
 
         expect(result.releases[0].templateAssets).toEqual([
             expect.objectContaining({
@@ -74,10 +104,7 @@ describe('GithubEditorCatalogAdapter', () => {
         ]);
         vi.stubGlobal('fetch', fetchMock);
 
-        const result = await new GithubEditorCatalogAdapter().fetchProvider(
-            'official-stable',
-            null,
-        );
+        const result = await createAdapter().fetchProvider(STABLE, null, null);
 
         expect(result.releases).toHaveLength(101);
         expect(result.lastPublishedAt).toBe(createPublishedAt(101));
@@ -96,9 +123,10 @@ describe('GithubEditorCatalogAdapter', () => {
         ]);
         vi.stubGlobal('fetch', fetchMock);
 
-        const result = await new GithubEditorCatalogAdapter().fetchProvider(
-            'official-stable',
+        const result = await createAdapter().fetchProvider(
+            STABLE,
             publishedAfter,
+            null,
         );
 
         expect(result.releases).toHaveLength(100);
@@ -119,9 +147,10 @@ describe('GithubEditorCatalogAdapter', () => {
         const fetchMock = createPagedFetchMock([page, []]);
         vi.stubGlobal('fetch', fetchMock);
 
-        const result = await new GithubEditorCatalogAdapter().fetchProvider(
-            'official-stable',
+        const result = await createAdapter().fetchProvider(
+            STABLE,
             publishedAfter,
+            null,
         );
 
         expect(result.releases.map(({ tag }) => tag)).toEqual(
@@ -144,9 +173,10 @@ describe('GithubEditorCatalogAdapter', () => {
         ]);
         vi.stubGlobal('fetch', fetchMock);
 
-        const result = await new GithubEditorCatalogAdapter().fetchProvider(
-            'official-stable',
+        const result = await createAdapter().fetchProvider(
+            STABLE,
             publishedAfter,
+            null,
         );
 
         expect(result.releases.map(({ tag }) => tag)).toEqual(
@@ -176,9 +206,10 @@ describe('GithubEditorCatalogAdapter', () => {
         ]);
         vi.stubGlobal('fetch', fetchMock);
 
-        const result = await new GithubEditorCatalogAdapter().fetchProvider(
-            'official-stable',
+        const result = await createAdapter().fetchProvider(
+            STABLE,
             publishedAfter,
+            null,
         );
 
         expect(result.releases).toHaveLength(100);
@@ -192,10 +223,7 @@ describe('GithubEditorCatalogAdapter', () => {
         const fetchMock = vi.fn(async () => Response.json(fullPage));
         vi.stubGlobal('fetch', fetchMock);
 
-        const result = await new GithubEditorCatalogAdapter().fetchProvider(
-            'official-stable',
-            null,
-        );
+        const result = await createAdapter().fetchProvider(STABLE, null, null);
 
         expect(result.releases).toHaveLength(10000);
         expect(result.lastPublishedAt).toBeNull();
@@ -205,18 +233,45 @@ describe('GithubEditorCatalogAdapter', () => {
     it('throws a useful response error', async () => {
         vi.stubGlobal(
             'fetch',
-            vi.fn(async () => new Response('rate limited', { status: 403 })),
+            vi.fn(async () => new Response('forbidden', { status: 403 })),
         );
 
         await expect(
-            new GithubEditorCatalogAdapter().fetchProvider(
-                'official-stable',
-                null,
-            ),
-        ).rejects.toThrow('Failed to fetch editor catalog: 403; rate limited');
+            createAdapter().fetchProvider(STABLE, null, null),
+        ).rejects.toThrow('GitHub request for godotengine/godot failed: 403');
     });
 
-    it.each(EDITOR_CATALOG_PROVIDER_IDS)(
+    it('reports a rate limit separately from authorisation', async () => {
+        vi.stubGlobal(
+            'fetch',
+            vi.fn(
+                async () =>
+                    new Response('', {
+                        status: 403,
+                        headers: { 'x-ratelimit-remaining': '0' },
+                    }),
+            ),
+        );
+
+        await expect(
+            createAdapter().fetchProvider(STABLE, null, null),
+        ).rejects.toThrow('GitHub rate limit reached for godotengine/godot');
+    });
+
+    it('sends the optional token to official sources', async () => {
+        const fetchMock = createPagedFetchMock([[createGithubRelease(4)]]);
+        vi.stubGlobal('fetch', fetchMock);
+
+        await createAdapter().fetchProvider(STABLE, null, 'ghu_token');
+
+        expect(fetchMock.mock.calls[0][1]).toMatchObject({
+            headers: expect.objectContaining({
+                Authorization: 'Bearer ghu_token',
+            }),
+        });
+    });
+
+    it.each(OFFICIAL_ENGINE_SOURCE_IDS)(
         'picks up later desktop uploads in %s after a newer release is cached',
         async (providerId) => {
             const newer = createGithubRelease(5);
@@ -248,15 +303,17 @@ describe('GithubEditorCatalogAdapter', () => {
                 ],
             ]);
             vi.stubGlobal('fetch', fetchMock);
-            const adapter = new GithubEditorCatalogAdapter();
+            const adapter = createAdapter();
 
             const first = await adapter.fetchProvider(
-                providerId,
+                sourceFor(providerId),
                 newer.published_at,
+                null,
             );
             const second = await adapter.fetchProvider(
-                providerId,
+                sourceFor(providerId),
                 first.lastPublishedAt,
+                null,
             );
 
             expect(first.releases.map(({ tag }) => tag)).toEqual([
@@ -306,12 +363,13 @@ describe('GithubEditorCatalogAdapter', () => {
             ],
         };
         vi.stubGlobal('fetch', createPagedFetchMock([[release], [completed]]));
-        const adapter = new GithubEditorCatalogAdapter();
+        const adapter = createAdapter();
 
-        const first = await adapter.fetchProvider('official-stable', null);
+        const first = await adapter.fetchProvider(STABLE, null, null);
         const second = await adapter.fetchProvider(
-            'official-stable',
+            STABLE,
             first.lastPublishedAt,
+            null,
         );
 
         expect(first.releases[0].variants).toHaveLength(1);
@@ -358,7 +416,9 @@ type GithubReleaseResponse = ReturnType<typeof createGithubRelease>;
  */
 function createPagedFetchMock(pages: GithubReleaseResponse[][]) {
     let pageIndex = 0;
-    return vi.fn(async (_url: URL) => Response.json(pages[pageIndex++] ?? []));
+    return vi.fn(async (_url: URL, _init?: RequestInit) =>
+        Response.json(pages[pageIndex++] ?? []),
+    );
 }
 
 /**

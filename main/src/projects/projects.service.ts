@@ -76,6 +76,7 @@ import {
 } from '../utils/godotProject.utils.js';
 import { sanitiseProjectDirectoryName } from '../utils/projectDirectoryName.utils.js';
 import { writeProjectLauncherConfig } from '../utils/projectLauncherConfig.utils.js';
+import { getReleaseTemplateIdentity } from '../utils/template-identity.util.js';
 import { ipcWebContentsSend } from '../utils.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { ProjectCreationService } from './project-creation.service.js';
@@ -1255,7 +1256,7 @@ export class ProjectsService {
             project.release,
             project.exportTemplateMode,
             project.exportTemplateBuilds,
-            `${project.release.version.replace('-', '.')}${project.release.mono ? '.mono' : ''}`,
+            getReleaseTemplateIdentity(project.release),
         );
         if (areTemplatesMutating())
             throw new Error(t('exportTemplates:errors.busy'));

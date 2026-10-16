@@ -50,6 +50,7 @@ describe('ProjectsModule', () => {
                 EditorCatalogModule.forRoot({
                     directory: '/config',
                     fileName: 'editor-catalog.json',
+                    sourcesFileName: 'engine-sources.json',
                 }),
                 ToolIntegrationModule.forRoot({
                     directory: '/config',
