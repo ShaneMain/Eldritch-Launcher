@@ -30,6 +30,7 @@ import {
     SUPPORTED_LOCALES,
 } from './i18n/config.js';
 import { getLocalesPath } from './pathResolver.js';
+import { ProjectGitStatusModule } from './project-git-status/project-git-status.module.js';
 import { ProjectTagsModule } from './project-tags/project-tags.module.js';
 import { ProjectsModule } from './projects/projects.module.js';
 import { TrayAvailabilityModule } from './services/tray-availability.module.js';
@@ -91,6 +92,7 @@ import { ToolIntegrationModule } from './tool-integration/tool-integration.modul
         TerminalModule,
         ProjectsModule,
         ProjectTagsModule,
+        ProjectGitStatusModule,
         TrayAvailabilityModule,
     ],
     providers: [AppController, AppLifecycleService],

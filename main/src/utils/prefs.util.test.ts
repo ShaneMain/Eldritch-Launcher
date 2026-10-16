@@ -20,6 +20,7 @@ import {
     getConfigDir,
     getDefaultPrefs,
     getPrefsPath,
+    normaliseProjectGitStatusRefreshMinutes,
     readPrefsFromDisk,
     readPrefsSnapshotFromDisk,
     writePrefsToDisk,
@@ -233,6 +234,7 @@ suite('prefs.util', (_test) => {
                 first_run: true,
                 windows_enable_symlinks: false,
                 linux_credential_storage: 'automatic',
+                project_git_status_refresh_minutes: 10,
                 receive_beta_updates: false,
                 skipped_app_update_version: undefined,
                 language: 'system',
@@ -281,6 +283,7 @@ suite('prefs.util', (_test) => {
                 first_run: true,
                 windows_enable_symlinks: false,
                 linux_credential_storage: 'automatic',
+                project_git_status_refresh_minutes: 10,
                 receive_beta_updates: false,
                 skipped_app_update_version: undefined,
                 language: 'system',
@@ -389,6 +392,7 @@ suite('prefs.util', (_test) => {
             projects_view_mode: 'cards',
             projects_tag_filter: [],
             linux_credential_storage: 'automatic',
+            project_git_status_refresh_minutes: 10,
         });
     });
 
@@ -425,6 +429,7 @@ suite('prefs.util', (_test) => {
             projects_view_mode: 'cards',
             projects_tag_filter: [],
             linux_credential_storage: 'automatic',
+            project_git_status_refresh_minutes: 10,
         });
     });
 
@@ -441,8 +446,17 @@ suite('prefs.util', (_test) => {
             projects_view_mode: 'cards',
             projects_tag_filter: [],
             linux_credential_storage: 'automatic',
+            project_git_status_refresh_minutes: 10,
         });
         expect(dialog.showMessageBox).not.toHaveBeenCalled();
+    });
+
+    it('normalises the project Git status refresh interval', () => {
+        expect(normaliseProjectGitStatusRefreshMinutes(0)).toBe(0);
+        expect(normaliseProjectGitStatusRefreshMinutes(30)).toBe(30);
+        for (const invalid of [-1, 1.5, 1_441, '10', null, undefined]) {
+            expect(normaliseProjectGitStatusRefreshMinutes(invalid)).toBe(10);
+        }
     });
 
     it('should write prefs to disk', async () => {

@@ -63,6 +63,25 @@ function normaliseProjectTagFilter(value: unknown): string[] {
     ];
 }
 
+export const DEFAULT_PROJECT_GIT_STATUS_REFRESH_MINUTES = 10;
+const MAX_PROJECT_GIT_STATUS_REFRESH_MINUTES = 24 * 60;
+
+/**
+ * Normalises the automatic project Git status refresh interval.
+ * @param value - Saved or requested interval in minutes; 0 disables refreshes.
+ * @returns A whole number of minutes within the supported range.
+ */
+export function normaliseProjectGitStatusRefreshMinutes(
+    value: unknown,
+): number {
+    return typeof value === 'number' &&
+        Number.isInteger(value) &&
+        value >= 0 &&
+        value <= MAX_PROJECT_GIT_STATUS_REFRESH_MINUTES
+        ? value
+        : DEFAULT_PROJECT_GIT_STATUS_REFRESH_MINUTES;
+}
+
 /**
  * Merges saved preferences and normalises optional project and credential-storage preferences.
  * @param defaultPrefs - Defaults for missing preferences.
@@ -91,6 +110,10 @@ function mergeWithDefaults(
         )
             ? runtimePrefs.linux_credential_storage
             : 'automatic',
+        project_git_status_refresh_minutes:
+            normaliseProjectGitStatusRefreshMinutes(
+                runtimePrefs.project_git_status_refresh_minutes,
+            ),
     };
 }
 
@@ -182,6 +205,8 @@ export async function getDefaultPrefs(): Promise<UserPreferences> {
         windows_enable_symlinks: false,
         linux_credential_storage: 'automatic',
         language: 'system', // Default to system language detection
+        project_git_status_refresh_minutes:
+            DEFAULT_PROJECT_GIT_STATUS_REFRESH_MINUTES,
     };
 }
 
