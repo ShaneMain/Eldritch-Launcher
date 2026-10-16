@@ -1,4 +1,3 @@
-import type { AppUpdateMessage } from '../app/index.js';
 import type { AppIntegrationSummary } from '../app-integrations/index.js';
 import type { CodeEditorIntegrationSettings } from '../codeEditorIntegration/index.js';
 import type { ProjectGitStatus } from '../project-git-status/index.js';
@@ -14,7 +13,6 @@ import type {
 } from '../releases/index.js';
 
 export type AppEventMap = {
-    'app-updates': AppUpdateMessage;
     'projects-updated': ProjectDetails[];
     'project-tags-updated': ProjectTagsSnapshot;
     'project-git-status-updated': ProjectGitStatus;

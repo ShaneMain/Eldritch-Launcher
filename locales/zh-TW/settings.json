@@ -8,7 +8,6 @@
         "tools": "工具",
         "codeEditors": "程式碼編輯器",
         "connections": "連線",
-        "updates": "更新",
         "exportTemplates": "匯出範本"
     },
     "appearance": {
@@ -177,7 +176,9 @@
             "version": "版本"
         },
         "terminal": {
-            "drawer": { "title": "終端機設定" },
+            "drawer": {
+                "title": "終端機設定"
+            },
             "loading": "正在載入終端機設定...",
             "enabled": "為專案資料夾啟用終端機",
             "selection": {
@@ -366,21 +367,6 @@
             "unavailableShort": "安全儲存無法使用。",
             "savedCurrent": "已儲存的選擇與啟動時使用的選擇相符。此變更不需要重新啟動。"
         }
-    },
-    "updates": {
-        "title": "更新",
-        "description": "設定 Eldritch Launcher 如何檢查更新",
-        "autoCheck": "自動檢查更新",
-        "betaChannel": "接收 Beta 更新",
-        "betaChannelDescription": "從 GitHub 下載預發布版本；這些版本可能不如正式發布穩定。",
-        "checkNow": "立即檢查更新",
-        "downloadNow": "下載更新",
-        "skipVersion": "跳過此版本",
-        "unskipVersion": "恢復已跳過的更新",
-        "readyWithVersion": "版本 {{version}} 已就緒，重新啟動 Eldritch Launcher 以安裝。<Button>立即重新啟動</Button>",
-        "readyNoVersion": "更新已就緒，重新啟動 Eldritch Launcher 以安裝。<Button>立即重新啟動</Button>",
-        "manualWithVersion": "{{version}} 版本可用，但此 rpm-ostree 系統不支援自動安裝。<Button>開啟下載頁面</Button>",
-        "manualNoVersion": "有新版本可用，但此 rpm-ostree 系統不支援自動安裝。<Button>開啟下載頁面</Button>"
     },
     "windowsSymlinks": {
         "title": "編輯器符號連結",

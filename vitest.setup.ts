@@ -26,7 +26,6 @@ vi.mock('@mariodebono/di-electron/renderer', () => {
 
     const subscriptions = new WeakMap<Listener, () => void>();
     const subscriptionMethods = {
-        'app-updates': 'subscribeAppUpdates',
         'projects-updated': 'subscribeProjects',
         'releases-updated': 'subscribeReleases',
         'release-install-progress': 'subscribeReleaseInstallProgress',

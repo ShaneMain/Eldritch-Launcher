@@ -7,11 +7,7 @@ import type {
     CreateCustomEngineManifestResult,
     CustomEngineManifest,
 } from '../releases/index.js';
-import type {
-    AppUpdateMessage,
-    CheckForUpdatesOptions,
-    SetAutoStartResult,
-} from './index.js';
+import type { SetAutoStartResult } from './index.js';
 
 export type AppFileFilter = {
     name: string;
@@ -49,8 +45,6 @@ export type AppBridge = {
         autoStart: boolean,
         hidden: boolean,
     ): Promise<SetAutoStartResult>;
-    setAutoCheckUpdates(enabled: boolean): Promise<boolean>;
-    setReceiveBetaUpdates(enabled: boolean): Promise<boolean>;
     openFileDialog(
         defaultPath: string,
         title: string,
@@ -81,13 +75,6 @@ export type AppBridge = {
     getTrayAvailability(): Promise<boolean>;
     getAppVersion(): Promise<string>;
     relaunchApp(): Promise<void>;
-    installUpdateAndRestart(): Promise<void>;
-    downloadAppUpdate(): Promise<void>;
-    skipAppUpdate(version: string): Promise<string>;
-    unskipAppUpdate(): Promise<void>;
-    checkForUpdates(
-        options?: CheckForUpdatesOptions,
-    ): Promise<AppUpdateMessage>;
     changeLanguage(lang: string): Promise<string>;
     rendererReady(): Promise<void>;
 };

@@ -8,7 +8,6 @@
         "tools": "Outils",
         "codeEditors": "Éditeurs de code",
         "connections": "Connexions",
-        "updates": "Mises à jour",
         "exportTemplates": "Modèles d’exportation"
     },
     "appearance": {
@@ -177,7 +176,9 @@
             "version": "Version"
         },
         "terminal": {
-            "drawer": { "title": "Paramètres du terminal" },
+            "drawer": {
+                "title": "Paramètres du terminal"
+            },
             "loading": "Chargement des paramètres du terminal...",
             "enabled": "Activer le terminal pour les dossiers de projet",
             "selection": {
@@ -366,21 +367,6 @@
             "unavailableShort": "Le stockage sécurisé n'est pas disponible.",
             "savedCurrent": "Le choix enregistré correspond au choix utilisé au démarrage. Aucun redémarrage n'est nécessaire pour cette modification."
         }
-    },
-    "updates": {
-        "title": "Mises à jour",
-        "description": "Configurer comment Eldritch Launcher vérifie les mises à jour",
-        "autoCheck": "Vérifier automatiquement les mises à jour",
-        "betaChannel": "Recevoir les mises à jour beta",
-        "betaChannelDescription": "Téléchargez les versions préliminaires depuis GitHub ; elles peuvent être moins stables que les versions officielles.",
-        "checkNow": "Vérifier les mises à jour",
-        "downloadNow": "Télécharger la mise à jour",
-        "skipVersion": "Ignorer cette version",
-        "unskipVersion": "Réactiver la mise à jour ignorée",
-        "readyWithVersion": "La version {{version}} est prête, redémarrez Eldritch Launcher pour l'installer. <Button>Redémarrer maintenant</Button>",
-        "readyNoVersion": "La mise à jour est prête, redémarrez Eldritch Launcher pour l'installer. <Button>Redémarrer maintenant</Button>",
-        "manualWithVersion": "La version {{version}} est disponible, mais l’installation automatique n’est pas prise en charge sur ce système rpm-ostree. <Button>Ouvrir la page de téléchargement</Button>",
-        "manualNoVersion": "Une nouvelle version est disponible, mais l’installation automatique n’est pas prise en charge sur ce système rpm-ostree. <Button>Ouvrir la page de téléchargement</Button>"
     },
     "windowsSymlinks": {
         "title": "Liens symboliques de l'éditeur",

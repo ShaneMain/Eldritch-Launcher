@@ -28,19 +28,6 @@ function migrateUserPreferences(
         updated = true;
     }
 
-    if (typeof nextPrefs.receive_beta_updates === 'undefined') {
-        nextPrefs.receive_beta_updates = defaultPrefs.receive_beta_updates;
-        updated = true;
-    }
-
-    if (
-        nextPrefs.skipped_app_update_version !== undefined &&
-        typeof nextPrefs.skipped_app_update_version !== 'string'
-    ) {
-        nextPrefs.skipped_app_update_version = undefined;
-        updated = true;
-    }
-
     const legacyVSCodePath = storedPrefs.vs_code_path?.trim();
     const vscodeIntegration = nextPrefs.code_editor_integrations?.vscode;
     if (

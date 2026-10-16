@@ -8,7 +8,6 @@
         "tools": "Araçlar",
         "codeEditors": "Kod Düzenleyicileri",
         "connections": "Bağlantılar",
-        "updates": "Güncellemeler",
         "exportTemplates": "Dışa Aktarma Şablonları"
     },
     "appearance": {
@@ -177,7 +176,9 @@
             "version": "Sürüm"
         },
         "terminal": {
-            "drawer": { "title": "Terminal ayarları" },
+            "drawer": {
+                "title": "Terminal ayarları"
+            },
             "loading": "Terminal ayarları yükleniyor...",
             "enabled": "Proje klasörleri için terminali etkinleştir",
             "selection": {
@@ -366,21 +367,6 @@
             "unavailableShort": "Güvenli depolama kullanılamıyor.",
             "savedCurrent": "Kaydedilen seçim başlangıçta kullanılan seçimle eşleşiyor. Bu değişiklik için yeniden başlatma gerekli değil."
         }
-    },
-    "updates": {
-        "title": "Güncellemeler",
-        "description": "Eldritch Launcher'ın güncellemeleri nasıl kontrol edeceğini yapılandırın",
-        "autoCheck": "Güncellemeleri otomatik kontrol et",
-        "betaChannel": "Beta güncellemeleri al",
-        "betaChannelDescription": "GitHub’dan ön sürüm paketlerini indirir; bunlar resmi sürümlere göre daha az kararlı olabilir.",
-        "checkNow": "Güncellemeleri kontrol et",
-        "downloadNow": "Güncellemeyi indir",
-        "skipVersion": "Bu sürümü atla",
-        "unskipVersion": "Atlanan güncellemeyi geri al",
-        "readyWithVersion": "{{version}} sürümü hazır, yüklemek için Eldritch Launcher'ı yeniden başlatın. <Button>Şimdi yeniden başlat</Button>",
-        "readyNoVersion": "Güncelleme hazır, yüklemek için Eldritch Launcher'ı yeniden başlatın. <Button>Şimdi yeniden başlat</Button>",
-        "manualWithVersion": "Sürüm {{version}} kullanılabilir, ancak bu rpm-ostree sisteminde otomatik kurulum desteklenmiyor. <Button>İndirme sayfasını aç</Button>",
-        "manualNoVersion": "Yeni bir sürüm kullanılabilir, ancak bu rpm-ostree sisteminde otomatik kurulum desteklenmiyor. <Button>İndirme sayfasını aç</Button>"
     },
     "windowsSymlinks": {
         "title": "Editör sembolik bağlantıları",

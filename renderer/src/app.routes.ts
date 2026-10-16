@@ -15,7 +15,6 @@ export const settingsTabs = [
     'codeEditors',
     'tools',
     'connections',
-    'updates',
 ] as const;
 
 export type SettingsTab = (typeof settingsTabs)[number];

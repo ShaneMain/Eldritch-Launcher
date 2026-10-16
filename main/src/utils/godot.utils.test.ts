@@ -3,26 +3,6 @@ import * as path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import { createProjectFile, getProjectDefinition } from './godot.utils.js';
 
-// Mock electron-updater
-vi.mock('electron-updater', () => ({
-    default: {
-        autoUpdater: {
-            on: vi.fn(),
-            logger: null,
-            channel: null,
-            checkForUpdates: vi.fn(),
-            checkForUpdatesAndNotify: vi.fn(),
-            downloadUpdate: vi.fn(),
-            quitAndInstall: vi.fn(),
-            setFeedURL: vi.fn(),
-            addAuthHeader: vi.fn(),
-            isUpdaterActive: vi.fn(),
-            currentVersion: '1.0.0',
-        },
-    },
-    UpdateCheckResult: {},
-}));
-
 // Mock electron
 vi.mock('electron', () => ({
     Menu: {

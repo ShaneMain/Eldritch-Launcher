@@ -49,7 +49,6 @@
         "nothing": "Rien",
         "minimize": "Réduire",
         "closeToTray": "Fermer dans la barre d'état système",
-        "autoCheckUpdates": "Vérifier automatiquement les mises à jour",
         "autoStart": "Démarrer au démarrage de l'ordinateur.",
         "startInTray": "Démarrer dans la barre."
     },
@@ -58,7 +57,6 @@
         "projectsLocation": "Emplacement des projets :",
         "installLocation": "Emplacement d'installation de Godot :",
         "postLaunchAction": "Action après le lancement d'un projet :",
-        "autoCheckUpdates": "Vérifier automatiquement les mises à jour :",
         "autoStart": "Démarrage automatique au démarrage de l'ordinateur :",
         "autoStartType": "Type de démarrage automatique :",
         "systemTray": "Barre d'état système",

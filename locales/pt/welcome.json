@@ -49,7 +49,6 @@
         "nothing": "Nada",
         "minimize": "Minimizar",
         "closeToTray": "Fechar para a bandeja do sistema",
-        "autoCheckUpdates": "Procurar atualizações automaticamente",
         "autoStart": "Iniciar quando o computador arranca.",
         "startInTray": "Iniciar na bandeja."
     },
@@ -58,7 +57,6 @@
         "projectsLocation": "Localização dos projetos:",
         "installLocation": "Localização das instalações do Godot:",
         "postLaunchAction": "Ação após iniciar um projeto:",
-        "autoCheckUpdates": "Procurar atualizações automaticamente:",
         "autoStart": "Arranque automático ao ligar o computador:",
         "autoStartType": "Tipo de arranque automático:",
         "systemTray": "Bandeja do sistema",

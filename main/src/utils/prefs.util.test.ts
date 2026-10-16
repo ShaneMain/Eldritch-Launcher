@@ -29,26 +29,6 @@ import {
 const platformMock = os.platform as unknown as vi.Mock<[], string>;
 const homedirMock = os.homedir as unknown as vi.Mock<[], string>;
 
-// Mock electron-updater
-vi.mock('electron-updater', () => ({
-    default: {
-        autoUpdater: {
-            on: vi.fn(),
-            logger: null,
-            channel: null,
-            checkForUpdates: vi.fn(),
-            checkForUpdatesAndNotify: vi.fn(),
-            downloadUpdate: vi.fn(),
-            quitAndInstall: vi.fn(),
-            setFeedURL: vi.fn(),
-            addAuthHeader: vi.fn(),
-            isUpdaterActive: vi.fn(),
-            currentVersion: '1.0.0',
-        },
-    },
-    UpdateCheckResult: {},
-}));
-
 // Mock electron
 vi.mock('electron', () => ({
     Menu: {
@@ -225,7 +205,6 @@ suite('prefs.util', (_test) => {
                 install_location: defaultDirs.dataDir,
                 config_location: defaultDirs.configDir,
                 projects_location: defaultDirs.projectDir,
-                auto_check_updates: true,
                 auto_start: true,
                 start_in_tray: true,
                 close_window_to_tray: true,
@@ -235,8 +214,6 @@ suite('prefs.util', (_test) => {
                 windows_enable_symlinks: false,
                 linux_credential_storage: 'automatic',
                 project_git_status_refresh_minutes: 10,
-                receive_beta_updates: false,
-                skipped_app_update_version: undefined,
                 language: 'system',
             });
         });
@@ -274,7 +251,6 @@ suite('prefs.util', (_test) => {
                 install_location: defaultDirs.dataDir,
                 config_location: defaultDirs.configDir,
                 projects_location: defaultDirs.projectDir,
-                auto_check_updates: true,
                 auto_start: true,
                 start_in_tray: true,
                 close_window_to_tray: true,
@@ -284,8 +260,6 @@ suite('prefs.util', (_test) => {
                 windows_enable_symlinks: false,
                 linux_credential_storage: 'automatic',
                 project_git_status_refresh_minutes: 10,
-                receive_beta_updates: false,
-                skipped_app_update_version: undefined,
                 language: 'system',
             });
         });
@@ -316,6 +290,25 @@ suite('prefs.util', (_test) => {
             expect(prefs.language).toBe('it');
         },
     );
+
+    it('loads saved preferences containing keys from removed features', async () => {
+        fsMock.existsSync.mockReturnValueOnce(true);
+        fsPromisesMock.readFile.mockResolvedValueOnce(
+            JSON.stringify({
+                removed_feature_flag: true,
+                removed_feature_version: '1.0.0',
+                language: 'it',
+                auto_start: false,
+            }),
+        );
+        const prefs = await readPrefsFromDisk(
+            '/home/user/.godot/prefs.json',
+            await getDefaultPrefs(),
+        );
+        expect(prefs.language).toBe('it');
+        expect(prefs.auto_start).toBe(false);
+        expect(prefs.first_run).toBe(true);
+    });
 
     it.each([undefined, 'unsupported', null])(
         'normalises saved Linux credential storage %s to Automatic',

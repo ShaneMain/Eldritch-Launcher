@@ -18,7 +18,6 @@ describe('settings routes', () => {
             'codeEditors',
             'tools',
             'connections',
-            'updates',
         ]);
         expect(isSettingsTab('connections')).toBe(true);
     });

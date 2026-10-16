@@ -17,11 +17,6 @@ vi.mock('electron', () => ({
         showMessageBox: vi.fn(),
     },
 }));
-vi.mock('electron-updater', () => ({
-    default: {
-        autoUpdater: {},
-    },
-}));
 
 import { AppIntegrationsModule } from '../app-integrations/app-integrations.module.js';
 import type { AppConfig } from '../config/index.js';

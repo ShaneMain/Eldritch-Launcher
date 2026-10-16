@@ -23,25 +23,6 @@ vi.mock('node:child_process', async (importOriginal) => ({
     ...spawnMocks,
 }));
 
-vi.mock('electron-updater', () => ({
-    default: {
-        autoUpdater: {
-            on: vi.fn(),
-            logger: null,
-            channel: null,
-            checkForUpdates: vi.fn(),
-            checkForUpdatesAndNotify: vi.fn(),
-            downloadUpdate: vi.fn(),
-            quitAndInstall: vi.fn(),
-            setFeedURL: vi.fn(),
-            addAuthHeader: vi.fn(),
-            isUpdaterActive: vi.fn(),
-            currentVersion: '1.0.0',
-        },
-    },
-    UpdateCheckResult: {},
-}));
-
 const manifestMocks = vi.hoisted(() => ({
     parseCustomEngineManifest: vi.fn(),
 }));

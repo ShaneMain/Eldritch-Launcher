@@ -8,7 +8,6 @@
         "tools": "Strumenti",
         "codeEditors": "Editor di codice",
         "connections": "Connessioni",
-        "updates": "Aggiornamenti",
         "exportTemplates": "Template di esportazione"
     },
     "appearance": {
@@ -177,7 +176,9 @@
             "version": "Versione"
         },
         "terminal": {
-            "drawer": { "title": "Impostazioni terminale" },
+            "drawer": {
+                "title": "Impostazioni terminale"
+            },
             "loading": "Caricamento impostazioni terminale...",
             "enabled": "Abilita terminale per le cartelle dei progetti",
             "selection": {
@@ -366,21 +367,6 @@
             "unavailableShort": "L'archiviazione sicura non è disponibile.",
             "savedCurrent": "La scelta salvata corrisponde a quella usata all'avvio. Non è necessario riavviare per questa modifica."
         }
-    },
-    "updates": {
-        "title": "Aggiornamenti",
-        "description": "Configura come Eldritch Launcher controlla gli aggiornamenti",
-        "autoCheck": "Controlla automaticamente gli aggiornamenti",
-        "betaChannel": "Ricevere aggiornamenti beta",
-        "betaChannelDescription": "Scarica build prerelease da GitHub; potrebbero essere meno stabili delle release ufficiali.",
-        "checkNow": "Controlla aggiornamenti",
-        "downloadNow": "Scarica aggiornamento",
-        "skipVersion": "Salta questa versione",
-        "unskipVersion": "Ripristina aggiornamento ignorato",
-        "readyWithVersion": "La versione {{version}} è pronta, riavvia Eldritch Launcher per installarla. <Button>Riavvia ora</Button>",
-        "readyNoVersion": "L'aggiornamento è pronto, riavvia Eldritch Launcher per installarlo. <Button>Riavvia ora</Button>",
-        "manualWithVersion": "La versione {{version}} è disponibile, ma l’installazione automatica non è supportata su questo sistema rpm-ostree. <Button>Apri la pagina di download</Button>",
-        "manualNoVersion": "È disponibile una nuova versione, ma l’installazione automatica non è supportata su questo sistema rpm-ostree. <Button>Apri la pagina di download</Button>"
     },
     "windowsSymlinks": {
         "title": "Collegamenti simbolici dell'editor",

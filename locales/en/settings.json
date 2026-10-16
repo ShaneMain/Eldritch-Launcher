@@ -8,8 +8,7 @@
         "behavior": "Behavior",
         "tools": "Tools",
         "codeEditors": "Code Editors",
-        "connections": "Connections",
-        "updates": "Updates"
+        "connections": "Connections"
     },
     "appearance": {
         "theme": {
@@ -368,21 +367,6 @@
             "unavailableShort": "Secure storage is unavailable.",
             "savedCurrent": "The saved choice matches the choice used at startup. No restart is needed for this change."
         }
-    },
-    "updates": {
-        "title": "Updates",
-        "description": "Configure how Eldritch Launcher checks for updates",
-        "autoCheck": "Automatically check for updates",
-        "betaChannel": "Receive beta updates",
-        "betaChannelDescription": "Download prerelease builds from GitHub; these may be less stable than official releases.",
-        "checkNow": "Check for updates",
-        "downloadNow": "Download update",
-        "skipVersion": "Skip this version",
-        "unskipVersion": "Unskip skipped update",
-        "readyWithVersion": "Version {{version}} is ready, restart Eldritch Launcher to install it. <Button>Restart now</Button>",
-        "readyNoVersion": "The update is ready, restart Eldritch Launcher to install it. <Button>Restart now</Button>",
-        "manualWithVersion": "Version {{version}} is available, but automatic installation is not supported on this rpm-ostree system. <Button>Open download page</Button>",
-        "manualNoVersion": "A new version is available, but automatic installation is not supported on this rpm-ostree system. <Button>Open download page</Button>"
     },
     "windowsSymlinks": {
         "title": "Editor symlinks",

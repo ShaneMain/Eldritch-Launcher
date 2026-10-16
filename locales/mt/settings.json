@@ -8,7 +8,6 @@
         "tools": "Għodod",
         "codeEditors": "Edituri tal-Kodiċi",
         "connections": "Konnessjonijiet",
-        "updates": "Aġġornamenti",
         "exportTemplates": "Mudelli ta’ esportazzjoni"
     },
     "appearance": {
@@ -177,7 +176,9 @@
             "version": "Verżjoni"
         },
         "terminal": {
-            "drawer": { "title": "Settings tat-Terminal" },
+            "drawer": {
+                "title": "Settings tat-Terminal"
+            },
             "loading": "Qed jitgħabbew is-settings tat-terminal...",
             "enabled": "Ippermetti terminal għall-folders tal-proġetti",
             "selection": {
@@ -366,21 +367,6 @@
             "unavailableShort": "Ħażna sigura mhix disponibbli.",
             "savedCurrent": "L-għażla ssejvjata taqbel mal-għażla użata mal-istartjar. Ma hemmx bżonn terġa' tibda għal din il-bidla."
         }
-    },
-    "updates": {
-        "title": "Aġġornamenti",
-        "description": "Ikkonfigura kif Eldritch Launcher jiċċekkja għal aġġornamenti",
-        "autoCheck": "Awtomatikament iċċekkja għal aġġornamenti",
-        "betaChannel": "Irċievi aġġornamenti beta",
-        "betaChannelDescription": "Niżżel build ta’ qabel rilaxx minn GitHub; dawn jistgħu jkunu inqas stabbli mill-verżjonijiet uffiċjali.",
-        "checkNow": "Iċċekkja għal aġġornamenti",
-        "downloadNow": "Niżżel l-aġġornament",
-        "skipVersion": "Aqbeż din il-verżjoni",
-        "unskipVersion": "Erġa’ attiva l-aġġornament maqbuż",
-        "readyWithVersion": "Il-verżjoni {{version}} hija lesta, erġa' ibda Eldritch Launcher biex tinstallaha. <Button>Ibda mill-ġdid issa</Button>",
-        "readyNoVersion": "L-aġġornament huwa lest, erġa' ibda Eldritch Launcher biex tinstallah. <Button>Ibda mill-ġdid issa</Button>",
-        "manualWithVersion": "Il-verżjoni {{version}} hija disponibbli, iżda l-installazzjoni awtomatika mhix appoġġjata fuq din is-sistema rpm-ostree. <Button>Iftaħ il-paġna tat-tniżżil</Button>",
-        "manualNoVersion": "Hemm verżjoni ġdida disponibbli, iżda l-installazzjoni awtomatika mhix appoġġjata fuq din is-sistema rpm-ostree. <Button>Iftaħ il-paġna tat-tniżżil</Button>"
     },
     "windowsSymlinks": {
         "title": "Symlinks tal-editur",

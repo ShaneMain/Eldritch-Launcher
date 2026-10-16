@@ -8,7 +8,6 @@
         "tools": "Werkzeuge",
         "codeEditors": "Code-Editoren",
         "connections": "Verbindungen",
-        "updates": "Aktualisierungen",
         "exportTemplates": "Exportvorlagen"
     },
     "appearance": {
@@ -177,7 +176,9 @@
             "version": "Version"
         },
         "terminal": {
-            "drawer": { "title": "Terminaleinstellungen" },
+            "drawer": {
+                "title": "Terminaleinstellungen"
+            },
             "loading": "Terminaleinstellungen werden geladen...",
             "enabled": "Terminal für Projektordner aktivieren",
             "selection": {
@@ -366,21 +367,6 @@
             "unavailableShort": "Sicherer Speicher ist nicht verfügbar.",
             "savedCurrent": "Die gespeicherte Auswahl entspricht der beim Start verwendeten Auswahl. Für diese Änderung ist kein Neustart erforderlich."
         }
-    },
-    "updates": {
-        "title": "Aktualisierungen",
-        "description": "Konfigurieren Sie, wie der Eldritch Launcher nach Updates sucht",
-        "autoCheck": "Automatisch nach Updates suchen",
-        "betaChannel": "Beta-Updates erhalten",
-        "betaChannelDescription": "Lade Vorabversionen von GitHub herunter; diese können weniger stabil sein als offizielle Releases.",
-        "checkNow": "Nach Updates suchen",
-        "downloadNow": "Update herunterladen",
-        "skipVersion": "Diese Version überspringen",
-        "unskipVersion": "Übersprungene Version wieder aktivieren",
-        "readyWithVersion": "Version {{version}} ist bereit, starte Eldritch Launcher neu, um sie zu installieren. <Button>Jetzt neu starten</Button>",
-        "readyNoVersion": "Das Update ist bereit, starte Eldritch Launcher neu, um es zu installieren. <Button>Jetzt neu starten</Button>",
-        "manualWithVersion": "Version {{version}} ist verfügbar, aber die automatische Installation wird auf diesem rpm-ostree-System nicht unterstützt. <Button>Download-Seite öffnen</Button>",
-        "manualNoVersion": "Eine neue Version ist verfügbar, aber die automatische Installation wird auf diesem rpm-ostree-System nicht unterstützt. <Button>Download-Seite öffnen</Button>"
     },
     "windowsSymlinks": {
         "title": "Editor-Symlinks",

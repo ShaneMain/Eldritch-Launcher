@@ -4,26 +4,6 @@ import type { ReleaseAsset } from '../types/github.js';
 import { getReleases } from './github.utils.js';
 import { createAssetSummary, getPlatformAsset } from './releases.utils.js';
 
-// Mock electron-updater
-vi.mock('electron-updater', () => ({
-    default: {
-        autoUpdater: {
-            on: vi.fn(),
-            logger: null,
-            channel: null,
-            checkForUpdates: vi.fn(),
-            checkForUpdatesAndNotify: vi.fn(),
-            downloadUpdate: vi.fn(),
-            quitAndInstall: vi.fn(),
-            setFeedURL: vi.fn(),
-            addAuthHeader: vi.fn(),
-            isUpdaterActive: vi.fn(),
-            currentVersion: '1.0.0',
-        },
-    },
-    UpdateCheckResult: {},
-}));
-
 // Mock electron
 vi.mock('electron', () => ({
     Menu: {

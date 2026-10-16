@@ -8,7 +8,6 @@
         "tools": "工具",
         "codeEditors": "代码编辑器",
         "connections": "连接",
-        "updates": "更新",
         "exportTemplates": "导出模板"
     },
     "appearance": {
@@ -177,7 +176,9 @@
             "version": "版本"
         },
         "terminal": {
-            "drawer": { "title": "终端设置" },
+            "drawer": {
+                "title": "终端设置"
+            },
             "loading": "正在加载终端设置...",
             "enabled": "为项目文件夹启用终端",
             "selection": {
@@ -366,21 +367,6 @@
             "unavailableShort": "安全存储不可用。",
             "savedCurrent": "已保存的选择与启动时使用的选择一致。此更改无需重启。"
         }
-    },
-    "updates": {
-        "title": "更新",
-        "description": "配置 Eldritch Launcher 如何检查更新",
-        "autoCheck": "自动检查更新",
-        "betaChannel": "接收 Beta 更新",
-        "betaChannelDescription": "从 GitHub 下载预发布版本；这些版本可能不如正式发布稳定。",
-        "checkNow": "立即检查更新",
-        "downloadNow": "下载更新",
-        "skipVersion": "跳过此版本",
-        "unskipVersion": "恢复已跳过的更新",
-        "readyWithVersion": "版本 {{version}} 已就绪，重新启动 Eldritch Launcher 以安装。<Button>立即重启</Button>",
-        "readyNoVersion": "更新已就绪，重新启动 Eldritch Launcher 以安装。<Button>立即重启</Button>",
-        "manualWithVersion": "{{version}} 版本可用，但此 rpm-ostree 系统不支持自动安装。<Button>打开下载页面</Button>",
-        "manualNoVersion": "有新版本可用，但此 rpm-ostree 系统不支持自动安装。<Button>打开下载页面</Button>"
     },
     "windowsSymlinks": {
         "title": "编辑器符号链接",

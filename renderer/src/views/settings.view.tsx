@@ -32,7 +32,6 @@ import { ProjectsSettingsPanel } from './settings/components/projects-settings-p
 import { SettingsTabs } from './settings/components/settings-tabs.component';
 import { TemplateStorageSettingsPanel } from './settings/components/template-storage-settings-panel.component';
 import { ToolsSettingsPanel } from './settings/components/tools-settings-panel.component';
-import { UpdatesSettingsPanel } from './settings/components/updates-settings-panel.component';
 import { CodeEditorSettingsDrawer } from './sub-views/code-editor-settings-drawer.subview';
 import { GitToolSettingsDrawer } from './sub-views/git-tool-settings-drawer.subview';
 import { TerminalToolSettingsDrawer } from './sub-views/terminal-tool-settings-drawer.subview';
@@ -834,9 +833,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                                 )
                             }
                             onDisconnect={confirmAppIntegrationDisconnect}
-                        />
-                        <UpdatesSettingsPanel
-                            active={activeTab === 'updates'}
                         />
                     </div>
                 </div>

@@ -8,7 +8,6 @@
         "tools": "Narzędzia",
         "codeEditors": "Edytory kodu",
         "connections": "Połączenia",
-        "updates": "Aktualizacje",
         "exportTemplates": "Szablony eksportu"
     },
     "appearance": {
@@ -177,7 +176,9 @@
             "version": "Wersja"
         },
         "terminal": {
-            "drawer": { "title": "Ustawienia terminala" },
+            "drawer": {
+                "title": "Ustawienia terminala"
+            },
             "loading": "Wczytywanie ustawień terminala...",
             "enabled": "Włącz terminal dla folderów projektów",
             "selection": {
@@ -366,21 +367,6 @@
             "unavailableShort": "Bezpieczne przechowywanie jest niedostępne.",
             "savedCurrent": "Zapisany wybór odpowiada wyborowi użytemu podczas uruchamiania. Ta zmiana nie wymaga ponownego uruchomienia."
         }
-    },
-    "updates": {
-        "title": "Aktualizacje",
-        "description": "Skonfiguruj sposób sprawdzania aktualizacji przez Eldritch Launcher",
-        "autoCheck": "Automatycznie sprawdzaj aktualizacje",
-        "betaChannel": "Otrzymuj aktualizacje beta",
-        "betaChannelDescription": "Pobierz wersje przedpremierowe z GitHub; mogą być mniej stabilne niż oficjalne wydania.",
-        "checkNow": "Sprawdź aktualizacje",
-        "downloadNow": "Pobierz aktualizację",
-        "skipVersion": "Pomiń tę wersję",
-        "unskipVersion": "Przywróć pominiętą aktualizację",
-        "readyWithVersion": "Wersja {{version}} jest gotowa, uruchom ponownie Eldritch Launcher, aby ją zainstalować. <Button>Uruchom ponownie teraz</Button>",
-        "readyNoVersion": "Aktualizacja jest gotowa, uruchom ponownie Eldritch Launcher, aby ją zainstalować. <Button>Uruchom ponownie teraz</Button>",
-        "manualWithVersion": "Wersja {{version}} jest dostępna, ale automatyczna instalacja nie jest obsługiwana w tym systemie rpm-ostree. <Button>Otwórz stronę pobierania</Button>",
-        "manualNoVersion": "Dostępna jest nowa wersja, ale automatyczna instalacja nie jest obsługiwana w tym systemie rpm-ostree. <Button>Otwórz stronę pobierania</Button>"
     },
     "windowsSymlinks": {
         "title": "Dowiązania symboliczne edytora",

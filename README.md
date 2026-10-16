@@ -9,7 +9,6 @@ Eldritch Launcher is a fork of [Godot Launcher](https://github.com/godotlauncher
 - **Engine fork sources.** Install editor builds published as GitHub releases of engine forks, including private repositories, next to the official Godot releases.
 - **GitHub device-flow login.** Sign in to GitHub with the device flow; no token server is involved and nothing secret ships with the app.
 - **"Behind" indicators.** Project cards show when the project's Git branch or its pinned engine build is behind its upstream.
-- **Self-update from this repository.** The launcher updates itself from [this repository's releases](https://github.com/ShaneMain/Eldritch-Launcher/releases).
 
 Configuration lives in `~/.eldritch-launcher`, separate from an upstream Godot Launcher install. Projects keep the upstream `.godotlauncher` pin file, so they stay compatible with Godot Launcher.
 
@@ -26,7 +25,9 @@ Configuration lives in `~/.eldritch-launcher`, separate from an upstream Godot L
 
 Releases follow [Semantic Versioning](https://semver.org/), with suffixes such as `-beta.1` for pre-release builds.
 
-Builds are **not code-signed**. Windows shows a SmartScreen warning on first install. macOS builds are unsigned and cannot update themselves: when an update is available, the launcher links to the releases page so you can download it manually. Linux AppImage and Windows installers update in place.
+The launcher does not update itself. To update, download the latest build from [GitHub Releases](https://github.com/ShaneMain/Eldritch-Launcher/releases) and install it over your current version.
+
+Builds are **not code-signed**. Windows shows a SmartScreen warning on first install; macOS builds are unsigned as well.
 
 ## Local development
 

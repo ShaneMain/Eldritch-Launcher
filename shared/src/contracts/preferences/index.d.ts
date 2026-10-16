@@ -37,8 +37,6 @@ export type UserPreferences = {
     config_location: string;
     projects_location: string;
     post_launch_action: 'none' | 'minimize' | 'close_to_tray';
-    auto_check_updates: boolean;
-    receive_beta_updates: boolean;
     auto_start: boolean;
     start_in_tray: boolean;
     close_window_to_tray?: boolean;
@@ -52,7 +50,6 @@ export type UserPreferences = {
     >;
     linux_credential_storage?: LinuxCredentialStoragePreference;
     language?: string;
-    skipped_app_update_version?: string;
     /** Minutes between automatic project Git status refreshes; 0 disables them. */
     project_git_status_refresh_minutes?: number;
 };

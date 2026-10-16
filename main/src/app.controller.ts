@@ -8,21 +8,13 @@ import type {
     AppBridge,
     AppFileFilter,
     AppOpenDialogProperty,
-    CheckForUpdatesOptions,
     CustomEngineManifest,
     LinuxCredentialStorageStatus,
     UserPreferences,
 } from '@shared/contracts';
 import { app, safeStorage, shell } from 'electron';
-import semver from 'semver';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { AppLifecycleService } from './app-lifecycle.service.js';
-import {
-    changeBetaChannel,
-    checkForUpdates,
-    downloadAppUpdate,
-    installUpdateAndRestart,
-} from './autoUpdater.js';
 import {
     ensureDirectory,
     fileExists,
@@ -50,7 +42,6 @@ import { TrayAvailabilityService } from './services/tray-availability.service.js
 import { closeSplashscreen } from './splashscreen/splashscreen.js';
 import { createCustomEngineManifest } from './utils/customEngineManifest.utils.js';
 import { setAutoStart } from './utils/platform.utils.js';
-import { setAutoCheckUpdates } from './utils/prefs.utils.js';
 import { isDev } from './utils.js';
 
 const AppHandler = createIpcHandleTyped<AppBridge>();
@@ -108,26 +99,6 @@ export class AppController implements AppBridge {
     @AppHandler('setAutoStart')
     setAutoStart(autoStart: boolean, hidden: boolean) {
         return setAutoStart(autoStart, hidden);
-    }
-
-    @AppHandler('setAutoCheckUpdates')
-    setAutoCheckUpdates(enabled: boolean) {
-        return setAutoCheckUpdates(enabled);
-    }
-
-    /**
-     * Saves the beta preference only when the selected update is not busy.
-     *
-     * @param enabled - Whether prerelease updates should be offered.
-     * @returns The preference that remains active after the attempted change.
-     */
-    @AppHandler('setReceiveBetaUpdates')
-    async setReceiveBetaUpdates(enabled: boolean): Promise<boolean> {
-        const prefs = await getUserPreferences();
-        const applied = await changeBetaChannel(enabled, () =>
-            setUserPreferences({ ...prefs, receive_beta_updates: enabled }),
-        );
-        return applied ? enabled : (prefs.receive_beta_updates ?? false);
     }
 
     @AppHandler('openFileDialog')
@@ -229,60 +200,6 @@ export class AppController implements AppBridge {
         app.exit();
     }
 
-    @AppHandler('installUpdateAndRestart')
-    async installUpdateAndRestart(): Promise<void> {
-        installUpdateAndRestart();
-    }
-
-    @AppHandler('downloadAppUpdate')
-    downloadAppUpdate() {
-        return downloadAppUpdate();
-    }
-
-    @AppHandler('skipAppUpdate')
-    async skipAppUpdate(version: string): Promise<string> {
-        const prefs = await getUserPreferences();
-        await setUserPreferences({
-            ...prefs,
-            skipped_app_update_version: version,
-        });
-        return version;
-    }
-
-    @AppHandler('unskipAppUpdate')
-    async unskipAppUpdate(): Promise<void> {
-        const prefs = await getUserPreferences();
-        if (typeof prefs.skipped_app_update_version === 'undefined') {
-            return;
-        }
-        const updatedPrefs: UserPreferences = { ...prefs };
-        delete updatedPrefs.skipped_app_update_version;
-        await setUserPreferences(updatedPrefs);
-    }
-
-    @AppHandler('checkForUpdates')
-    async checkForUpdates(options?: CheckForUpdatesOptions) {
-        const prefs = await getUserPreferences();
-        const skippedVersion = prefs.skipped_app_update_version;
-        const result = await checkForUpdates({
-            ignoreSkippedVersion: options?.ignoreSkippedVersion ?? false,
-            skippedVersion,
-        });
-
-        if (
-            skippedVersion &&
-            result.version &&
-            result.version !== skippedVersion &&
-            isNewerVersion(result.version, skippedVersion)
-        ) {
-            const updatedPrefs: UserPreferences = { ...prefs };
-            delete updatedPrefs.skipped_app_update_version;
-            await setUserPreferences(updatedPrefs);
-        }
-
-        return result;
-    }
-
     @AppHandler('changeLanguage')
     async changeLanguage(lang: string): Promise<string> {
         const preference = normalizeLocalePreference(lang);
@@ -308,21 +225,4 @@ export class AppController implements AppBridge {
 
 function normalizeLocalePreference(locale: string): string {
     return locale === 'system' ? locale : locale.trim().replace(/_/g, '-');
-}
-
-function isNewerVersion(
-    candidateVersion: string,
-    currentVersion: string,
-): boolean {
-    const normalizedCandidateVersion = normalizeVersion(candidateVersion);
-    const normalizedCurrentVersion = normalizeVersion(currentVersion);
-    return Boolean(
-        normalizedCandidateVersion &&
-            normalizedCurrentVersion &&
-            semver.gt(normalizedCandidateVersion, normalizedCurrentVersion),
-    );
-}
-
-function normalizeVersion(version: string): string | null {
-    return semver.valid(version) ?? semver.coerce(version)?.version ?? null;
 }

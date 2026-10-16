@@ -43,9 +43,6 @@ function createPrefs(
         config_location: '/tmp/config',
         projects_location: '/tmp/projects',
         post_launch_action: 'close_to_tray',
-        auto_check_updates: true,
-        receive_beta_updates: false,
-        skipped_app_update_version: undefined,
         auto_start: true,
         start_in_tray: true,
         confirm_project_remove: true,
@@ -69,19 +66,6 @@ describe('userPreferences migration', () => {
         vi.clearAllMocks();
         mocks.getDefaultDirs.mockReturnValue({ prefsPath: '/tmp/prefs.json' });
         mocks.getDefaultPrefs.mockResolvedValue(createPrefs());
-    });
-
-    it('keeps missing skipped update preference as undefined', async () => {
-        mockStoredPrefs({
-            prefs_version: 4,
-            receive_beta_updates: false,
-        });
-
-        const prefs = await getUserPreferences();
-
-        expect(prefs.receive_beta_updates).toBe(false);
-        expect(prefs.skipped_app_update_version).toBeUndefined();
-        expect(mocks.writePrefsToDisk).toHaveBeenCalledTimes(0);
     });
 
     it('copies the legacy VS Code path into integration settings', async () => {
@@ -304,36 +288,6 @@ describe('userPreferences migration', () => {
             reloaded.code_editor_integrations?.vscode?.executable_path,
         ).toBeUndefined();
         expect(mocks.writePrefsToDisk).toHaveBeenCalledTimes(2);
-    });
-
-    it('clears invalid skipped update preference values', async () => {
-        mockStoredPrefs({
-            prefs_version: 4,
-            skipped_app_update_version: 42 as unknown as string,
-        });
-
-        const prefs = await getUserPreferences();
-
-        expect(prefs.skipped_app_update_version).toBeUndefined();
-        expect(mocks.writePrefsToDisk).toHaveBeenCalledWith(
-            '/tmp/prefs.json',
-            expect.objectContaining({
-                skipped_app_update_version: undefined,
-            }),
-        );
-    });
-
-    it('persists explicit skipped versions', async () => {
-        const prefs = createPrefs({
-            skipped_app_update_version: '1.9.1',
-        });
-
-        await setUserPreferences(prefs);
-
-        expect(mocks.writePrefsToDisk).toHaveBeenCalledWith(
-            '/tmp/prefs.json',
-            prefs,
-        );
     });
 
     it('rejects invalid Linux credential-storage preferences without writing', async () => {

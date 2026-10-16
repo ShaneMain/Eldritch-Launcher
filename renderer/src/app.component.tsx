@@ -30,11 +30,9 @@ import {
     isSettingsTab,
     type SettingsTab,
 } from './app.routes';
-import { AppUpdateNotification } from './components/app-update-notification.component';
 import { LoadingRocket } from './components/loading-rocket.component';
 import { MenuDivider } from './components/ui/menu-divider.component';
 import { Tooltip } from './components/ui/tooltip.component';
-import { useApp } from './hooks/app.hook';
 import { useAppNavigation } from './hooks/app-navigation.hook';
 import { usePreferences } from './hooks/preferences.hook';
 import { useRelease } from './hooks/release.hook';
@@ -263,34 +261,16 @@ function SettingsRoute() {
  * @returns The primary application layout.
  */
 function MainLayout() {
-    const { loadPreferences } = usePreferences();
     const templatesActive = useTemplateActivity();
     const { t } = useTranslation('common');
     const location = useLocation();
-    const { currentView, openExternalLink } = useAppNavigation();
-    const {
-        updateAvailable,
-        installAndRelaunch,
-        downloadAppUpdate,
-        retryAppUpdate,
-        skipAppUpdate,
-    } = useApp();
+    const { currentView } = useAppNavigation();
 
     const viewClassName = (view: string) =>
         clsx({
             'menu-active': currentView === view,
         });
     const connectionsActive = isConnectionsPathname(location.pathname);
-
-    /**
-     * Skips the selected release and refreshes shared Settings preferences.
-     *
-     * @param version - Exact release version to skip.
-     */
-    const handleSkipUpdate = async (version: string) => {
-        await skipAppUpdate(version);
-        await loadPreferences();
-    };
 
     return (
         <div className="flex h-full overflow-hidden">
@@ -388,15 +368,6 @@ function MainLayout() {
                     </div>
                 ))}
                 <div className="flex flex-1"></div>
-                <AppUpdateNotification
-                    pathname={location.pathname}
-                    updateAvailable={updateAvailable}
-                    installAndRelaunch={installAndRelaunch}
-                    downloadAppUpdate={downloadAppUpdate}
-                    retryAppUpdate={retryAppUpdate}
-                    skipAppUpdate={handleSkipUpdate}
-                    openUpdateUrl={openExternalLink}
-                />
                 <div className="pt-2">
                     <MenuDivider />
                     <ul className="menu w-full gap-1 text-base">

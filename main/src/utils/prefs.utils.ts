@@ -4,11 +4,6 @@ import * as path from 'node:path';
 import type { UserPreferences } from '@shared/contracts';
 import { dialog } from 'electron';
 import logger from 'electron-log';
-import { startAutoUpdateChecks, stopAutoUpdateChecks } from '../autoUpdater.js';
-import {
-    getUserPreferences,
-    setUserPreferences,
-} from '../commands/userPreferences.js';
 import { t } from '../i18n/index.js';
 import { isLinuxCredentialStoragePreference } from '../linux-credential-storage.utils.js';
 import { getMainWindow } from '../mainWindow.js';
@@ -194,9 +189,6 @@ export async function getDefaultPrefs(): Promise<UserPreferences> {
         config_location: pathModule.resolve(defaultPrefs.configDir),
         projects_location: pathModule.resolve(defaultPrefs.projectDir),
         post_launch_action: 'close_to_tray',
-        auto_check_updates: true,
-        receive_beta_updates: false,
-        skipped_app_update_version: undefined,
         auto_start: true,
         start_in_tray: true,
         close_window_to_tray: true,
@@ -260,20 +252,6 @@ export async function getLoadedPrefs(): Promise<UserPreferences> {
     const prefsPath = await getPrefsPath();
     const defaultPrefs = await getDefaultPrefs();
     return readPrefsFromDisk(prefsPath, defaultPrefs);
-}
-
-export async function setAutoCheckUpdates(enabled: boolean): Promise<boolean> {
-    // ensure save in prefs
-    const prefs = await getUserPreferences();
-    await setUserPreferences({ ...prefs, auto_check_updates: enabled });
-
-    if (enabled) {
-        startAutoUpdateChecks();
-    } else {
-        stopAutoUpdateChecks();
-    }
-
-    return enabled;
 }
 
 export function __resetPrefsCacheForTesting(): void {

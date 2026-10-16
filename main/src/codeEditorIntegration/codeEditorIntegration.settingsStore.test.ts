@@ -18,8 +18,6 @@ function createPreferences(
         install_location: 'installs',
         config_location: 'config',
         projects_location: 'projects',
-        auto_check_updates: true,
-        receive_beta_updates: false,
         post_launch_action: 'none',
         auto_start: false,
         start_in_tray: false,

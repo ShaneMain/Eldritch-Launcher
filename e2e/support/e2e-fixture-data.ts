@@ -265,8 +265,6 @@ export const SAMPLE_PREFS: UserPreferences = {
     config_location: '/Users/docs/.eldritch-launcher',
     projects_location: '/Users/docs/Godot/Projects',
     post_launch_action: 'close_to_tray',
-    auto_check_updates: true,
-    receive_beta_updates: false,
     auto_start: true,
     start_in_tray: true,
     confirm_project_remove: true,

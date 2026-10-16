@@ -6,7 +6,6 @@ import {
     GitFork,
     Palette,
     Plug,
-    RefreshCw,
     SlidersHorizontal,
     Wrench,
 } from 'lucide-react';
@@ -26,7 +25,6 @@ const settingsTabTestIds: Record<SettingsTab, string> = {
     codeEditors: 'tabCodeEditors',
     tools: 'tabTools',
     connections: 'tabConnections',
-    updates: 'tabUpdates',
 };
 
 const settingsTabIcons = {
@@ -39,7 +37,6 @@ const settingsTabIcons = {
     codeEditors: Code,
     tools: Wrench,
     connections: Plug,
-    updates: RefreshCw,
 };
 
 type SettingsTabsProps = {

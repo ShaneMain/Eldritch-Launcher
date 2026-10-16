@@ -20,8 +20,6 @@ interface AppPreferences {
         autoStart: boolean,
         hidden: boolean,
     ) => Promise<SetAutoStartResult>;
-    setAutoUpdates: (enabled: boolean) => Promise<boolean>;
-    setReceiveBetaUpdates: (enabled: boolean) => Promise<boolean>;
     platform: string;
 }
 
@@ -84,23 +82,6 @@ export const PreferencesProvider: React.FC<AppPreferencesProviderProps> = ({
         return result;
     };
 
-    const setAutoUpdates = async (enabled: boolean): Promise<boolean> => {
-        const result = await appBridge.setAutoCheckUpdates(enabled);
-        await loadPreferences();
-        return result;
-    };
-
-    const setReceiveBetaUpdates = async (
-        enabled: boolean,
-    ): Promise<boolean> => {
-        setPreferences((prev) =>
-            prev ? { ...prev, receive_beta_updates: enabled } : prev,
-        );
-        const result = await appBridge.setReceiveBetaUpdates(enabled);
-        await loadPreferences();
-        return result;
-    };
-
     return (
         <preferencesContext.Provider
             value={{
@@ -110,8 +91,6 @@ export const PreferencesProvider: React.FC<AppPreferencesProviderProps> = ({
                 loadPreferences,
                 updatePreferences,
                 setAutoStart,
-                setAutoUpdates,
-                setReceiveBetaUpdates,
             }}
         >
             {' '}

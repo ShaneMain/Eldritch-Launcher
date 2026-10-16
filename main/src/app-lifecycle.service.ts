@@ -17,9 +17,8 @@ import {
 } from '@mariodebono/di-electron';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { I18nService } from '@mariodebono/di-electron-i18n';
-import { app, dialog, autoUpdater as electronAutoUpdater } from 'electron';
+import { app, dialog } from 'electron';
 import logger from 'electron-log/main.js';
-import { setupAutoUpdate, stopAutoUpdateChecks } from './autoUpdater.js';
 import { getUserPreferences } from './commands/userPreferences.js';
 import type { AppConfig } from './config/index.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
@@ -194,20 +193,6 @@ export class AppLifecycleService implements OnModuleInit, OnModuleDestroy {
         const prefs = await getUserPreferences();
         if (!this.config.e2eFixtures) {
             setAutoStart(prefs.auto_start, prefs.start_in_tray);
-            setupAutoUpdate(
-                mainWindow,
-                prefs.auto_check_updates,
-                60 * 60 * 1000,
-                false,
-                false,
-                prefs.receive_beta_updates,
-                async () => {
-                    const latestPrefs = await getUserPreferences();
-                    return {
-                        skippedVersion: latestPrefs.skipped_app_update_version,
-                    };
-                },
-            );
             this.disposeFocusRevalidation = setupFocusRevalidation(
                 mainWindow,
                 () =>
@@ -215,10 +200,6 @@ export class AppLifecycleService implements OnModuleInit, OnModuleDestroy {
                 () => this.projectsService.refreshProjectHealth(),
             );
         }
-        electronAutoUpdater.on(
-            'before-quit-for-update',
-            this.handleBeforeQuitForUpdate,
-        );
         app.on('before-quit', this.handleBeforeQuit);
         mainWindow.on('closed', this.disposeWindowResources);
 
@@ -295,10 +276,6 @@ export class AppLifecycleService implements OnModuleInit, OnModuleDestroy {
     @OnAppQuit({ order: LifecycleHookOrder.Before })
     onAppQuit(): void {
         this.prepareForQuit('Quitting app');
-        electronAutoUpdater.removeListener(
-            'before-quit-for-update',
-            this.handleBeforeQuitForUpdate,
-        );
         app.removeListener('before-quit', this.handleBeforeQuit);
     }
 
@@ -313,14 +290,6 @@ export class AppLifecycleService implements OnModuleInit, OnModuleDestroy {
     private readonly handleBeforeQuit = (event: Electron.Event): void => {
         if (event.defaultPrevented || isTemplateExitBlocked()) return;
         this.prepareForQuit('Quitting app');
-    };
-
-    /** Starts updater shutdown only when template work permits an exit. */
-    private readonly handleBeforeQuitForUpdate = (): void => {
-        if (isTemplateExitBlocked()) return;
-        if (this.prepareForQuit('Quitting app to install update')) {
-            this.electronAppService.quit();
-        }
     };
 
     private readonly disposeWindowResources = (): void => {
@@ -369,16 +338,14 @@ export class AppLifecycleService implements OnModuleInit, OnModuleDestroy {
         this.revealMainWindowOnRendererReady = true;
     }
 
-    private prepareForQuit(message: string): boolean {
+    private prepareForQuit(message: string): void {
         if (this.willClose) {
-            return false;
+            return;
         }
 
         logger.info(message);
-        stopAutoUpdateChecks();
         this.disposeWindowResources();
         this.willClose = true;
-        return true;
     }
 
     private hideMainWindow(): void {
