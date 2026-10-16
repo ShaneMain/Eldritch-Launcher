@@ -29,4 +29,7 @@ export const I18N_NAMESPACES = [
     'welcome',
     'dialogs',
     'menus',
+    'githubAuth',
+    'engineSources',
+    'projectStatus',
 ] as const;
