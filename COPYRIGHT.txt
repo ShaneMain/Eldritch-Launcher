@@ -1,6 +1,15 @@
 Copyright
 =========
 
+Eldritch Launcher
+-----------------
+
+Author: ShaneMain  
+License: MIT  
+Source: https://github.com/ShaneMain/Eldritch-Launcher  
+
+Eldritch Launcher is a modified version (fork) of Godot Launcher. It is not the original Godot Launcher and is not maintained or endorsed by the Godot Launcher maintainers. The Godot Launcher notices below apply to the code and assets it inherits.
+
 Godot Launcher
 --------------
 
