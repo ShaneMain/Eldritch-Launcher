@@ -65,6 +65,7 @@ describe('projectFile utilities', () => {
     test.each([
         ['4', '"mobile"', 'Unknown'],
         ['5', undefined, 'FORWARD_PLUS'],
+        ['5', '"forward_plus"', 'FORWARD_PLUS'],
         ['5', '"mobile"', 'MOBILE'],
         ['5', '"gl_compatibility"', 'COMPATIBLE'],
         ['5', '"custom"', 'Unknown'],

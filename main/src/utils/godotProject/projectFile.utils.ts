@@ -88,6 +88,7 @@ export async function getProjectRendererFromParsed(
 
     switch (method) {
         case 'Unknown':
+        case 'forward_plus':
             return 'FORWARD_PLUS';
         case 'mobile':
             return 'MOBILE';

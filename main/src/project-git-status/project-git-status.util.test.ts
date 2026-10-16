@@ -68,6 +68,7 @@ describe('classifyFetchFailure', () => {
             'auth-required',
         ],
         ['git@github.com: Permission denied (publickey).', 'auth-required'],
+        ['fatal: unable to get password from user', 'auth-required'],
         ['remote: Repository not found.', 'auth-required'],
         [
             'fatal: unable to access: The requested URL returned error: 403',

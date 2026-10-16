@@ -13,6 +13,7 @@ const AUTH_PATTERNS = [
     'authentication failed',
     'could not read username',
     'could not read password',
+    'unable to get password from user',
     'terminal prompts disabled',
     'invalid username or password',
     'permission denied (publickey',
