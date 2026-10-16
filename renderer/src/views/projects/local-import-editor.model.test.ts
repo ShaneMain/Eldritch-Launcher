@@ -20,6 +20,138 @@ const row: ProjectImportInspection = {
     name: 'Chosen name',
 };
 
+const FORK = {
+    sourceId: 'fork:eldritch-game-studio/eldritch-engine',
+    source: 'Eldritch-Game-Studio/Eldritch-Engine',
+    revision: 'b90e2049efff97732d8dffa8af3f4ea48fb140d9',
+};
+const FORK_VERSION = '4.7.2.stable.mono.custom_build.b90e2049e';
+
+/**
+ * Creates a .NET release summary for linux x64.
+ *
+ * @param version - Release version.
+ * @param fork - Optional fork identity.
+ * @returns The release summary.
+ */
+function dotnetRelease(
+    version: string,
+    fork?: ReleaseSummary['fork'],
+): ReleaseSummary {
+    return {
+        version,
+        version_number: 4.7,
+        name: version,
+        published_at: null,
+        draft: false,
+        prerelease: false,
+        assets: [
+            {
+                name: `${version}.tar.gz`,
+                download_url:
+                    'https://api.github.com/repos/x/y/releases/assets/1',
+                platform_tags: ['linux', 'x64'],
+                mono: true,
+            },
+        ],
+        ...(fork ? { fork } : {}),
+    };
+}
+
+/** Inspection of a project pinned to the b90e204 fork build that is not installed. */
+const missingForkRow: ProjectImportInspection = {
+    ...row,
+    editorResolution: {
+        requested: {
+            kind: 'exact',
+            channel: 'fork',
+            flavor: 'dotnet',
+            base_version: '4.7',
+            version: FORK_VERSION,
+            fork: FORK,
+        },
+        downloadable: {
+            match: 'exact',
+            version: FORK_VERSION,
+            flavor: 'dotnet',
+            prerelease: false,
+            fork: FORK,
+        },
+    },
+};
+
+describe('fork-pinned import rows', () => {
+    const official = dotnetRelease(FORK_VERSION);
+    const otherFork = dotnetRelease(
+        '4.7.2.stable.mono.custom_build.e9c91112a',
+        {
+            ...FORK,
+            revision: 'e9c91112ac16939a1ec74ec6f5dd0dc7441388da',
+        },
+    );
+
+    it('uses the installed exact fork editor', () => {
+        const editor = {
+            version: FORK_VERSION,
+            mono: true,
+            fork: FORK,
+        } as InstalledRelease;
+
+        const prepared = prepareLocalImportRow(
+            { ...row, editor },
+            [official],
+            [],
+            [otherFork],
+        );
+
+        expect(prepared.editorActions).toEqual([
+            expect.objectContaining({
+                id: 'automatic',
+                kind: 'use',
+                version: FORK_VERSION,
+                flavor: 'dotnet',
+            }),
+        ]);
+    });
+
+    it('offers only the exact pinned fork build for download', () => {
+        const pinned = dotnetRelease(FORK_VERSION, {
+            ...FORK,
+            source: 'eldritch-game-studio/eldritch-engine',
+        });
+
+        const prepared = prepareLocalImportRow(
+            missingForkRow,
+            [official],
+            [],
+            [otherFork, pinned],
+        );
+
+        expect(prepared.editorActionId).toBe('download');
+        expect(prepared.editorActions[0]).toMatchObject({
+            kind: 'download',
+            download: pinned,
+            options: { resolution: 'add_missing' },
+        });
+        expect(prepared.editorActions.map((action) => action.id)).toEqual([
+            'download',
+            'missing',
+        ]);
+    });
+
+    it('never substitutes an official or different fork build when the pin is unavailable', () => {
+        const prepared = prepareLocalImportRow(
+            missingForkRow,
+            [official],
+            [],
+            [otherFork],
+        );
+
+        expect(prepared.editorActions).toEqual([
+            expect.objectContaining({ id: 'missing', kind: 'missing' }),
+        ]);
+    });
+});
 describe('local import editor preparation', () => {
     it('keeps the inferred request while preselecting a recommended download', () => {
         const prepared = prepareLocalImportRow(

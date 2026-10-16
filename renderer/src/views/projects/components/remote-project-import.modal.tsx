@@ -117,7 +117,8 @@ export const RemoteProjectImportModal: React.FC<
     ]);
     const { preferences, platform } = usePreferences();
     const { addProject, codeEditorSettings, projects } = useProjects();
-    const { availableReleases, availablePrereleases } = useRelease();
+    const { availableReleases, availablePrereleases, forkReleases } =
+        useRelease();
 
     const {
         getIdentitySettings,
@@ -575,6 +576,7 @@ export const RemoteProjectImportModal: React.FC<
                     },
                     availableReleases,
                     availablePrereleases,
+                    forkReleases,
                 );
             });
             setReviewRows(nextRows);

@@ -463,6 +463,7 @@ export function useAddProjectWorkflow({
                 },
                 availableReleases,
                 availablePrereleases,
+                forkReleases,
             ),
         );
         for (const row of rows) {

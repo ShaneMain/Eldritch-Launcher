@@ -22,14 +22,17 @@ export type LocalImportRow = ProjectImportInspection & {
 };
 
 /** Builds review actions without starting registration or editor downloads.
+ * Fork pins only offer the exact pinned fork build, never an official one.
  * @param row - Read-only main-process inspection.
  * @param stable - Stable catalogue for legacy exact requirements.
  * @param prereleases - Prerelease catalogue for exact requirements.
+ * @param forkReleases - Fork source builds for exact fork pins.
  */
 export function prepareLocalImportRow(
     row: ProjectImportInspection,
     stable: ReleaseSummary[],
     prereleases: ReleaseSummary[],
+    forkReleases: ReleaseSummary[] = [],
 ): LocalImportRow {
     const resolution = row.editorResolution;
     const actions: LocalImportEditorAction[] = [];
@@ -54,6 +57,7 @@ export function prepareLocalImportRow(
             resolution,
             stable,
             prereleases,
+            forkReleases,
         );
         if (download)
             actions.push({
