@@ -4,8 +4,8 @@
  * Override at runtime with `ELDRITCH_LAUNCHER_GITHUB_CLIENT_ID` and
  * `ELDRITCH_LAUNCHER_GITHUB_APP_SLUG`.
  */
-export const GITHUB_APP_CLIENT_ID = '';
-export const GITHUB_APP_SLUG = '';
+export const GITHUB_APP_CLIENT_ID = 'Iv23li2rfGaBRYlD5lT1';
+export const GITHUB_APP_SLUG = 'eldritch-launcher';
 
 export const GITHUB_USER_AGENT = 'Eldritch-Launcher';
 
