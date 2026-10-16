@@ -4,6 +4,7 @@ import { CopyBadge } from '../../../components/ui/copy-badge.component';
 import { SearchField } from '../../../components/ui/search-field.component';
 
 import type { ProjectViewMode } from '../project-view.types';
+import { GitStatusRefreshAllButton } from './git-status-refresh-all-button.component';
 import { ProjectViewToggle } from './project-view-toggle.component';
 
 type ProjectsHeaderProps = {
@@ -119,6 +120,7 @@ export const ProjectsHeader: React.FC<ProjectsHeaderProps> = ({
                     compactLabel={compactViewLabel}
                 />
                 <div className="ml-auto flex min-w-0 items-center justify-end gap-2">
+                    <GitStatusRefreshAllButton />
                     {tagFilter}
                     <SearchField
                         inputRef={searchInputRef}

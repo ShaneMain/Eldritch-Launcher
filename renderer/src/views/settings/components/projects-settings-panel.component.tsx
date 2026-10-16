@@ -1,6 +1,7 @@
 import type React from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ProjectGitStatusRefreshSetting } from '../../../components/settings/project-git-status-refresh.component';
 import { ProjectsLocation } from '../../../components/settings/projects-location.component';
 import { SettingsSection } from '../../../components/settings/settings-section.component';
 import { ContentDivider } from '../../../components/ui/content-divider.component';
@@ -35,6 +36,8 @@ export const ProjectsSettingsPanel: React.FC<ProjectsSettingsPanelProps> = ({
                     {t('tags.manage.title')}
                 </button>
             </SettingsSection>
+            <ContentDivider />
+            <ProjectGitStatusRefreshSetting />
             <ManageProjectTagsDrawer
                 open={active && manageTags}
                 onOpenChange={setManageTags}
