@@ -18,15 +18,15 @@ describe('ProjectDiscoveryService', () => {
         await fs.rm(repositoryPath, { recursive: true, force: true });
     });
 
-    it('discovers valid root and nested Godot projects', async () => {
-        await writeProject(repositoryPath, 'Root Game');
+    it('discovers projects in sibling and nested directories', async () => {
+        await writeProject(path.join(repositoryPath, 'client'), 'Client');
         await writeProject(
             path.join(repositoryPath, 'games', 'nested'),
             'Nested',
         );
 
         const originalProjectFile = await fs.readFile(
-            path.join(repositoryPath, 'project.godot'),
+            path.join(repositoryPath, 'client', 'project.godot'),
             'utf8',
         );
         await expect(
@@ -35,9 +35,13 @@ describe('ProjectDiscoveryService', () => {
             ok: true,
             projects: [
                 {
-                    name: 'Root Game',
-                    relativePath: '.',
-                    projectFilePath: path.join(repositoryPath, 'project.godot'),
+                    name: 'Client',
+                    relativePath: 'client',
+                    projectFilePath: path.join(
+                        repositoryPath,
+                        'client',
+                        'project.godot',
+                    ),
                     detectedEditor: {
                         kind: 'stable-base',
                         channel: 'official',
@@ -64,8 +68,35 @@ describe('ProjectDiscoveryService', () => {
             ],
         });
         await expect(
-            fs.readFile(path.join(repositoryPath, 'project.godot'), 'utf8'),
+            fs.readFile(
+                path.join(repositoryPath, 'client', 'project.godot'),
+                'utf8',
+            ),
         ).resolves.toBe(originalProjectFile);
+    });
+
+    it('treats a project root as one project without scanning its contents', async () => {
+        await writeProject(repositoryPath, 'Root Game');
+        await writeProject(path.join(repositoryPath, 'addons', 'demo'), 'Demo');
+        let directory = repositoryPath;
+        for (let depth = 0; depth < 14; depth++) {
+            directory = path.join(directory, `level-${depth}`);
+        }
+        await fs.mkdir(directory, { recursive: true });
+        const bulk = path.join(repositoryPath, 'assets');
+        await fs.mkdir(bulk);
+        await Promise.all(
+            Array.from({ length: 10_050 }, (_, index) =>
+                fs.writeFile(path.join(bulk, `${index}.txt`), ''),
+            ),
+        );
+
+        await expect(
+            service.discover(repositoryPath, new AbortController().signal),
+        ).resolves.toMatchObject({
+            ok: true,
+            projects: [{ name: 'Root Game', relativePath: '.' }],
+        });
     });
 
     it('ignores generated directories, symlinks and malformed projects', async () => {

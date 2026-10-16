@@ -68,47 +68,49 @@ export class ProjectDiscoveryService {
                     };
                 }
 
-                for (const entry of entries) {
-                    if (signal.aborted) {
-                        return { ok: false, reason: 'cancelled' };
-                    }
-                    if (entry.isSymbolicLink()) {
-                        continue;
-                    }
-                    const entryPath = path.join(current.directory, entry.name);
-                    if (entry.isDirectory()) {
-                        if (SKIPPED_DIRECTORIES.has(entry.name)) {
-                            continue;
-                        }
-                        if (current.depth >= MAX_DISCOVERY_DEPTH) {
+                // A directory holding project.godot is a project root; Godot
+                // owns everything beneath it, so its subtree is not scanned.
+                const projectFile = entries.find(
+                    (entry) => entry.isFile() && entry.name === 'project.godot',
+                );
+                if (projectFile) {
+                    const project = await this.inspectProject(
+                        repositoryPath,
+                        path.join(current.directory, projectFile.name),
+                    );
+                    if (project) {
+                        projects.push(project);
+                        if (projects.length > MAX_DISCOVERED_PROJECTS) {
                             return {
                                 ok: false,
                                 reason: 'discovery-limit-exceeded',
                             };
                         }
-                        pending.push({
-                            directory: entryPath,
-                            depth: current.depth + 1,
-                        });
                         continue;
                     }
-                    if (!entry.isFile() || entry.name !== 'project.godot') {
+                }
+
+                for (const entry of entries) {
+                    if (signal.aborted) {
+                        return { ok: false, reason: 'cancelled' };
+                    }
+                    if (
+                        entry.isSymbolicLink() ||
+                        !entry.isDirectory() ||
+                        SKIPPED_DIRECTORIES.has(entry.name)
+                    ) {
                         continue;
                     }
-                    const project = await this.inspectProject(
-                        repositoryPath,
-                        entryPath,
-                    );
-                    if (!project) {
-                        continue;
-                    }
-                    projects.push(project);
-                    if (projects.length > MAX_DISCOVERED_PROJECTS) {
+                    if (current.depth >= MAX_DISCOVERY_DEPTH) {
                         return {
                             ok: false,
                             reason: 'discovery-limit-exceeded',
                         };
                     }
+                    pending.push({
+                        directory: path.join(current.directory, entry.name),
+                        depth: current.depth + 1,
+                    });
                 }
             }
         } catch {
