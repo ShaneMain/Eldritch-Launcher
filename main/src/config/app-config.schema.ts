@@ -20,7 +20,8 @@ export const AppConfigSchema = z.object({
     disableDevMenu: z.boolean(),
     startHidden: z.boolean(),
     e2eFixtures: z.boolean(),
-    useLocalGitHubBroker: z.boolean().default(false),
+    githubClientId: z.string(),
+    githubAppSlug: z.string(),
     paths: AppPathsSchema,
 });
 

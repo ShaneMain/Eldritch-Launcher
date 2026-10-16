@@ -1,6 +1,10 @@
 import * as os from 'node:os';
 import * as path from 'node:path';
 import {
+    GITHUB_APP_CLIENT_ID,
+    GITHUB_APP_SLUG,
+} from '../app-integrations/providers/github/github-app-integration.constants.js';
+import {
     APP_INTERNAL_NAME,
     INSTALLED_RELEASES_FILENAME,
     MIGRATIONS_FILENAME,
@@ -111,9 +115,11 @@ export function configuration(
         startHidden: cliConfig.startHidden ?? false,
         // Fixture behaviour is only available to unpackaged development runs.
         e2eFixtures,
-        useLocalGitHubBroker:
-            isDev &&
-            (envConfig.GODOT_LAUNCHER_USE_LOCAL_GITHUB_BROKER ?? false),
+        githubClientId:
+            envConfig.ELDRITCH_LAUNCHER_GITHUB_CLIENT_ID ??
+            GITHUB_APP_CLIENT_ID,
+        githubAppSlug:
+            envConfig.ELDRITCH_LAUNCHER_GITHUB_APP_SLUG ?? GITHUB_APP_SLUG,
         paths: resolveAppPaths({
             platform: options.platform,
             homedir: e2eFixtures ? e2eHomeDir : options.homedir,

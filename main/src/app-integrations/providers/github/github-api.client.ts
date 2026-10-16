@@ -13,6 +13,7 @@ import {
     GITHUB_REPOSITORY_PAGE_MAX_BYTES,
     GITHUB_REPOSITORY_RESPONSE_MAX_BYTES,
     GITHUB_REQUEST_TIMEOUT_MS,
+    GITHUB_USER_AGENT,
     GITHUB_USER_RESPONSE_MAX_BYTES,
     GITHUB_USER_URL,
     MAX_INSTALLATION_PAGES,
@@ -561,7 +562,7 @@ function githubHeaders(
         Accept: 'application/vnd.github+json',
         Authorization: `Bearer ${accessToken}`,
         ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
-        'User-Agent': 'Godot-Launcher',
+        'User-Agent': GITHUB_USER_AGENT,
         'X-GitHub-Api-Version': '2022-11-28',
     };
 }

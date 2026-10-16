@@ -1,17 +1,11 @@
-export type GitHubLoopbackDescriptor = {
-    host: '127.0.0.1' | '::1';
-    port: number;
-    nonce: string;
+/** One GitHub device-flow authorisation awaiting user confirmation. */
+export type GitHubDeviceAuthorization = {
+    deviceCode: string;
+    userCode: string;
+    verificationUri: string;
+    expiresInSeconds: number;
+    intervalSeconds: number;
 };
-
-export type GitHubAuthAttempt = {
-    attemptId: string;
-    attemptToken: string;
-    browserUrl: string;
-    expiresAt: number;
-};
-
-export type GitHubAuthIntent = 'connect' | 'reauthorise';
 
 export type GitHubTokenBundle = {
     accessToken: string;
@@ -20,14 +14,6 @@ export type GitHubTokenBundle = {
     refreshTokenExpiresIn: number | null;
     scope: string;
     tokenType: string;
-};
-
-export type GitHubOAuthRedemption = GitHubTokenBundle & {
-    installationUrl: string | null;
-};
-
-export type GitHubSetupRedemption = {
-    installationId: string;
 };
 
 export type GitHubStoredCredential = GitHubTokenBundle & {
@@ -80,15 +66,4 @@ export type GitHubCreatedRepository = {
     private: true;
     clone_url: string;
     html_url: string;
-};
-
-export type GitHubLoopbackCompletion = {
-    ticket: string;
-    respond: (completed: boolean) => void;
-};
-
-export type GitHubLoopbackListener = {
-    descriptor: GitHubLoopbackDescriptor;
-    waitForCompletion: () => Promise<GitHubLoopbackCompletion>;
-    close: () => Promise<void>;
 };

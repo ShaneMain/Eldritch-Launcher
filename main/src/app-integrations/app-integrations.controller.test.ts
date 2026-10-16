@@ -17,6 +17,8 @@ describe('AppIntegrationsController', () => {
                 connectionStage: null,
                 connections: [],
                 connectionOptions: [],
+                configurationIssue: null,
+                deviceAuthorization: null,
             },
         ];
         const appIntegrations = {
@@ -38,6 +40,8 @@ describe('AppIntegrationsController', () => {
                 connectionStage: null,
                 connections: [],
                 connectionOptions: [],
+                configurationIssue: null,
+                deviceAuthorization: null,
             },
         };
         const appIntegrations = {

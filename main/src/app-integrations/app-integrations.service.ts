@@ -6,9 +6,13 @@ import type {
     AppIntegrationActionResult,
     AppIntegrationConnectionOption,
     AppIntegrationConnectionSummary,
+    AppIntegrationDeviceAuthorization,
     AppIntegrationDisconnectOptions,
     AppIntegrationSummary,
 } from '@shared/contracts';
+import logger from 'electron-log/main.js';
+import { getMainWindow } from '../mainWindow.js';
+import { ipcWebContentsSend } from '../utils.js';
 import {
     type AppIntegrationConnectionIntent,
     type AppIntegrationConnectionRecord,
@@ -32,8 +36,8 @@ import { AppIntegrationSecureStorageAdapter } from './app-integration-secure-sto
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { AppIntegrationsStore } from './app-integrations.store.js';
 
-const CONNECTION_TIMEOUT_MS = 5 * 60 * 1_000;
-const PROVIDER_ACTION_TIMEOUT_MS = 30_000;
+// Covers GitHub's 15-minute device-code lifetime for the whole session.
+const CONNECTION_TIMEOUT_MS = 15 * 60 * 1_000;
 
 type ConnectionSessionStage = 'authorising' | 'choosing' | 'installing';
 
@@ -45,6 +49,7 @@ type ActiveConnectionSession = {
     busy: boolean;
     committing: boolean;
     connected: AppIntegrationProviderConnection | null;
+    deviceAuthorization: AppIntegrationDeviceAuthorization | null;
     installation: AppIntegrationProviderInstallation | null;
     options: Array<{
         id: string;
@@ -522,42 +527,9 @@ export class AppIntegrationsService implements OnModuleDestroy {
                 });
             } else {
                 if (options.revokeAuthorisation) {
-                    if (!(await this.secureStorage.isAvailable())) {
-                        return this.failure(
-                            provider,
-                            'secure-storage-unavailable',
-                        );
-                    }
-                    const encrypted = await this.secrets.get(record.id);
-                    if (!encrypted) {
-                        return this.failure(provider, 'unknown');
-                    }
-                    const credential =
-                        await this.secureStorage.decrypt(encrypted);
-                    const signal = AbortSignal.timeout(
-                        PROVIDER_ACTION_TIMEOUT_MS,
-                    );
-                    const prepared = await provider.prepareCredentialRevocation(
-                        signal,
-                        credential,
-                    );
-                    if (prepared.credential !== credential) {
-                        const preparedCiphertext =
-                            await this.secureStorage.encrypt(
-                                prepared.credential,
-                            );
-                        await this.secrets.set(record.id, preparedCiphertext);
-                        await this.store.set({
-                            ...record,
-                            accessTokenExpiresAt: prepared.accessTokenExpiresAt,
-                            refreshTokenExpiresAt:
-                                prepared.refreshTokenExpiresAt,
-                        });
-                    }
-                    await provider.revokeCredential(
-                        signal,
-                        prepared.credential,
-                    );
+                    // Revocation needs a client secret Launcher never has, so
+                    // open the provider page before removing the credential.
+                    await provider.openAuthorisationSettings();
                 }
                 const previousCiphertext = await this.secrets.get(record.id);
                 await this.secrets.remove(record.id);
@@ -607,6 +579,9 @@ export class AppIntegrationsService implements OnModuleDestroy {
         if (!(await this.secureStorage.isAvailable())) {
             return this.failure(provider, 'secure-storage-unavailable');
         }
+        if (provider.getConfigurationIssue() !== null) {
+            return this.failure(provider, 'not-configured');
+        }
 
         const current = connectionId
             ? await this.getProviderConnection(providerId, connectionId)
@@ -624,6 +599,7 @@ export class AppIntegrationsService implements OnModuleDestroy {
             busy: true,
             committing: false,
             connected: null,
+            deviceAuthorization: null,
             installation: null,
             options: [],
         };
@@ -642,7 +618,20 @@ export class AppIntegrationsService implements OnModuleDestroy {
             const result = await provider.connect(controller.signal, {
                 intent,
                 expectedAccountId: current?.accountId ?? null,
+                onDeviceAuthorization: (authorization) => {
+                    if (this.connectionSessions.get(providerId) !== session) {
+                        return;
+                    }
+                    session.deviceAuthorization = authorization;
+                    void this.publish(provider).catch((error: unknown) =>
+                        logger.warn(
+                            'Unable to publish the app integration device code',
+                            error,
+                        ),
+                    );
+                },
             });
+            session.deviceAuthorization = null;
             if (this.connectionSessions.get(providerId) !== session) {
                 await result.installation?.close();
                 throw new AppIntegrationProviderError(
@@ -878,12 +867,13 @@ export class AppIntegrationsService implements OnModuleDestroy {
         }
         const installation = session.installation;
         session.connected = null;
+        session.deviceAuthorization = null;
         session.installation = null;
         session.options = [];
         try {
             await installation?.close();
         } catch {
-            // Broker attempts expire independently, so local cleanup still wins.
+            // Provider installation steps hold no remote state, so local cleanup still wins.
         }
     }
 
@@ -1096,7 +1086,25 @@ export class AppIntegrationsService implements OnModuleDestroy {
             connectionStage: session?.stage ?? null,
             connections,
             connectionOptions,
+            configurationIssue: provider.getConfigurationIssue(),
+            deviceAuthorization:
+                session?.stage === 'authorising'
+                    ? session.deviceAuthorization
+                    : null,
         };
+    }
+
+    /**
+     * Pushes the latest summary to the renderer while a bridge call is pending.
+     *
+     * @param provider - Registered provider implementation.
+     */
+    private async publish(provider: AppIntegrationProvider): Promise<void> {
+        const summary = await this.summarize(provider);
+        const webContents = getMainWindow()?.webContents;
+        if (webContents && !webContents.isDestroyed?.()) {
+            ipcWebContentsSend('app-integration-updated', webContents, summary);
+        }
     }
 
     /**

@@ -6,15 +6,13 @@ export type AppIntegrationRefreshDiagnosticPhase =
     | 'credential-decrypt'
     | 'credential-parse'
     | 'credential-classified'
-    | 'broker-rotation'
+    | 'token-rotation'
     | 'provider-validation'
     | 'credential-persist'
     | 'metadata-update';
 
 export type AppIntegrationRefreshDiagnosticCode =
-    | 'broker-invalid-response'
-    | 'broker-rejected-token'
-    | 'broker-unavailable'
+    | 'client-id-missing'
     | 'credential-invalid'
     | 'credential-missing'
     | 'github-forbidden'
@@ -23,8 +21,11 @@ export type AppIntegrationRefreshDiagnosticCode =
     | 'network-error'
     | 'refresh-token-expired'
     | 'refresh-token-missing'
+    | 'refresh-token-rejected'
     | 'secure-storage-error'
     | 'timed-out'
+    | 'token-endpoint-invalid-response'
+    | 'token-endpoint-unavailable'
     | 'unknown';
 
 export type AppIntegrationRefreshDiagnostic = AppIntegrationRefreshContext & {
@@ -35,7 +36,6 @@ export type AppIntegrationRefreshDiagnostic = AppIntegrationRefreshContext & {
     refreshTokenState?: 'missing' | 'present' | 'recorded-expired' | 'unknown';
     code?: AppIntegrationRefreshDiagnosticCode;
     status?: number | null;
-    requestId?: string | null;
 };
 
 /** Writes one allowlisted credential-refresh diagnostic without secret values. */

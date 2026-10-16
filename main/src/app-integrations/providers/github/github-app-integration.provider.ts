@@ -1,7 +1,7 @@
-import { createHash, randomBytes } from 'node:crypto';
 import { Injectable } from '@mariodebono/di';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { ConfigService } from '@mariodebono/di-config';
+import type { AppIntegrationConfigurationIssue } from '@shared/contracts';
 import { shell } from 'electron';
 import { ZodError } from 'zod';
 import type { AppConfig } from '../../../config/index.js';
@@ -10,32 +10,34 @@ import { APP_INTEGRATION_PROVIDER_TAG } from '../../app-integration.constants.js
 import {
     type AppIntegrationAccessTarget,
     type AppIntegrationConnectionRequest,
-    type AppIntegrationPreparedCredential,
     type AppIntegrationProvider,
     type AppIntegrationProviderConnection,
+    type AppIntegrationProviderConnectionResult,
     AppIntegrationProviderError,
+    type AppIntegrationProviderInstallation,
     type AppIntegrationProviderRefreshResult,
     type AppIntegrationRefreshContext,
 } from '../../app-integration.types.js';
 import { logAppIntegrationRefreshDiagnostic } from '../../app-integration-refresh-diagnostics.util.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { GitHubApiClient, GitHubApiError } from './github-api.client.js';
+import {
+    GITHUB_AUTHORISATIONS_SETTINGS_URL,
+    GITHUB_INSTALLATION_POLL_INTERVAL_MS,
+    githubAppInstallationUrl,
+} from './github-app-integration.constants.js';
 import { GitHubStoredCredentialSchema } from './github-app-integration.schema.js';
 import type {
-    GitHubAuthAttempt,
-    GitHubAuthIntent,
-    GitHubLoopbackCompletion,
     GitHubStoredCredential,
     GitHubTokenBundle,
     GitHubUserIdentity,
 } from './github-app-integration.types.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import {
-    GitHubAuthBrokerClient,
-    GitHubBrokerError,
-} from './github-auth-broker.client.js';
-// biome-ignore lint/style/useImportType: Required for DI constructor metadata
-import { GitHubAuthLoopbackListenerService } from './github-auth-loopback-listener.service.js';
+    GitHubDeviceFlowClient,
+    GitHubOAuthError,
+    waitFor,
+} from './github-device-flow.client.js';
 
 /** Describes GitHub as an app integration available to Launcher. */
 @Injectable({ tags: [APP_INTEGRATION_PROVIDER_TAG] })
@@ -49,211 +51,175 @@ export class GitHubAppIntegrationProvider implements AppIntegrationProvider {
     /**
      * Creates the GitHub provider.
      *
-     * @param configService - Runtime Launcher configuration.
-     * @param broker - GitHub authentication broker client.
-     * @param loopback - Ephemeral local callback listener.
+     * @param configService - Runtime Launcher configuration with the GitHub App identity.
+     * @param deviceFlow - GitHub OAuth device-flow and token-refresh client.
      * @param github - GitHub API identity client.
      */
     constructor(
         private readonly configService: ConfigService<AppConfig>,
-        private readonly broker: GitHubAuthBrokerClient,
-        private readonly loopback: GitHubAuthLoopbackListenerService,
+        private readonly deviceFlow: GitHubDeviceFlowClient,
         private readonly github: GitHubApiClient,
     ) {}
 
+    /** Reports a missing GitHub App client ID or slug before any request. */
+    getConfigurationIssue(): AppIntegrationConfigurationIssue | null {
+        if (!this.configService.getOrThrow('githubClientId')) {
+            return 'client-id-missing';
+        }
+        if (!this.configService.getOrThrow('githubAppSlug')) {
+            return 'app-slug-missing';
+        }
+        return null;
+    }
+
     /**
-     * Completes one GitHub connection or reauthorisation flow.
+     * Completes one GitHub device-flow connection or reauthorisation.
      *
      * @param signal - Connection-attempt cancellation signal.
-     * @param request - Requested operation and optional expected account ID.
+     * @param request - Requested operation, expected account, and code sink.
+     * @returns The verified user credential and, for new connections, the
+     * installation step.
      */
     async connect(
         signal: AbortSignal,
         request: AppIntegrationConnectionRequest,
-    ) {
+    ): Promise<AppIntegrationProviderConnectionResult> {
         try {
-            const result = await this.completeBrowserAttempt(
-                request.intent === 'connect' ? 'connect' : 'reauthorise',
+            if (this.getConfigurationIssue() !== null) {
+                throw new AppIntegrationProviderError('not-configured');
+            }
+            const clientId = this.configService.getOrThrow('githubClientId');
+            const authorization = await this.deviceFlow.requestDeviceCode(
+                clientId,
                 signal,
-                request.expectedAccountId,
+            );
+            request.onDeviceAuthorization({
+                userCode: authorization.userCode,
+                verificationUri: authorization.verificationUri,
+                expiresAt: new Date(
+                    Date.now() + authorization.expiresInSeconds * 1_000,
+                ).toISOString(),
+            });
+            const token = await this.deviceFlow.waitForAccessToken(
+                clientId,
+                authorization,
+                signal,
+            );
+            const issuedAt = Date.now();
+            const identity = await this.github.getUser(
+                token.accessToken,
+                signal,
+            );
+            if (
+                request.expectedAccountId !== null &&
+                request.expectedAccountId !== String(identity.id)
+            ) {
+                throw new AppIntegrationProviderError('account-mismatch');
+            }
+            const accessTargets = await this.github.getInstallations(
+                token.accessToken,
+                signal,
             );
             revealMainWindow();
-            return result;
+            return {
+                connection: this.createConnection(
+                    identity,
+                    token,
+                    accessTargets,
+                    null,
+                    issuedAt,
+                ),
+                installation:
+                    request.intent === 'connect'
+                        ? this.createInstallation(
+                              identity,
+                              token,
+                              accessTargets,
+                              issuedAt,
+                              signal,
+                          )
+                        : null,
+            };
         } catch (error) {
             throw mapProviderError(error, signal);
         }
     }
 
     /**
-     * Completes one broker-backed GitHub browser attempt.
+     * Creates the explicit GitHub App installation step for a new connection.
+     * GitHub offers no callback without a server, so Launcher opens the
+     * install page and polls the user's installations until a new one appears.
      *
-     * @param intent - Whether to authorise a user or install the GitHub App.
-     * @param signal - Connection-attempt cancellation signal.
-     * @param expectedAccountId - Immutable GitHub user ID required on return.
-     * @returns The verified user credential and optional installation action.
+     * @param identity - Verified GitHub user identity.
+     * @param token - Device-flow token bundle.
+     * @param knownTargets - Installations visible before installing.
+     * @param issuedAt - Token issue time used for expiry calculation.
+     * @param signal - Connection-session cancellation signal.
+     * @returns The single-use installation step.
      */
-    private async completeBrowserAttempt(
-        intent: GitHubAuthIntent,
+    private createInstallation(
+        identity: GitHubUserIdentity,
+        token: GitHubTokenBundle,
+        knownTargets: AppIntegrationProviderConnection['accessTargets'],
+        issuedAt: number,
         signal: AbortSignal,
-        expectedAccountId: string | null,
-    ) {
-        const verifier = randomBytes(32).toString('base64url');
-        const challenge = createHash('sha256')
-            .update(verifier)
-            .digest('base64url');
-        const nonce = randomBytes(32).toString('base64url');
-        const listener = await this.loopback.start(
-            nonce,
-            this.configService.getOrThrow('useLocalGitHubBroker'),
-            signal,
-        );
-        let attempt: GitHubAuthAttempt | undefined;
-        let oauthCompletion: GitHubLoopbackCompletion | undefined;
-        let setupCompletion: GitHubLoopbackCompletion | undefined;
-        let closed = false;
-
-        const close = async (): Promise<void> => {
-            if (closed) {
-                return;
-            }
-            closed = true;
-            oauthCompletion?.respond(false);
-            oauthCompletion = undefined;
-            setupCompletion?.respond(false);
-            setupCompletion = undefined;
-            await listener.close();
-            if (attempt) {
-                await this.broker.cancel(attempt);
-            }
-        };
-
-        try {
-            attempt = await this.broker.createAttempt(
-                challenge,
-                listener.descriptor,
-                intent,
-                signal,
-            );
-            const activeAttempt = attempt;
-            await shell.openExternal(activeAttempt.browserUrl);
-
-            oauthCompletion = await listener.waitForCompletion();
-            const redemption = await this.broker.redeemOAuth(
-                activeAttempt,
-                verifier,
-                oauthCompletion.ticket,
-                signal,
-            );
-            const { installationUrl, ...token } = redemption;
-            const identity = await this.github.getUser(
-                token.accessToken,
-                signal,
-            );
-            const accountId = String(identity.id);
-            if (expectedAccountId !== null && expectedAccountId !== accountId) {
-                throw new AppIntegrationProviderError('account-mismatch');
-            }
-
-            const accessTargets = await this.github.getInstallations(
-                token.accessToken,
-                signal,
-            );
-            const connectedAt = Date.now();
-            const connection = this.createConnection(
-                identity,
-                token,
-                accessTargets,
-                null,
-                connectedAt,
-            );
-
-            if (intent === 'reauthorise') {
-                if (installationUrl !== null) {
+    ): AppIntegrationProviderInstallation {
+        let started = false;
+        return {
+            // Nothing is held open; the session signal stops any polling.
+            close: async () => undefined,
+            install: async () => {
+                if (started) {
                     throw new AppIntegrationProviderError('invalid-response');
                 }
-                oauthCompletion.respond(true);
-                oauthCompletion = undefined;
-                await close();
-                return { connection, installation: null };
-            }
-            if (installationUrl === null) {
-                throw new AppIntegrationProviderError('invalid-response');
-            }
-
-            oauthCompletion.respond(true);
-            oauthCompletion = undefined;
-            let installationStarted = false;
-            return {
-                connection,
-                installation: {
-                    close,
-                    install: async () => {
-                        if (installationStarted || closed) {
-                            throw new AppIntegrationProviderError(
-                                'invalid-response',
-                            );
-                        }
-                        installationStarted = true;
-                        try {
-                            await shell.openExternal(installationUrl);
-                            setupCompletion =
-                                await listener.waitForCompletion();
-                            const installationId = (
-                                await this.broker.redeemSetup(
-                                    activeAttempt,
-                                    verifier,
-                                    setupCompletion.ticket,
-                                    signal,
-                                )
-                            ).installationId;
-                            const installedTargets =
-                                await this.github.getInstallations(
-                                    token.accessToken,
-                                    signal,
-                                );
-                            if (
-                                !installedTargets.some(
-                                    (target) =>
-                                        target.providerTargetId ===
-                                        installationId,
-                                )
-                            ) {
-                                throw new AppIntegrationProviderError(
-                                    'installation-required',
-                                );
-                            }
-                            setupCompletion.respond(true);
-                            setupCompletion = undefined;
+                started = true;
+                try {
+                    const knownIds = new Set(
+                        knownTargets.map((target) => target.providerTargetId),
+                    );
+                    await shell.openExternal(
+                        githubAppInstallationUrl(
+                            this.configService.getOrThrow('githubAppSlug'),
+                        ),
+                    );
+                    while (true) {
+                        await waitFor(
+                            GITHUB_INSTALLATION_POLL_INTERVAL_MS,
+                            signal,
+                        );
+                        const targets = await this.github.getInstallations(
+                            token.accessToken,
+                            signal,
+                        );
+                        const added = targets.find(
+                            (target) => !knownIds.has(target.providerTargetId),
+                        );
+                        if (added) {
                             revealMainWindow();
                             return this.createConnection(
                                 identity,
                                 token,
-                                installedTargets,
-                                installationId,
-                                connectedAt,
+                                targets,
+                                added.providerTargetId,
+                                issuedAt,
                             );
-                        } catch (error) {
-                            setupCompletion?.respond(false);
-                            setupCompletion = undefined;
-                            throw mapProviderError(error, signal);
                         }
-                    },
-                },
-            };
-        } catch (error) {
-            await close();
-            throw error;
-        }
+                    }
+                } catch (error) {
+                    throw mapProviderError(error, signal);
+                }
+            },
+        };
     }
 
     /**
      * Builds one verified connection result from a GitHub token and identity.
      *
      * @param identity - Verified GitHub user identity.
-     * @param token - Broker-issued GitHub user token bundle.
+     * @param token - GitHub App user token bundle.
      * @param accessTargets - Installations visible to the user.
-     * @param selectedAccessTargetId - Exact setup installation, when present.
-     * @param connectedAt - Token issue time used for expiry calculation.
+     * @param selectedAccessTargetId - Newly installed target, when present.
+     * @param issuedAt - Token issue time used for expiry calculation.
      * @returns The provider connection result.
      */
     private createConnection(
@@ -261,7 +227,7 @@ export class GitHubAppIntegrationProvider implements AppIntegrationProvider {
         token: GitHubTokenBundle,
         accessTargets: AppIntegrationProviderConnection['accessTargets'],
         selectedAccessTargetId: string | null,
-        connectedAt: number,
+        issuedAt: number,
     ): AppIntegrationProviderConnection {
         return {
             accountId: String(identity.id),
@@ -271,15 +237,12 @@ export class GitHubAppIntegrationProvider implements AppIntegrationProvider {
                 GitHubStoredCredentialSchema.parse({
                     ...token,
                     version: 1,
-                    createdAt: new Date(connectedAt).toISOString(),
+                    createdAt: new Date(issuedAt).toISOString(),
                 }),
             ),
-            accessTokenExpiresAt: expiryFromSeconds(
-                connectedAt,
-                token.expiresIn,
-            ),
+            accessTokenExpiresAt: expiryFromSeconds(issuedAt, token.expiresIn),
             refreshTokenExpiresAt: expiryFromSeconds(
-                connectedAt,
+                issuedAt,
                 token.refreshTokenExpiresIn,
             ),
             accessTargets,
@@ -299,7 +262,8 @@ export class GitHubAppIntegrationProvider implements AppIntegrationProvider {
     }
 
     /**
-     * Refreshes an authorised GitHub user and their visible installations.
+     * Refreshes an authorised GitHub user and their visible installations,
+     * rotating the token directly with GitHub when it is near expiry.
      *
      * @param signal - Refresh cancellation signal.
      * @param credential - Decrypted GitHub token bundle.
@@ -370,39 +334,55 @@ export class GitHubAppIntegrationProvider implements AppIntegrationProvider {
                 });
                 return { status: 'reauthorisation-required' };
             }
-            const shouldRotate =
-                accessTokenExpiry !== null &&
-                accessTokenExpiry <= now + 5 * 60 * 1_000;
-            if (shouldRotate && !stored.refreshToken) {
-                logAppIntegrationRefreshDiagnostic({
-                    ...context,
-                    providerId: this.metadata.id,
-                    phase: 'broker-rotation',
-                    outcome: 'terminal-failure',
-                    accessTokenState,
-                    refreshTokenState,
-                    code: 'refresh-token-missing',
-                });
-                return { status: 'reauthorisation-required' };
-            }
             let token: GitHubTokenBundle = stored;
-            if (shouldRotate) {
+            // Tokens from apps that opted out of expiry never rotate.
+            if (
+                accessTokenExpiry !== null &&
+                accessTokenExpiry <= now + 5 * 60 * 1_000
+            ) {
+                if (!stored.refreshToken) {
+                    logAppIntegrationRefreshDiagnostic({
+                        ...context,
+                        providerId: this.metadata.id,
+                        phase: 'token-rotation',
+                        outcome: 'terminal-failure',
+                        accessTokenState,
+                        refreshTokenState,
+                        code: 'refresh-token-missing',
+                    });
+                    return { status: 'reauthorisation-required' };
+                }
+                const clientId =
+                    this.configService.getOrThrow('githubClientId');
+                if (!clientId) {
+                    logAppIntegrationRefreshDiagnostic({
+                        ...context,
+                        providerId: this.metadata.id,
+                        phase: 'token-rotation',
+                        outcome: 'temporary-failure',
+                        accessTokenState,
+                        refreshTokenState,
+                        code: 'client-id-missing',
+                    });
+                    return { status: 'temporarily-unavailable' };
+                }
                 logAppIntegrationRefreshDiagnostic({
                     ...context,
                     providerId: this.metadata.id,
-                    phase: 'broker-rotation',
+                    phase: 'token-rotation',
                     outcome: 'started',
                     accessTokenState,
                     refreshTokenState,
                 });
-                token = await this.rotateCredential(
+                token = await this.deviceFlow.refreshAccessToken(
+                    clientId,
                     stored.refreshToken,
                     signal,
                 );
                 logAppIntegrationRefreshDiagnostic({
                     ...context,
                     providerId: this.metadata.id,
-                    phase: 'broker-rotation',
+                    phase: 'token-rotation',
                     outcome: 'succeeded',
                     accessTokenState,
                     refreshTokenState: token.refreshToken
@@ -426,7 +406,7 @@ export class GitHubAppIntegrationProvider implements AppIntegrationProvider {
                 });
                 return { status: 'reauthorisation-required' };
             }
-            const refreshedAt = shouldRotate ? Date.now() : createdAt;
+            const refreshedAt = token === stored ? createdAt : Date.now();
             logAppIntegrationRefreshDiagnostic({
                 ...context,
                 providerId: this.metadata.id,
@@ -462,18 +442,17 @@ export class GitHubAppIntegrationProvider implements AppIntegrationProvider {
             };
         } catch (error) {
             const terminal =
-                (error instanceof GitHubBrokerError &&
-                    error.code === 'github_rejected_token') ||
+                (error instanceof GitHubOAuthError &&
+                    error.code === 'bad_refresh_token') ||
                 (error instanceof GitHubApiError &&
                     (error.status === 401 || error.status === 403));
             const code =
-                error instanceof GitHubBrokerError
-                    ? error.code === 'github_rejected_token'
-                        ? ('broker-rejected-token' as const)
-                        : error.code === 'github_unavailable' ||
-                            error.code === 'rate_limited'
-                          ? ('broker-unavailable' as const)
-                          : ('broker-invalid-response' as const)
+                error instanceof GitHubOAuthError
+                    ? error.code === 'bad_refresh_token'
+                        ? ('refresh-token-rejected' as const)
+                        : error.code === 'unavailable'
+                          ? ('token-endpoint-unavailable' as const)
+                          : ('token-endpoint-invalid-response' as const)
                     : error instanceof GitHubApiError
                       ? error.status === 401
                           ? ('github-unauthorised' as const)
@@ -489,18 +468,16 @@ export class GitHubAppIntegrationProvider implements AppIntegrationProvider {
                 ...context,
                 providerId: this.metadata.id,
                 phase:
-                    error instanceof GitHubBrokerError
-                        ? 'broker-rotation'
+                    error instanceof GitHubOAuthError
+                        ? 'token-rotation'
                         : 'provider-validation',
                 outcome: terminal ? 'terminal-failure' : 'temporary-failure',
                 code,
                 status:
-                    error instanceof GitHubBrokerError ||
+                    error instanceof GitHubOAuthError ||
                     error instanceof GitHubApiError
                         ? error.status
                         : null,
-                requestId:
-                    error instanceof GitHubBrokerError ? error.requestId : null,
             });
             if (terminal) {
                 return { status: 'reauthorisation-required' };
@@ -510,110 +487,11 @@ export class GitHubAppIntegrationProvider implements AppIntegrationProvider {
     }
 
     /**
-     * Produces a current GitHub credential that can identify the complete grant.
-     *
-     * @param signal - Revocation cancellation signal.
-     * @param credential - Decrypted stored token bundle.
-     * @returns The current credential and its provider expiry metadata.
+     * Opens GitHub's authorised GitHub Apps settings. GitHub only revokes
+     * GitHub App user grants with the client secret, which Launcher never has.
      */
-    async prepareCredentialRevocation(
-        signal: AbortSignal,
-        credential: string,
-    ): Promise<AppIntegrationPreparedCredential> {
-        try {
-            const stored = GitHubStoredCredentialSchema.parse(
-                JSON.parse(credential),
-            );
-            const createdAt = new Date(stored.createdAt).getTime();
-            const accessTokenExpiry =
-                stored.expiresIn === null
-                    ? null
-                    : createdAt + stored.expiresIn * 1_000;
-            const shouldRotate =
-                accessTokenExpiry !== null &&
-                accessTokenExpiry <= Date.now() + 5 * 60 * 1_000;
-            if (!shouldRotate) {
-                return {
-                    credential,
-                    accessTokenExpiresAt: expiryFromSeconds(
-                        createdAt,
-                        stored.expiresIn,
-                    ),
-                    refreshTokenExpiresAt: expiryFromSeconds(
-                        createdAt,
-                        stored.refreshTokenExpiresIn,
-                    ),
-                };
-            }
-            if (
-                stored.refreshTokenExpiresIn !== null &&
-                createdAt + stored.refreshTokenExpiresIn * 1_000 <= Date.now()
-            ) {
-                throw new GitHubBrokerError('github_rejected_token', 401);
-            }
-
-            const token = await this.rotateCredential(
-                stored.refreshToken,
-                signal,
-            );
-            const rotatedAt = Date.now();
-            return {
-                credential: JSON.stringify(
-                    GitHubStoredCredentialSchema.parse({
-                        ...token,
-                        version: 1,
-                        createdAt: new Date(rotatedAt).toISOString(),
-                    }),
-                ),
-                accessTokenExpiresAt: expiryFromSeconds(
-                    rotatedAt,
-                    token.expiresIn,
-                ),
-                refreshTokenExpiresAt: expiryFromSeconds(
-                    rotatedAt,
-                    token.refreshTokenExpiresIn,
-                ),
-            };
-        } catch (error) {
-            throw mapProviderError(error, signal);
-        }
-    }
-
-    /**
-     * Revokes the complete GitHub App user authorisation through the broker.
-     *
-     * @param signal - Revocation cancellation signal.
-     * @param credential - Prepared decrypted token bundle.
-     */
-    async revokeCredential(
-        signal: AbortSignal,
-        credential: string,
-    ): Promise<void> {
-        try {
-            const stored = GitHubStoredCredentialSchema.parse(
-                JSON.parse(credential),
-            );
-            await this.broker.revoke(stored.accessToken, signal);
-        } catch (error) {
-            throw mapProviderError(error, signal);
-        }
-    }
-
-    /**
-     * Rotates an expiring GitHub credential.
-     *
-     * @param refreshToken - Current GitHub refresh token.
-     * @param signal - Refresh cancellation signal.
-     * @returns The rotated token bundle.
-     */
-    private async rotateCredential(
-        refreshToken: string | null,
-        signal: AbortSignal,
-    ): Promise<GitHubTokenBundle> {
-        if (!refreshToken) {
-            throw new GitHubBrokerError('github_rejected_token', 401);
-        }
-        return this.broker.refresh(refreshToken, signal);
+    async openAuthorisationSettings(): Promise<void> {
+        await shell.openExternal(GITHUB_AUTHORISATIONS_SETTINGS_URL);
     }
 
     /**
@@ -676,20 +554,19 @@ function mapProviderError(
     if (error instanceof AppIntegrationProviderError) {
         return error;
     }
-    if (error instanceof GitHubBrokerError) {
-        if (error.code === 'attempt_denied') {
-            return new AppIntegrationProviderError('denied');
+    if (error instanceof GitHubOAuthError) {
+        switch (error.code) {
+            case 'access_denied':
+                return new AppIntegrationProviderError('denied');
+            case 'expired_token':
+                return new AppIntegrationProviderError('timed-out');
+            case 'device_flow_disabled':
+                return new AppIntegrationProviderError('device-flow-disabled');
+            case 'unavailable':
+                return new AppIntegrationProviderError('provider-unavailable');
+            default:
+                return new AppIntegrationProviderError('invalid-response');
         }
-        if (error.code === 'attempt_expired') {
-            return new AppIntegrationProviderError('timed-out');
-        }
-        if (
-            error.code === 'github_unavailable' ||
-            error.code === 'rate_limited'
-        ) {
-            return new AppIntegrationProviderError('provider-unavailable');
-        }
-        return new AppIntegrationProviderError('invalid-response');
     }
     if (error instanceof ZodError) {
         return new AppIntegrationProviderError('invalid-response');
