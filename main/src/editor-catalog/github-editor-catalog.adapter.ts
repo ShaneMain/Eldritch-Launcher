@@ -16,6 +16,8 @@ import {
     ForkManifestSchema,
     findForkManifestAssets,
     mapForkRelease,
+    needsForkTagRevision,
+    SHA40_PATTERN,
 } from './fork-release.mapper.js';
 import {
     type GithubReleaseResponse,
@@ -25,14 +27,16 @@ import { mapGithubEditorRelease } from './github-editor-release.mapper.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { GithubSourceAccessService } from './github-source-access.service.js';
 
-const MANIFEST_DOWNLOAD_CONCURRENCY = 4;
-const MANIFEST_TIMEOUT_MS = 60_000;
+const FORK_METADATA_CONCURRENCY = 4;
+const FORK_METADATA_TIMEOUT_MS = 60_000;
 
 /** Fetches editor releases from official and fork GitHub sources. */
 @Injectable()
 export class GithubEditorCatalogAdapter {
     /** Parsed fork manifests by immutable GitHub asset ID. */
     private readonly manifests = new Map<number, ForkManifest>();
+    /** Resolved release tag commits by source ID, then tag name. */
+    private readonly tagRevisions = new Map<string, Map<string, string>>();
 
     /**
      * Creates the catalog adapter.
@@ -110,61 +114,103 @@ export class GithubEditorCatalogAdapter {
     }
 
     /**
-     * Loads missing manifests and maps one page of fork releases.
+     * Loads missing manifests and tag commits, then maps one page of fork
+     * releases.
      *
      * @param source - Fork source that owns the releases.
      * @param releases - Releases on one GitHub page.
      * @param token - Optional GitHub bearer token.
-     * @returns Releases with a usable build manifest.
+     * @returns Releases with a usable build.
      */
     private async mapForkPage(
         source: EngineSource,
         releases: GithubEditorRelease[],
         token: string | null,
     ): Promise<FetchedEditorCatalogProvider['releases']> {
-        const pending = releases
+        const repository = `${source.owner}/${source.repo}`;
+        const pendingManifests = releases
             .filter((release) => !release.draft)
             .flatMap(findForkManifestAssets)
             .filter((asset) => !this.manifests.has(asset.id));
-        let nextIndex = 0;
-        const loadNext = async (): Promise<void> => {
-            while (nextIndex < pending.length) {
-                const asset = pending[nextIndex++];
-                try {
-                    this.manifests.set(
-                        asset.id,
-                        await this.fetchManifest(source, asset, token),
-                    );
-                } catch (error) {
-                    logger.warn(
-                        `Failed to read fork build manifest ${asset.name} from ${source.owner}/${source.repo}`,
-                        error,
-                    );
-                }
+        await runConcurrently(pendingManifests, async (asset) => {
+            try {
+                this.manifests.set(
+                    asset.id,
+                    await this.fetchManifest(source, asset, token),
+                );
+            } catch (error) {
+                logger.warn(
+                    `Failed to read fork build manifest ${asset.name} from ${repository}`,
+                    error,
+                );
             }
-        };
-        await Promise.all(
-            Array.from(
-                {
-                    length: Math.min(
-                        pending.length,
-                        MANIFEST_DOWNLOAD_CONCURRENCY,
-                    ),
-                },
-                () => loadNext(),
-            ),
-        );
+        });
+
+        const resolved =
+            this.tagRevisions.get(source.id) ?? new Map<string, string>();
+        this.tagRevisions.set(source.id, resolved);
+        const pendingTags = releases
+            .filter(needsForkTagRevision)
+            .map((release) => release.tagName)
+            .filter((tag) => !resolved.has(tag));
+        await runConcurrently(pendingTags, async (tag) => {
+            try {
+                resolved.set(
+                    tag,
+                    await this.fetchTagRevision(source, tag, token),
+                );
+            } catch (error) {
+                logger.warn(
+                    `Failed to resolve the commit of tag ${tag} in ${repository}`,
+                    error,
+                );
+            }
+        });
 
         return releases.flatMap((release) => {
-            const mapped = mapForkRelease(source, release, this.manifests);
+            const mapped = mapForkRelease(
+                source,
+                release,
+                this.manifests,
+                resolved,
+            );
             if (!mapped.ok) {
                 logger.info(
-                    `Skipping ${source.owner}/${source.repo} release ${release.tagName}: ${mapped.reason}`,
+                    `Skipping ${repository} release ${release.tagName}: ${mapped.reason}`,
                 );
                 return [];
             }
             return [mapped.release];
         });
+    }
+
+    /**
+     * Resolves the commit a release tag points at.
+     *
+     * @param source - Fork source that owns the tag.
+     * @param tag - Release tag name.
+     * @param token - Optional GitHub bearer token.
+     * @returns The full 40-hex commit SHA.
+     */
+    private async fetchTagRevision(
+        source: EngineSource,
+        tag: string,
+        token: string | null,
+    ): Promise<string> {
+        const response = await this.access.request(
+            `/repos/${encodeURIComponent(source.owner)}/${encodeURIComponent(source.repo)}/commits/${encodeURIComponent(tag)}`,
+            token,
+            source,
+            {
+                headers: { Accept: 'application/vnd.github.sha' },
+                signal: AbortSignal.timeout(FORK_METADATA_TIMEOUT_MS),
+            },
+        );
+        const revision = (await response.text()).trim();
+        if (!SHA40_PATTERN.test(revision)) {
+            throw new Error('GitHub did not return a commit SHA for the tag');
+        }
+        return revision;
     }
 
     /**
@@ -186,7 +232,7 @@ export class GithubEditorCatalogAdapter {
         if (asset.size !== undefined && asset.size > FORK_MANIFEST_MAX_BYTES) {
             throw new Error('Manifest is too large');
         }
-        const signal = AbortSignal.timeout(MANIFEST_TIMEOUT_MS);
+        const signal = AbortSignal.timeout(FORK_METADATA_TIMEOUT_MS);
         const url = await this.access.resolveAssetDownloadUrl(
             asset.apiUrl,
             token,
@@ -214,6 +260,32 @@ export class GithubEditorCatalogAdapter {
 }
 
 /**
+ * Runs a task for every item with at most {@link FORK_METADATA_CONCURRENCY}
+ * tasks at a time.
+ *
+ * @param items - Items to process.
+ * @param task - Task for one item; it handles its own failures.
+ * @returns A promise that ends after every task.
+ */
+async function runConcurrently<T>(
+    items: readonly T[],
+    task: (item: T) => Promise<void>,
+): Promise<void> {
+    let nextIndex = 0;
+    const runNext = async (): Promise<void> => {
+        while (nextIndex < items.length) {
+            await task(items[nextIndex++]);
+        }
+    };
+    await Promise.all(
+        Array.from(
+            { length: Math.min(items.length, FORK_METADATA_CONCURRENCY) },
+            runNext,
+        ),
+    );
+}
+
+/**
  * Converts a checked GitHub API release into the internal input shape.
  *
  * @param value - The checked GitHub API release.
@@ -229,6 +301,9 @@ function toGithubEditorRelease(
         publishedAt: value.published_at,
         draft: value.draft,
         prerelease: value.prerelease,
+        ...(value.target_commitish
+            ? { targetCommitish: value.target_commitish }
+            : {}),
         assets: value.assets.map((asset) => ({
             id: asset.id,
             name: asset.name,

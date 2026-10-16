@@ -266,6 +266,17 @@ export const EngineSourcesPanelView: React.FC<EngineSourcesPanelViewProps> = ({
             </ul>
         )}
 
+        {!loading &&
+            !loadError &&
+            !sources.some((source) => !source.builtIn) && (
+                <p
+                    className="text-base text-base-content/75"
+                    data-testid="engineSourcesNoForks"
+                >
+                    {t('settings.noForks')}
+                </p>
+            )}
+
         <AddEngineSourceForm
             t={t}
             adding={adding}

@@ -53,14 +53,6 @@ export const OFFICIAL_ENGINE_SOURCES: readonly EngineSource[] = [
     },
 ];
 
-/** Fork source added to a new engine source file. */
-export const DEFAULT_FORK_SOURCE = {
-    owner: 'Eldritch-Game-Studio',
-    repo: 'Eldritch-Engine',
-    displayName: 'Eldritch Engine',
-    requiresAuth: true,
-} as const;
-
 /** GitHub owner or repository name accepted for a fork source. */
 export const GITHUB_NAME_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,99})$/;
 

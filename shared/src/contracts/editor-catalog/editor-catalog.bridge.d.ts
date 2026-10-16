@@ -46,8 +46,11 @@ export type EditorCatalogForkBuild = {
     source: string;
     /** Full 40-hex engine commit the build was produced from. */
     revision: string;
-    /** Full 40-hex upstream Godot commit the fork is based on. */
-    upstreamBase: string;
+    /**
+     * Full 40-hex upstream Godot commit the fork is based on, when the
+     * release publishes a build manifest.
+     */
+    upstreamBase?: string;
 };
 
 /** Describes one editor release in the catalog. */

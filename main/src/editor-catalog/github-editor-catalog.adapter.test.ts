@@ -403,6 +403,78 @@ describe('GithubEditorCatalogAdapter', () => {
         }
         expect(second.lastPublishedAt).toBe(first.lastPublishedAt);
     });
+
+    it('resolves the tag commit of a fork release without a manifest once', async () => {
+        const revision = '77dcf97d82cbfe4e4615475fa52ca03da645dbd8';
+        const fork: EngineSource = {
+            id: 'fork:example/godot-fork',
+            kind: 'fork',
+            owner: 'example',
+            repo: 'godot-fork',
+            displayName: 'Example fork',
+            requiresAuth: false,
+            builtIn: false,
+        };
+        const release = {
+            id: 9,
+            name: null,
+            tag_name: '4.3-stable',
+            published_at: '2026-10-01T00:00:00Z',
+            draft: false,
+            prerelease: false,
+            target_commitish: 'master',
+            assets: [
+                {
+                    id: 90,
+                    url: 'https://api.github.com/repos/example/godot-fork/releases/assets/90',
+                    name: 'Godot_v4.3-stable_linux.x86_64.zip',
+                    browser_download_url:
+                        'https://github.com/example/godot-fork/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip',
+                    digest: `sha256:${'b'.repeat(64)}`,
+                    size: 1,
+                },
+            ],
+        };
+        const fetchMock = vi.fn(async (url: URL, init?: RequestInit) => {
+            if (url.pathname.endsWith('/commits/4.3-stable')) {
+                expect(init?.headers).toMatchObject({
+                    Accept: 'application/vnd.github.sha',
+                });
+                return new Response(revision);
+            }
+            return Response.json([release]);
+        });
+        vi.stubGlobal('fetch', fetchMock);
+        const adapter = createAdapter();
+
+        const first = await adapter.fetchProvider(fork, null, null);
+        const second = await adapter.fetchProvider(fork, null, null);
+
+        for (const result of [first, second]) {
+            expect(result.releases).toHaveLength(1);
+            expect(result.releases[0]).toMatchObject({
+                version: '4.3.stable.77dcf97d8',
+                fork: { source: 'example/godot-fork', revision },
+                variants: [
+                    {
+                        flavor: 'gdscript',
+                        assets: [
+                            expect.objectContaining({
+                                platform: 'linux',
+                                architecture: 'x64',
+                                downloadUrl: release.assets[0].url,
+                            }),
+                        ],
+                    },
+                ],
+            });
+        }
+        expect(
+            fetchMock.mock.calls.filter(([url]) =>
+                url.pathname.includes('/commits/'),
+            ),
+        ).toHaveLength(1);
+    });
 });
 
 /** Raw GitHub release response used by adapter tests. */

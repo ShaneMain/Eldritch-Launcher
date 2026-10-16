@@ -7,6 +7,7 @@ const githubReleaseSchema = z.object({
     published_at: z.string().nullable(),
     draft: z.boolean(),
     prerelease: z.boolean(),
+    target_commitish: z.string().optional(),
     assets: z.array(
         z.object({
             id: z.number().int(),

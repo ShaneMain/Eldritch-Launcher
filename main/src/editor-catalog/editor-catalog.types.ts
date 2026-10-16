@@ -30,6 +30,8 @@ export type GithubEditorRelease = {
     publishedAt: string | null;
     draft: boolean;
     prerelease: boolean;
+    /** Branch or commit the release tag was created from. */
+    targetCommitish?: string;
     assets: GithubEditorAsset[];
 };
 

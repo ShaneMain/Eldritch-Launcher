@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { JsonFileStore } from '../json-store/json-file.store.js';
 import type { JsonStoreCoordinatorService } from '../json-store/json-store-coordinator.service.js';
 import {
-    DEFAULT_FORK_SOURCE,
     ENGINE_SOURCES_SCHEMA_VERSION,
     forkSourceId,
     GITHUB_NAME_PATTERN,
@@ -25,14 +24,12 @@ const EngineSourcesFileSchema = z.object({
 
 /**
  * Creates the engine source file used before the user changes anything.
+ * New installs list no forks; users add their own fork repositories.
  *
- * @returns A file with the preconfigured fork source.
+ * @returns A file without fork sources.
  */
 export function createDefaultEngineSources(): EngineSourcesFile {
-    return {
-        schemaVersion: ENGINE_SOURCES_SCHEMA_VERSION,
-        forks: [{ ...DEFAULT_FORK_SOURCE }],
-    };
+    return { schemaVersion: ENGINE_SOURCES_SCHEMA_VERSION, forks: [] };
 }
 
 /**

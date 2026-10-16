@@ -9,6 +9,7 @@
         "overview": "GitHub repositories that publish Godot editor builds. Add a fork to install its builds and pin projects to an exact engine revision.",
         "loading": "Loading engine sources...",
         "loadError": "Engine sources could not be loaded.",
+        "noForks": "No forks added yet. To list builds from an engine fork, enter its GitHub owner and repository below; for github.com/owner/repo, enter owner and repo.",
         "builtIn": "Built-in",
         "requiresAuth": "GitHub sign-in",
         "state": {

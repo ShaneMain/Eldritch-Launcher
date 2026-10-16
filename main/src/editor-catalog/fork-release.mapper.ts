@@ -18,17 +18,26 @@ import type {
     GithubEditorAsset,
     GithubEditorRelease,
 } from './editor-catalog.types.js';
+import {
+    type EditorAssetTarget,
+    findEditorVersion,
+    getExportTemplatesFlavor,
+    isExportTemplatesAssetName,
+    normalizePublishedAt,
+    parseEditorAssetName,
+} from './github-editor-release.mapper.js';
 
-const Sha40Schema = z.string().regex(/^[0-9a-f]{40}$/);
+/** Full 40-hex Git commit SHA. */
+export const SHA40_PATTERN = /^[0-9a-f]{40}$/;
+const Sha40Schema = z.string().regex(SHA40_PATTERN);
+
+/** Characters allowed in a fork version, which also names its install folder. */
+const FORK_VERSION_PATTERN = /^[A-Za-z0-9._+-]{1,200}$/;
 
 /** Fields of a fork build manifest used by the catalog. */
 export const ForkManifestSchema = z.object({
     schema: z.literal(FORK_MANIFEST_SCHEMA),
-    version: z
-        .string()
-        .min(1)
-        .max(200)
-        .regex(/^[A-Za-z0-9._+-]+$/),
+    version: z.string().regex(FORK_VERSION_PATTERN),
     revision: Sha40Schema,
     upstreamBase: Sha40Schema,
     platform: z.string().min(1),
@@ -165,25 +174,30 @@ type ForkBuild = {
 };
 
 /**
- * Converts one fork GitHub release into a catalog release using its build
- * manifests. Releases without a usable manifest are skipped.
+ * Converts one fork GitHub release into a catalog release. Releases with
+ * build manifest assets are mapped from their manifests; other releases are
+ * mapped from official-style editor archive names. Releases without a usable
+ * build are skipped.
  *
  * @param source - Fork source that published the release.
  * @param release - GitHub release.
  * @param manifests - Parsed manifests by GitHub asset ID.
+ * @param tagRevisions - Commits of release tags by tag name, for releases
+ * without a manifest whose target is not a commit.
  * @returns The catalog release, or the reason it was skipped.
  */
 export function mapForkRelease(
     source: EngineSource,
     release: GithubEditorRelease,
     manifests: ReadonlyMap<number, ForkManifest>,
+    tagRevisions: ReadonlyMap<string, string>,
 ): ForkReleaseMapping {
     if (release.draft || !release.tagName.trim()) {
         return { ok: false, reason: 'draft or untagged release' };
     }
     const manifestAssets = findForkManifestAssets(release);
     if (manifestAssets.length === 0) {
-        return { ok: false, reason: 'no build manifest asset' };
+        return mapArchiveForkRelease(source, release, tagRevisions);
     }
 
     const builds: ForkBuild[] = [];
@@ -323,16 +337,225 @@ export function mapForkRelease(
     };
 }
 
+/** Editor archive of a fork release without a build manifest. */
+type ForkEditorArchive = {
+    asset: GithubEditorAsset;
+    apiUrl: string;
+    digest: string;
+    target: EditorAssetTarget;
+};
+
+/** Installable archives and engine version of a release without a manifest. */
+type ForkArchiveBuild =
+    | {
+          ok: true;
+          archives: ForkEditorArchive[];
+          versionParts: EditorCatalogRelease['versionParts'];
+          versionFromTag: boolean;
+      }
+    | { ok: false; reason: string };
+
 /**
- * Converts a publication time into a valid ISO value.
+ * Reads the installable editor archives and the Godot version of a fork
+ * release without a build manifest. Archives need a GitHub API URL and a
+ * SHA-256 digest, which fork installs require. The version comes from the
+ * tag, else from the archive names.
  *
- * @param value - The publication time to normalize.
- * @returns The ISO time, or null when the value is missing or invalid.
+ * @param release - GitHub release without manifest assets.
+ * @returns The archives and version, or the reason the release is unusable.
  */
-function normalizePublishedAt(value: string | null): string | null {
-    if (!value) {
-        return null;
+function readForkArchiveBuild(release: GithubEditorRelease): ForkArchiveBuild {
+    const named = release.assets.flatMap((asset) => {
+        const target = parseEditorAssetName(asset.name);
+        return target ? [{ asset, target }] : [];
+    });
+    if (named.length === 0) {
+        return {
+            ok: false,
+            reason: 'no build manifest and no editor archive for a supported platform',
+        };
     }
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? null : date.toISOString();
+    const archives = named.flatMap(({ asset, target }) => {
+        const digest = normalizeGithubAssetDigest(asset.digest);
+        return digest && asset.apiUrl
+            ? [{ asset, apiUrl: asset.apiUrl, digest, target }]
+            : [];
+    });
+    if (archives.length === 0) {
+        return {
+            ok: false,
+            reason: 'editor archives have no GitHub SHA-256 digest',
+        };
+    }
+
+    const tagVersion = findEditorVersion(release.tagName);
+    const versions = [
+        tagVersion,
+        ...archives.map(({ asset }) => findEditorVersion(asset.name)),
+    ].filter((version) => version !== null);
+    const versionParts = versions.find(
+        (version) => version.major >= EDITOR_CATALOG_MIN_VERSION,
+    );
+    if (!versionParts) {
+        return {
+            ok: false,
+            reason:
+                versions.length > 0
+                    ? `unsupported engine version ${formatEngineVersion(versions[0])}`
+                    : 'no Godot version in the tag or editor archive names',
+        };
+    }
+    return {
+        ok: true,
+        archives,
+        versionParts,
+        versionFromTag: versionParts === tagVersion,
+    };
+}
+
+/**
+ * Checks whether mapping a release needs its tag commit looked up: the
+ * release has no manifest, has an installable build, and its target is a
+ * branch name rather than a commit.
+ *
+ * @param release - GitHub release.
+ * @returns Whether the caller must resolve the tag's commit.
+ */
+export function needsForkTagRevision(release: GithubEditorRelease): boolean {
+    return (
+        !release.draft &&
+        Boolean(release.tagName.trim()) &&
+        !SHA40_PATTERN.test(release.targetCommitish ?? '') &&
+        findForkManifestAssets(release).length === 0 &&
+        readForkArchiveBuild(release).ok
+    );
+}
+
+/**
+ * Formats version parts the way Godot names its version and export template
+ * folder, such as `4.3.stable` or `4.4.1.rc2`.
+ *
+ * @param parts - Version parts.
+ * @returns The dotted Godot version.
+ */
+function formatEngineVersion(
+    parts: EditorCatalogRelease['versionParts'],
+): string {
+    return `${parts.major}.${parts.minor}${parts.patch ? `.${parts.patch}` : ''}.${parts.channel}${parts.iteration || ''}`;
+}
+
+/**
+ * Maps a fork release without a build manifest from official-style editor
+ * archive names such as `Godot_v4.3-stable_mono_linux_x86_64.zip`.
+ *
+ * The version starts with the dotted Godot version, which Godot also uses
+ * for export templates, so template lookup keeps working. It ends with the
+ * short revision when the tag names the version, or with the tag otherwise,
+ * so fork builds never share an install identity with official editors.
+ *
+ * @param source - Fork source that published the release.
+ * @param release - GitHub release without manifest assets.
+ * @param tagRevisions - Commits of release tags by tag name.
+ * @returns The catalog release, or the reason it was skipped.
+ */
+function mapArchiveForkRelease(
+    source: EngineSource,
+    release: GithubEditorRelease,
+    tagRevisions: ReadonlyMap<string, string>,
+): ForkReleaseMapping {
+    const build = readForkArchiveBuild(release);
+    if (!build.ok) {
+        return build;
+    }
+    const revision = SHA40_PATTERN.test(release.targetCommitish ?? '')
+        ? (release.targetCommitish as string)
+        : tagRevisions.get(release.tagName);
+    if (!revision) {
+        return { ok: false, reason: 'tag commit unavailable' };
+    }
+
+    const { versionParts } = build;
+    const engineVersion = formatEngineVersion(versionParts);
+    const tagVersion = `${engineVersion}.${release.tagName}`;
+    const version =
+        !build.versionFromTag && FORK_VERSION_PATTERN.test(tagVersion)
+            ? tagVersion
+            : `${engineVersion}.${revision.slice(0, 9)}`;
+
+    const releaseId = `${source.id}:${release.tagName}`;
+    const assetsByFlavor = new Map<EditorCatalogFlavor, EditorCatalogAsset[]>();
+    const targets = new Set<string>();
+    for (const { asset, apiUrl, digest, target } of build.archives) {
+        const assets = assetsByFlavor.get(target.flavor) ?? [];
+        for (const architecture of target.architectures) {
+            const key = `${target.flavor}:${target.platform}:${architecture}`;
+            if (targets.has(key)) {
+                continue;
+            }
+            targets.add(key);
+            assets.push({
+                id: `${releaseId}:${target.flavor}:${asset.id}:${target.platform}:${architecture}`,
+                name: asset.name,
+                downloadUrl: apiUrl,
+                digest,
+                platform: target.platform,
+                architecture,
+            });
+        }
+        assetsByFlavor.set(target.flavor, assets);
+    }
+
+    const templateAssets = release.assets.flatMap(
+        (asset): ExportTemplateAsset[] => {
+            if (!asset.apiUrl || !isExportTemplatesAssetName(asset.name)) {
+                return [];
+            }
+            const flavor = getExportTemplatesFlavor(asset.name);
+            const templateIdentity = getEngineVersionTemplateIdentity(
+                version,
+                flavor === 'dotnet',
+            );
+            const digest = normalizeGithubAssetDigest(asset.digest);
+            return templateIdentity
+                ? [
+                      {
+                          id: `${releaseId}:templates:${asset.id}`,
+                          name: asset.name,
+                          flavor,
+                          downloadUrl: asset.apiUrl,
+                          sizeBytes: asset.size ?? 0,
+                          ...(digest ? { digest } : {}),
+                          templateIdentity,
+                      },
+                  ]
+                : [];
+        },
+    );
+
+    return {
+        ok: true,
+        release: {
+            id: releaseId,
+            sourceReleaseId: String(release.id),
+            providerId: source.id,
+            tag: release.tagName,
+            version,
+            baseVersion: `${versionParts.major}.${versionParts.minor}`,
+            name: release.name?.trim() || release.tagName,
+            publishedAt: normalizePublishedAt(release.publishedAt),
+            prerelease: release.prerelease || versionParts.channel !== 'stable',
+            versionParts,
+            variants: [...assetsByFlavor.entries()].map(([flavor, assets]) => ({
+                id: `${releaseId}:${flavor}`,
+                flavor,
+                assets,
+            })),
+            ...(templateAssets.length > 0 ? { templateAssets } : {}),
+            fork: {
+                sourceId: source.id,
+                source: `${source.owner}/${source.repo}`,
+                revision,
+            },
+        },
+    };
 }

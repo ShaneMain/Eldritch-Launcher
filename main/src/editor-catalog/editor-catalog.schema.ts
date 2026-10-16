@@ -71,7 +71,7 @@ export const EditorCatalogReleaseSchema = z.object({
             sourceId: EditorCatalogProviderIdSchema,
             source: z.string().regex(/^[^/\s]+\/[^/\s]+$/),
             revision: Sha40Schema,
-            upstreamBase: Sha40Schema,
+            upstreamBase: Sha40Schema.optional(),
         })
         .optional(),
 });

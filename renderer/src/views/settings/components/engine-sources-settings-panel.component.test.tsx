@@ -111,4 +111,16 @@ describe('EngineSourcesPanelView', () => {
     it('renders no add-source error without a failure', () => {
         expect(renderPanel()).not.toContain('addEngineSourceError');
     });
+
+    it('invites adding a fork when only built-in sources exist', () => {
+        const html = renderPanel({ sources: [officialStable] });
+
+        expect(html).toContain('engineSourcesNoForks');
+        expect(html).toContain('settings.noForks');
+        expect(html).toContain('addEngineSourceForm');
+    });
+
+    it('hides the no-forks hint once a fork is configured', () => {
+        expect(renderPanel()).not.toContain('engineSourcesNoForks');
+    });
 });
