@@ -271,9 +271,6 @@
             "title": "Ligar o GitHub",
             "reconnect": "Voltar a ligar o GitHub",
             "description": "Liga o GitHub para continuares. O teu trabalho atual será mantido.",
-            "browserDescription": "Continua no navegador para autorizar o acesso e depois volta aqui.",
-            "continueInBrowser": "Continuar no navegador",
-            "waiting": "Conclui a ligação no navegador e volta aqui.",
             "refreshRepositories": "Atualizar repositórios",
             "accessDescription": "Gira o acesso aos repositórios no GitHub ou adicione outra conta e, em seguida, atualize a lista de repositórios."
         },
@@ -330,12 +327,7 @@
             "title": "Desligar {{connection}}?",
             "description": "Isto remove a ligação do Godot Launcher. Não desinstala a aplicação GitHub nem altera os remotos dos projetos.",
             "finalDescription": "Isto remove a ligação deste dispositivo. Não desinstala a aplicação GitHub nem altera o acesso aos repositórios ou os remotos dos projetos.",
-            "revokeAllDevices": "Revogar também esta autorização do GitHub em todos os dispositivos com o Godot Launcher.",
-            "revokeDetail": "Os outros dispositivos com o Godot Launcher ligados a esta conta do GitHub terão de voltar a ligar-se.",
-            "localOnlyWarning": "O acesso ao GitHub continuará ativo noutros dispositivos, e os tokens copiados permanecerão válidos até expirarem ou serem revogados.",
-            "failureDetail": "Não foi possível remover a ligação. A credencial local foi mantida. Tente novamente.",
-            "revokeAction": "Revogar e desligar",
-            "localOnlyAction": "Desligar este dispositivo"
+            "failureDetail": "Não foi possível remover a ligação. A credencial local foi mantida. Tente novamente."
         },
         "credentialStorage": {
             "configure": "Configurar armazenamento",

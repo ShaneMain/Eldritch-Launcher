@@ -1,5 +1,6 @@
 import type {
     AppIntegrationActionResult,
+    AppIntegrationConfigurationIssue,
     AppIntegrationSummary,
 } from '@shared/contracts';
 
@@ -95,4 +96,30 @@ export function getGitHubConnectionFlowState(
         return 'installing';
     if (hasUsableGitHubConnection(result.integration)) return 'completed';
     return 'error';
+}
+
+/**
+ * Selects the message explaining why GitHub cannot be connected in this build.
+ *
+ * @param issue - Missing GitHub App configuration.
+ * @returns The `githubAuth` translation key.
+ */
+export function gitHubConfigurationIssueKey(
+    issue: AppIntegrationConfigurationIssue,
+): string {
+    return issue === 'client-id-missing'
+        ? 'githubAuth:configuration.clientIdMissing'
+        : 'githubAuth:configuration.appSlugMissing';
+}
+
+/**
+ * Formats the time left on a device code as `m:ss`.
+ *
+ * @param remainingMs - Milliseconds until the code expires.
+ * @returns The countdown text, never negative.
+ */
+export function formatDeviceCodeRemaining(remainingMs: number): string {
+    const totalSeconds = Math.max(0, Math.ceil(remainingMs / 1_000));
+    const seconds = totalSeconds % 60;
+    return `${Math.floor(totalSeconds / 60)}:${seconds < 10 ? '0' : ''}${seconds}`;
 }

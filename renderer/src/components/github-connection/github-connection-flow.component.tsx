@@ -15,11 +15,14 @@ import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppIntegrations } from '../../hooks/app-integrations.hook';
+import { subscribeAppEvent } from '../../renderer.bridge.ts';
 import {
     GitHubConnectionFlowSessionGuard,
     type GitHubConnectionFlowState,
     getGitHubConnectionFlowState,
+    gitHubConfigurationIssueKey,
 } from './github-connection-flow.model';
+import { GitHubDeviceCode } from './github-device-code.component';
 
 export type GitHubConnectionFlowProps = {
     onConnected: () => void;
@@ -54,7 +57,7 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
     autoStart = false,
     plainError = false,
 }) => {
-    const { t } = useTranslation(['settings', 'common']);
+    const { t } = useTranslation(['settings', 'common', 'githubAuth']);
     const {
         connect,
         finishConnections,
@@ -92,6 +95,9 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
     const onCancelRef = useRef(onCancel);
     onConnectedRef.current = onConnected;
     onCancelRef.current = onCancel;
+    const stateRef = useRef(state);
+    stateRef.current = state;
+    const configurationIssue = integration?.configurationIssue ?? null;
 
     /** Cancels this flow's pending provider session once. */
     const cancelOwnedSession = useCallback(() => {
@@ -116,6 +122,22 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
             cancelOwnedSession();
         };
     }, [cancelOwnedSession]);
+
+    // The connect call stays pending until GitHub approves the code, so the
+    // code itself arrives as a pushed summary while authorising.
+    useEffect(
+        () =>
+            subscribeAppEvent('app-integration-updated', (summary) => {
+                if (
+                    summary.id === 'github' &&
+                    mountedRef.current &&
+                    stateRef.current === 'authorising'
+                ) {
+                    setIntegration(summary);
+                }
+            }),
+        [],
+    );
 
     useEffect(() => {
         let active = true;
@@ -375,6 +397,7 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
                     disabled={
                         loadingInitialState ||
                         busy ||
+                        configurationIssue !== null ||
                         (showReconnectChoices && !selectedReconnectId)
                     }
                     onClick={handleStart}
@@ -384,12 +407,8 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
                             ? 'connections.flow.reconnect'
                             : showAccessManagement
                               ? 'connections.flow.addAccount'
-                              : 'connections.flow.continueInBrowser',
+                              : 'githubAuth:getCode',
                     )}
-                    <ExternalLink
-                        className="size-3.5 shrink-0 opacity-45"
-                        aria-hidden="true"
-                    />
                 </button>
             )}
             {state === 'intro' && showAccessManagement && (
@@ -446,7 +465,7 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
                     {!showAccessManagement && !showReconnectChoices && (
                         <>
                             <p className="text-base-content/75">
-                                {t('connections.flow.browserDescription')}
+                                {t('githubAuth:intro')}
                             </p>
                             <div className="flex items-start gap-2 text-base-content/75">
                                 <ShieldCheck
@@ -459,6 +478,14 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
                                 </span>
                             </div>
                         </>
+                    )}
+                    {configurationIssue && (
+                        <p
+                            className="alert alert-warning alert-soft text-base"
+                            role="alert"
+                        >
+                            {t(gitHubConfigurationIssueKey(configurationIssue))}
+                        </p>
                     )}
                     {accessFailure && (
                         <p
@@ -522,17 +549,16 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
                                 <button
                                     type="button"
                                     className="btn btn-link h-auto min-h-0 p-0 text-base font-normal"
-                                    disabled={busy || loadingInitialState}
+                                    disabled={
+                                        busy ||
+                                        loadingInitialState ||
+                                        configurationIssue !== null
+                                    }
                                     onClick={handleConnectAnother}
                                 >
                                     {t(
                                         'connections.flow.connectAnotherAccount',
                                     )}
-                                    <ExternalLink
-                                        size={16}
-                                        className="shrink-0 opacity-45"
-                                        aria-hidden="true"
-                                    />
                                 </button>
                             </div>
                             <div
@@ -594,7 +620,11 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
                 </>
             )}
 
-            {state === 'authorising' && <WaitingState t={t} />}
+            {state === 'authorising' && (
+                <GitHubDeviceCode
+                    authorization={integration?.deviceAuthorization ?? null}
+                />
+            )}
 
             {state === 'saving' && (
                 <div className="flex items-center gap-3" role="status">
@@ -615,7 +645,12 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
                 />
             )}
 
-            {state === 'installing' && <WaitingState t={t} />}
+            {state === 'installing' && (
+                <div className="flex items-start gap-3" role="status">
+                    <span className="loading loading-spinner loading-sm mt-0.5" />
+                    <p>{t('githubAuth:installing')}</p>
+                </div>
+            )}
 
             {state === 'error' && (
                 <p
@@ -648,28 +683,11 @@ const emptyGitHubIntegration: AppIntegrationSummary = {
     displayName: 'GitHub',
     state: 'not-connected',
     connectionStage: null,
+    configurationIssue: null,
+    deviceAuthorization: null,
     connections: [],
     connectionOptions: [],
 };
-
-type WaitingStateProps = {
-    t: (key: string) => string;
-};
-
-/**
- * Explains that the user must finish the provider-owned browser step.
- *
- * @param props - Translation helper.
- * @returns A browser-waiting status.
- */
-const WaitingState: React.FC<WaitingStateProps> = ({ t }) => (
-    <>
-        <div className="flex items-start gap-3" role="status">
-            <span className="loading loading-spinner loading-sm mt-0.5" />
-            <p>{t('connections.flow.waiting')}</p>
-        </div>
-    </>
-);
 
 type ConnectionChooserProps = {
     integration: AppIntegrationSummary;
@@ -855,9 +873,17 @@ function errorTranslationKey(
         case 'account-mismatch':
             return 'connections.errors.accountMismatch';
         case 'denied':
-            return 'connections.errors.denied';
+            return 'githubAuth:errors.denied';
         case 'timed-out':
-            return 'connections.errors.timedOut';
+            return 'githubAuth:errors.expired';
+        case 'device-flow-disabled':
+            return 'githubAuth:errors.deviceFlowDisabled';
+        case 'network-error':
+            return 'githubAuth:errors.network';
+        case 'provider-unavailable':
+            return 'githubAuth:errors.unavailable';
+        case 'not-configured':
+            return 'githubAuth:errors.notConfigured';
         case 'secure-storage-unavailable':
             return 'connections.errors.secureStorageUnavailable';
         case 'installation-required':

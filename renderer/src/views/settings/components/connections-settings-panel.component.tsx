@@ -15,6 +15,7 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import githubInvertocatBlack from '../../../assets/icons/github-invertocat-black.svg';
 import githubInvertocatWhite from '../../../assets/icons/github-invertocat-white.svg';
+import { gitHubConfigurationIssueKey } from '../../../components/github-connection/github-connection-flow.model';
 import { Drawer } from '../../../components/ui/drawer/drawer.component';
 import { StatusBadge } from '../../../components/ui/status-badge.component';
 import { Tooltip } from '../../../components/ui/tooltip.component';
@@ -193,6 +194,9 @@ const IntegrationCard: React.FC<IntegrationCardProps> = ({
         0,
     );
     const hasConnections = connectionCount > 0;
+    const connectDisabled =
+        integration.state === 'secure-storage-unavailable' ||
+        integration.configurationIssue !== null;
 
     return (
         <section
@@ -266,6 +270,18 @@ const IntegrationCard: React.FC<IntegrationCardProps> = ({
                                 {t('connections.secureStorageUnavailable')}
                             </p>
                         )}
+                        {integration.configurationIssue && (
+                            <p
+                                className="mt-[8px] text-warning"
+                                data-testid={`app-integration-configuration-${integration.id}`}
+                            >
+                                {t(
+                                    gitHubConfigurationIssueKey(
+                                        integration.configurationIssue,
+                                    ),
+                                )}
+                            </p>
+                        )}
                         {actionError && actionError !== 'cancelled' && (
                             <p className="mt-[8px] text-error" role="alert">
                                 {t(errorTranslationKey(actionError))}
@@ -278,10 +294,7 @@ const IntegrationCard: React.FC<IntegrationCardProps> = ({
                         <button
                             type="button"
                             className="btn btn-primary text-base"
-                            disabled={
-                                integration.state ===
-                                'secure-storage-unavailable'
-                            }
+                            disabled={connectDisabled}
                             onClick={() => onOpenConnection()}
                         >
                             {t('connections.actions.connect', {
@@ -293,10 +306,7 @@ const IntegrationCard: React.FC<IntegrationCardProps> = ({
                         <button
                             type="button"
                             className="btn btn-sm btn-ghost text-base"
-                            disabled={
-                                integration.state ===
-                                'secure-storage-unavailable'
-                            }
+                            disabled={connectDisabled}
                             onClick={() => onOpenConnection()}
                         >
                             <Plus size={15} aria-hidden="true" />
@@ -359,8 +369,9 @@ export const GitHubConnectionsDrawer: React.FC<
     onManageAccess,
     onDisconnect,
 }) => {
-    const storageUnavailable =
-        integration?.state === 'secure-storage-unavailable';
+    const connectDisabled =
+        integration?.state === 'secure-storage-unavailable' ||
+        Boolean(integration?.configurationIssue);
     const { theme, systemTheme } = useTheme();
     const effectiveTheme = (theme ?? 'auto') === 'auto' ? systemTheme : theme;
     const githubIconSrc =
@@ -407,7 +418,7 @@ export const GitHubConnectionsDrawer: React.FC<
                     <button
                         type="button"
                         className="btn btn-sm btn-ghost text-base"
-                        disabled={storageUnavailable}
+                        disabled={connectDisabled}
                         onClick={() => onOpenConnection()}
                     >
                         <Plus size={15} aria-hidden="true" />
@@ -440,7 +451,7 @@ export const GitHubConnectionsDrawer: React.FC<
                                 <button
                                     type="button"
                                     className="btn btn-primary text-base"
-                                    disabled={storageUnavailable}
+                                    disabled={connectDisabled}
                                     onClick={() =>
                                         onOpenConnection(connection.id)
                                     }

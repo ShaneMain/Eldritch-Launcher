@@ -271,9 +271,6 @@
             "title": "连接 GitHub",
             "reconnect": "重新连接 GitHub",
             "description": "连接 GitHub 以继续。当前工作将会保留。",
-            "browserDescription": "在浏览器中继续以授权访问，然后返回此处。",
-            "continueInBrowser": "在浏览器中继续",
-            "waiting": "在浏览器中完成连接，然后返回此处。",
             "refreshRepositories": "刷新仓库",
             "accessDescription": "在 GitHub 上管理仓库访问权限，或添加其他账户，然后刷新仓库列表。"
         },
@@ -330,12 +327,7 @@
             "title": "断开 {{connection}} 的连接？",
             "description": "这会从 Godot Launcher 中移除连接，但不会卸载 GitHub 应用，也不会更改任何项目的远程仓库。",
             "finalDescription": "这会从此设备移除连接，但不会卸载 GitHub 应用，也不会更改仓库访问权限或项目的远程仓库。",
-            "revokeAllDevices": "同时撤销所有 Godot Launcher 设备上的此 GitHub 授权。",
-            "revokeDetail": "连接到此 GitHub 帐户的其他 Godot Launcher 设备需要重新连接。",
-            "localOnlyWarning": "其他设备上的 GitHub 访问权限仍然有效，任何已复制的令牌在过期或被撤销前仍可使用。",
-            "failureDetail": "无法移除连接。本地凭据已保留。请重试。",
-            "revokeAction": "撤销并断开连接",
-            "localOnlyAction": "仅断开此设备"
+            "failureDetail": "无法移除连接。本地凭据已保留。请重试。"
         },
         "credentialStorage": {
             "configure": "配置存储",

@@ -230,7 +230,7 @@ test('connects GitHub in place and preserves the project form after cancellation
     await connect.click();
     const dialog = mainPage.getByRole('dialog', { name: 'Connect GitHub', exact: true });
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole('button', { name: 'Continue in browser' })).toBeEnabled();
+    await expect(dialog.getByRole('button', { name: 'Get sign-in code' })).toBeEnabled();
     const outputDirectory = path.resolve(process.cwd(), '.internal-docs', 'shared-github-connection');
     await fs.mkdir(outputDirectory, { recursive: true });
     await mainPage.screenshot({ path: path.join(outputDirectory, 'create-project-dark.png') });
@@ -240,7 +240,7 @@ test('connects GitHub in place and preserves the project form after cancellation
     await expect(mainPage.getByTestId('inputProjectName')).toHaveValue('Preserved Game');
     await expect(editor).toHaveText(editorBefore ?? '');
     await connect.click();
-    await dialog.getByRole('button', { name: 'Continue in browser' }).click();
+    await dialog.getByRole('button', { name: 'Get sign-in code' }).click();
     await expect(dialog.getByText('fixture-user', { exact: true })).toBeVisible();
     const list = dialog.getByTestId('github-connection-options');
     const footer = dialog.locator('footer');
@@ -273,8 +273,8 @@ test('ignores a late browser response after cancelling and reopening connection'
     const connect = mainPage.getByRole('button', { name: 'Connect GitHub', exact: true });
     await connect.click();
     const dialog = mainPage.getByRole('dialog', { name: 'Connect GitHub', exact: true });
-    await dialog.getByRole('button', { name: 'Continue in browser' }).click();
-    await expect(dialog.getByText('Complete the connection in your browser, then return here.')).toBeVisible();
+    await dialog.getByRole('button', { name: 'Get sign-in code' }).click();
+    await expect(dialog.getByText('Requesting a sign-in code from GitHub...')).toBeVisible();
     await mainPage.keyboard.press('Escape');
     await expect(dialog).not.toBeVisible();
     await connect.click();
@@ -282,7 +282,7 @@ test('ignores a late browser response after cancelling and reopening connection'
         const state = globalThis as typeof globalThis & { __releaseConnection?: () => void };
         state.__releaseConnection?.();
     });
-    await expect(dialog.getByRole('button', { name: 'Continue in browser' })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Get sign-in code' })).toBeVisible();
     await expect(dialog.getByRole('checkbox')).toHaveCount(0);
     await mainPage.keyboard.press('Escape');
     await expect(mainPage.getByTestId('inputProjectName')).toHaveValue('Cancelled Connection Game');
@@ -321,7 +321,7 @@ test('uses the shared connection dialog from Settings', async () => {
         await mainPage.getByTestId('btnConnections').click();
         await card.getByRole('button', { name: 'Connect GitHub', exact: true }).click();
         await expect(dialog).toBeVisible();
-        await expect(dialog.getByRole('button', { name: 'Continue in browser' })).toBeEnabled();
+        await expect(dialog.getByRole('button', { name: 'Get sign-in code' })).toBeEnabled();
         await mainPage.screenshot({ path: path.join(outputDirectory, `settings-${theme.name}.png`) });
         await mainPage.keyboard.press('Escape');
         await expect(dialog).not.toBeVisible();
@@ -333,7 +333,7 @@ test('uses the shared connection dialog from Settings', async () => {
             .getByRole('button', { name: 'Connect GitHub', exact: true })
             .click();
         await dialog
-            .getByRole('button', { name: 'Continue in browser' })
+            .getByRole('button', { name: 'Get sign-in code' })
             .click();
         await dialog.getByRole('checkbox', { name: /fixture-user/ }).locator('..').click();
         await mainPage.screenshot({
@@ -347,11 +347,11 @@ test('uses the shared connection dialog from Settings', async () => {
         await expect(dialog).not.toBeVisible();
     }
     await card.getByRole('button', { name: 'Connect GitHub', exact: true }).click();
-    await dialog.getByRole('button', { name: 'Continue in browser' }).click();
+    await dialog.getByRole('button', { name: 'Get sign-in code' }).click();
     await dialog.getByRole('checkbox', { name: /fixture-user/ }).locator('..').click();
     await dialog.getByRole('button', { name: /Connect selected/i }).click();
     await expect(dialog.getByRole('status')).toHaveText('Connecting...');
-    await expect(dialog.getByText('Complete the connection in your browser, then return here.')).toHaveCount(0);
+    await expect(dialog.getByText('Requesting a sign-in code from GitHub...')).toHaveCount(0);
     await electronApp.evaluate(() => {
         (globalThis as typeof globalThis & { __releaseSelectionSave?: () => void }).__releaseSelectionSave?.();
     });
@@ -394,7 +394,7 @@ test('uses the shared connection dialog from Settings', async () => {
     });
     await management.getByRole('button', { name: 'Add connection', exact: true }).click();
     await expect(dialog).toBeVisible();
-    await dialog.getByRole('button', { name: 'Continue in browser' }).focus();
+    await dialog.getByRole('button', { name: 'Get sign-in code' }).focus();
     await mainPage.keyboard.press('Tab');
     expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true);
     await mainPage.keyboard.press('Escape');
@@ -422,6 +422,7 @@ async function stubSharedConnection(deferConnection = false, expiredConnection =
             id: 'github', displayName: 'GitHub', state: 'not-connected',
             connectionStage: null as string | null,
             connections: [] as unknown[], connectionOptions: [] as unknown[],
+            configurationIssue: null, deviceAuthorization: null,
         };
         if (expiredConnection) {
             summary.state = 'reauthorisation-required';

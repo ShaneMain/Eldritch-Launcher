@@ -22,7 +22,7 @@ type AppIntegrationDisconnectConfirmProps = {
 /**
  * Selects the warning and action label for one revocation choice.
  *
- * @param revokeAuthorisation - Whether the remote GitHub grant will be revoked.
+ * @param revokeAuthorisation - Whether GitHub's revocation page will be opened.
  * @param copy - Localised confirmation copy.
  * @returns The matching detail and destructive action label.
  */

@@ -271,9 +271,6 @@
             "title": "Qabbad GitHub",
             "reconnect": "Erġa' qabbad GitHub",
             "description": "Qabbad GitHub biex tkompli. Ix-xogħol attwali tiegħek se jinżamm.",
-            "browserDescription": "Kompli fil-browser biex tawtorizza l-aċċess, imbagħad erġa' lura hawn.",
-            "continueInBrowser": "Kompli fil-browser",
-            "waiting": "Imla l-konnessjoni fil-browser, imbagħad erġa' lura hawn.",
             "refreshRepositories": "Aġġorna r-repożitorji",
             "accessDescription": "Immaniġġja l-aċċess għar-repożitorji fuq GitHub jew żid kont ieħor, imbagħad aġġorna l-lista tar-repożitorji."
         },
@@ -330,12 +327,7 @@
             "title": "Tiskonnettja {{connection}}?",
             "description": "Dan ineħħi l-konnessjoni minn Godot Launcher. Ma jneħħix l-app GitHub u ma jibdilx ir-remotes tal-proġetti.",
             "finalDescription": "Dan ineħħi l-konnessjoni minn dan l-apparat. Ma jneħħix l-app GitHub, ma jibdilx l-aċċess għar-repożitorji jew ir-remotes tal-proġetti.",
-            "revokeAllDevices": "Irrevoka wkoll din l-awtorizzazzjoni ta' GitHub fuq l-apparati kollha ta' Godot Launcher.",
-            "revokeDetail": "Apparati oħra ta' Godot Launcher konnessi ma' dan il-kont ta' GitHub ikollhom jerġgħu jikkonnettjaw.",
-            "localOnlyWarning": "L-aċċess għal GitHub jibqa' attiv fuq apparati oħra, u tokens ikkupjati jibqgħu validi sakemm jiskadu jew jiġu rrevokati.",
-            "failureDetail": "Il-konnessjoni ma setgħetx titneħħa. Il-kredenzjali lokali nżammu. Erġa' pprova.",
-            "revokeAction": "Irrevoka u skonnettja",
-            "localOnlyAction": "Skonnettja dan l-apparat"
+            "failureDetail": "Il-konnessjoni ma setgħetx titneħħa. Il-kredenzjali lokali nżammu. Erġa' pprova."
         },
         "credentialStorage": {
             "configure": "Ikkonfigura l-ħażna",

@@ -1044,7 +1044,7 @@ test('GitHub import connects in the existing modal and refreshes repositories', 
     await expect(modal).not.toBeVisible();
     await mainPage.getByTestId('btnProjectAdd').click();
     await mainPage.getByTestId('btnAddProjectGitHub').click();
-    await modal.locator('footer').getByRole('button', { name: 'Continue in browser' }).click();
+    await modal.locator('footer').getByRole('button', { name: 'Get sign-in code' }).click();
     const list = modal.getByTestId('github-connection-options');
     await expect(list).toBeVisible();
     const footer = modal.locator('footer');
@@ -1655,6 +1655,8 @@ async function stubGitHubImportConnection(): Promise<void> {
                 },
             ],
             connectionOptions: [],
+            configurationIssue: null,
+            deviceAuthorization: null,
         });
 
         ipcMain.removeHandler('appIntegrations.listIntegrations');

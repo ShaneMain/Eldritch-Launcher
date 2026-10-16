@@ -322,6 +322,8 @@ function createIsolatedLaunchEnvironment(
         XDG_STATE_HOME: path.join(homeDir, '.local', 'state'),
         GODOT_LAUNCHER_E2E_FIXTURES: '1',
         GODOT_LAUNCHER_E2E_HOME_DIR: homeDir,
+        ELDRITCH_LAUNCHER_GITHUB_CLIENT_ID: 'Iv1.e2efixture',
+        ELDRITCH_LAUNCHER_GITHUB_APP_SLUG: 'eldritch-launcher-e2e',
     };
     delete launchEnvironment.ELECTRON_RUN_AS_NODE;
     return launchEnvironment;

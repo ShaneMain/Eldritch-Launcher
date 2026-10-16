@@ -36,6 +36,8 @@ const github: AppIntegrationSummary = {
     connectionStage: null,
     connections: [],
     connectionOptions: [],
+    configurationIssue: null,
+    deviceAuthorization: null,
 };
 
 describe('useAppIntegrations', () => {
