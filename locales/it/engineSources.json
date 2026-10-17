@@ -2,6 +2,7 @@
     "title": "Engine sources",
     "errors": {
         "authRequired": "Sign in to GitHub in Settings → Connections to use builds from {{source}}.",
+        "noAccess": "Your GitHub sign-in cannot access {{source}}. Install the Eldritch Launcher GitHub App on {{owner}} and give it access to the repository, then try again.",
         "sourceUnavailable": "Engine source {{source}} is not configured.",
         "integrityUnavailable": "Build {{name}} has no SHA-256 digest; refusing to install."
     },
@@ -15,12 +16,14 @@
         "state": {
             "ok": "Up to date",
             "authRequired": "Sign-in required",
+            "noAccess": "No access",
             "error": "Refresh failed",
             "pending": "Not refreshed yet"
         },
         "lastRefreshed": "Refreshed {{age}}",
         "neverRefreshed": "Never refreshed",
-        "authRequiredHint": "Sign in to GitHub in Settings → Connections to list builds from this source.",
+        "buildCount_one": "{{count}} build",
+        "buildCount_other": "{{count}} builds",
         "refresh": "Refresh",
         "removeConfirm": {
             "title": "Remove {{name}}?",
@@ -36,15 +39,23 @@
             "errors": {
                 "invalid": "Enter a valid GitHub owner and repository name.",
                 "duplicate": "This repository is already an engine source.",
-                "notFound": "The repository was not found. Check the owner and name, or sign in to GitHub if it is private.",
                 "authRequired": "This repository is private. Sign in to GitHub in Settings → Connections, then try again.",
+                "noAccess": "No repository at this address is visible to your GitHub sign-in. Check the URL. If the repository is private, install the Eldritch Launcher GitHub App on its owner with access to the repository, then try again.",
                 "network": "GitHub could not be reached. Check your connection and try again."
             }
         }
     },
+    "access": {
+        "authRequired": "{{source}} is private. Sign in to GitHub to list its builds. If they still don't appear, install the Eldritch Launcher GitHub App on {{owner}} with access to the repository.",
+        "noAccess": "Your GitHub sign-in cannot see {{source}}. Install the Eldritch Launcher GitHub App on {{owner}} and give it access to the repository; its builds appear the next time you open this list.",
+        "signIn": "Sign in to GitHub",
+        "installApp": "Install GitHub App on {{owner}}",
+        "installAppAnywhere": "Install GitHub App"
+    },
     "drawer": {
-        "authRequired": "This source requires a GitHub login. Sign in to GitHub in Settings → Connections to list its builds.",
         "empty": "No builds found for this source.",
+        "emptyHint": "{{source}} has no GitHub releases with Godot editor builds that Eldritch Launcher can install.",
+        "noHostBuilds": "{{source}} publishes no build for this computer.",
         "noPlatformBuild": "No build for this platform"
     },
     "installs": {
@@ -62,6 +73,8 @@
         "updateFailed": "Could not update the engine pin",
         "authRequired": "Engine: auth required",
         "authRequiredTooltip": "Sign in to GitHub in Settings → Connections to check {{source}}.",
+        "noAccess": "Engine: no access",
+        "noAccessTooltip": "Your GitHub sign-in cannot access {{source}}. Install the Eldritch Launcher GitHub App on its owner with access to the repository.",
         "unavailable": "Engine status unavailable",
         "errorTooltip": "Could not check {{source}}: {{message}}",
         "unknownSourceTooltip": "Engine source {{source}} is not configured. Add it in Settings → Engine sources.",

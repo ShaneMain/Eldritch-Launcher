@@ -85,13 +85,14 @@ export function mapEditorCatalogResult(
         forkReleases: result.releases
             .filter((release) => release.fork)
             .map(mapEditorCatalogRelease),
-        // Fork sources waiting for a GitHub login are shown by the engine
+        // Fork sources blocked by GitHub access are explained by the engine
         // sources UI, not as a generic catalog failure.
         refreshError: result.providers.find(
             (provider) =>
                 provider.refreshError &&
                 !(
-                    provider.state === 'auth-required' &&
+                    (provider.state === 'auth-required' ||
+                        provider.state === 'no-access') &&
                     OFFICIAL_PROVIDER_IDS[provider.id] !== true
                 ),
         )?.refreshError,

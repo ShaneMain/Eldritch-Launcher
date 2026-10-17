@@ -80,6 +80,9 @@ vi.mock('../../hooks/release.hook', () => ({
     useRelease: () => ({
         availableReleases: [],
         availablePrereleases: [],
+        forkReleases: [],
+        catalogProviders: [],
+        reloadReleases: async () => undefined,
         releaseInstallProgress: [],
         loading: false,
         hasError: undefined,

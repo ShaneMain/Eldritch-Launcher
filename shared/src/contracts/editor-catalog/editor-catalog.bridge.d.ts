@@ -71,8 +71,16 @@ export type EditorCatalogRelease = {
     fork?: EditorCatalogForkBuild;
 };
 
-/** Reports whether a provider's latest refresh succeeded. */
-export type EditorCatalogProviderHealth = 'ok' | 'auth-required' | 'error';
+/**
+ * Reports whether a provider's latest refresh succeeded. `auth-required`
+ * means no usable GitHub login; `no-access` means the signed-in account,
+ * through the GitHub App, cannot see the repository.
+ */
+export type EditorCatalogProviderHealth =
+    | 'ok'
+    | 'auth-required'
+    | 'no-access'
+    | 'error';
 
 /** Reports the cache state of one catalog provider. */
 export type EditorCatalogProviderStatus = {

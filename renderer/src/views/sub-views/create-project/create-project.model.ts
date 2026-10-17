@@ -21,6 +21,10 @@ import {
     resolveGitIdentityDecision,
     resolveGitIdentitySave,
 } from '../../../git-identity.model';
+import {
+    type ForkEngineHost,
+    toHostRelease,
+} from '../../../hooks/fork-engine-channels.model';
 import { sortReleases } from '../../../release-sorting.util';
 
 export const OVERWRITE_PATH_CHECK_DEBOUNCE_MS = 200;
@@ -210,6 +214,34 @@ export function getCreateProjectCatalogueVariants(
             variantKeys.add(variant.key);
             return true;
         });
+}
+
+/**
+ * Builds the selectable variants of one fork source. Fork sources may
+ * publish only some platforms, so only builds that run on the host are
+ * offered, and builds older than the project's Godot major version are not.
+ *
+ * @param releases - Builds published by the fork source.
+ * @param host - Current platform and architecture.
+ * @param minimumMajorVersion - Oldest Godot major version to offer.
+ * @param search - Optional version, name, or tag search.
+ * @returns Newest-first variants with a host install asset.
+ */
+export function getCreateProjectForkVariants(
+    releases: ReleaseSummary[],
+    host: ForkEngineHost,
+    minimumMajorVersion: number,
+    search: string,
+): CreateProjectCatalogueVariant[] {
+    return getCreateProjectCatalogueVariants(
+        releases
+            .filter(
+                (release) =>
+                    Math.trunc(release.version_number) >= minimumMajorVersion,
+            )
+            .map((release) => toHostRelease(release, host)),
+        search,
+    );
 }
 
 /**

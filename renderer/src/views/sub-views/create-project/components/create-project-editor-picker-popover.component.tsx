@@ -6,7 +6,9 @@ import clsx from 'clsx';
 import type React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ForkSourceAccessNotice } from '../../../../components/fork-source-access-notice.component';
 import { SearchField } from '../../../../components/ui/search-field.component';
+import type { ForkEngineChannel } from '../../../../hooks/fork-engine-channels.model';
 import type {
     CreateProjectCatalogueVariant,
     CreateProjectEditorSelection,
@@ -27,6 +29,12 @@ type CreateProjectEditorPickerPopoverProps = {
     open: boolean;
     tab: CreateProjectEditorPickerTab;
     channel: CreateProjectEditorPickerChannel;
+    /** Fork engine sources offered as extra channels. */
+    forkChannels: ForkEngineChannel[];
+    /** Selected fork channel, replacing the official channel. */
+    forkChannel: ForkEngineChannel | undefined;
+    /** Whether the host platform used to filter fork builds is known. */
+    hostKnown: boolean;
     search: string;
     installedRows: CreateProjectReleaseRow[];
     installedReleases: InstalledRelease[];
@@ -39,6 +47,7 @@ type CreateProjectEditorPickerPopoverProps = {
     selection: CreateProjectEditorSelection | null;
     onTabChange: (tab: CreateProjectEditorPickerTab) => void;
     onChannelChange: (channel: CreateProjectEditorPickerChannel) => void;
+    onForkChannelChange: (channelId: string) => void;
     onSearchChange: (search: string) => void;
     onSelectionChange: (selection: CreateProjectEditorSelection) => void;
     onCancelInstall: (jobId: string) => void;
@@ -66,6 +75,9 @@ export const CreateProjectEditorPickerPopover: React.FC<
     open,
     tab,
     channel,
+    forkChannels,
+    forkChannel,
+    hostKnown,
     search,
     installedRows,
     installedReleases,
@@ -78,6 +90,7 @@ export const CreateProjectEditorPickerPopover: React.FC<
     selection,
     onTabChange,
     onChannelChange,
+    onForkChannelChange,
     onSearchChange,
     onSelectionChange,
     onCancelInstall,
@@ -85,7 +98,12 @@ export const CreateProjectEditorPickerPopover: React.FC<
     onKeyDown,
     registerInstalledOption,
 }) => {
-    const { t } = useTranslation(['createProject', 'installEditor']);
+    const { t } = useTranslation([
+        'createProject',
+        'installEditor',
+        'engineSources',
+    ]);
+    const forkAccess = forkChannel?.access;
     const catalogueGroups = useMemo(
         () => groupCreateProjectCatalogueVariants(catalogueVariants),
         [catalogueVariants],
@@ -226,9 +244,13 @@ export const CreateProjectEditorPickerPopover: React.FC<
                                     type="button"
                                     role="tab"
                                     data-testid="tabCreateProjectStableEditors"
-                                    aria-selected={channel === 'stable'}
+                                    aria-selected={
+                                        !forkChannel && channel === 'stable'
+                                    }
                                     className={clsx('tab text-base', {
-                                        'tab-active': channel === 'stable',
+                                        'tab-active':
+                                            !forkChannel &&
+                                            channel === 'stable',
                                     })}
                                     onClick={() => onChannelChange('stable')}
                                 >
@@ -238,9 +260,13 @@ export const CreateProjectEditorPickerPopover: React.FC<
                                     type="button"
                                     role="tab"
                                     data-testid="tabCreateProjectPrereleaseEditors"
-                                    aria-selected={channel === 'prerelease'}
+                                    aria-selected={
+                                        !forkChannel && channel === 'prerelease'
+                                    }
                                     className={clsx('tab text-base', {
-                                        'tab-active': channel === 'prerelease',
+                                        'tab-active':
+                                            !forkChannel &&
+                                            channel === 'prerelease',
                                     })}
                                     onClick={() =>
                                         onChannelChange('prerelease')
@@ -248,131 +274,199 @@ export const CreateProjectEditorPickerPopover: React.FC<
                                 >
                                     {t('editorPicker.prereleases')}
                                 </button>
+                                {forkChannels.map((candidate) => (
+                                    <button
+                                        key={candidate.id}
+                                        type="button"
+                                        role="tab"
+                                        data-testid={`tabCreateProjectForkEditors_${candidate.id}`}
+                                        aria-selected={
+                                            forkChannel?.id === candidate.id
+                                        }
+                                        className={clsx('tab text-base', {
+                                            'tab-active':
+                                                forkChannel?.id ===
+                                                candidate.id,
+                                        })}
+                                        onClick={() =>
+                                            onForkChannelChange(candidate.id)
+                                        }
+                                    >
+                                        {candidate.label}
+                                    </button>
+                                ))}
                             </div>
                         </div>
 
-                        {(catalogueError || retryingCatalogue) && (
-                            <div
-                                className="alert alert-warning alert-soft shrink-0 text-warning-content dark:text-warning"
-                                data-testid="createProjectEditorCatalogueError"
-                                role="alert"
-                            >
-                                <span>
-                                    {hasCachedCatalogueReleases
-                                        ? t('editorPicker.refreshFailed')
-                                        : t('editorPicker.loadFailed')}
-                                </span>
-                                <button
-                                    type="button"
-                                    className="btn btn-sm btn-ghost text-base"
-                                    data-testid="btnRetryCreateProjectEditorCatalogue"
-                                    disabled={retryingCatalogue}
-                                    onClick={() => void onRetryCatalogue()}
+                        {!forkChannel &&
+                            (catalogueError || retryingCatalogue) && (
+                                <div
+                                    className="alert alert-warning alert-soft shrink-0 text-warning-content dark:text-warning"
+                                    data-testid="createProjectEditorCatalogueError"
+                                    role="alert"
                                 >
-                                    {retryingCatalogue
-                                        ? t('editorPicker.retrying')
-                                        : t('editorPicker.retry')}
-                                </button>
+                                    <span>
+                                        {hasCachedCatalogueReleases
+                                            ? t('editorPicker.refreshFailed')
+                                            : t('editorPicker.loadFailed')}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-ghost text-base"
+                                        data-testid="btnRetryCreateProjectEditorCatalogue"
+                                        disabled={retryingCatalogue}
+                                        onClick={() => void onRetryCatalogue()}
+                                    >
+                                        {retryingCatalogue
+                                            ? t('editorPicker.retrying')
+                                            : t('editorPicker.retry')}
+                                    </button>
+                                </div>
+                            )}
+
+                        {forkChannel &&
+                        (forkAccess?.kind === 'auth-required' ||
+                            forkAccess?.kind === 'no-access') ? (
+                            <ForkSourceAccessNotice
+                                access={forkAccess}
+                                source={forkChannel.source}
+                            />
+                        ) : (
+                            <div
+                                role="listbox"
+                                aria-labelledby={labelledBy}
+                                data-testid="createProjectEditorCatalogueList"
+                                className="min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pl-1 pr-3"
+                            >
+                                {(forkChannel
+                                    ? !hostKnown
+                                    : loading && !catalogueError) &&
+                                catalogueVariants.length === 0 ? (
+                                    <p
+                                        className="py-4 text-center text-base-content/75"
+                                        role="status"
+                                    >
+                                        {t('editorPicker.loading')}
+                                    </p>
+                                ) : forkChannel &&
+                                  catalogueVariants.length === 0 ? (
+                                    <div
+                                        className="flex flex-col items-center gap-1 px-4 py-4 text-center text-base-content/75"
+                                        data-testid="createProjectForkEditorsEmpty"
+                                    >
+                                        <span>
+                                            {t(
+                                                forkChannel.releases.length ===
+                                                    0
+                                                    ? 'engineSources:drawer.empty'
+                                                    : 'editorPicker.noMatches',
+                                            )}
+                                        </span>
+                                        {forkAccess?.kind === 'error'
+                                            ? forkAccess.message && (
+                                                  <span className="text-sm text-error">
+                                                      {forkAccess.message}
+                                                  </span>
+                                              )
+                                            : !search.trim() && (
+                                                  <span className="text-sm">
+                                                      {t(
+                                                          forkChannel.releases
+                                                              .length === 0
+                                                              ? 'engineSources:drawer.emptyHint'
+                                                              : 'engineSources:drawer.noHostBuilds',
+                                                          {
+                                                              source: forkChannel.source,
+                                                          },
+                                                      )}
+                                                  </span>
+                                              )}
+                                    </div>
+                                ) : catalogueVariants.length === 0 &&
+                                  !catalogueError ? (
+                                    <p className="py-4 text-center text-base-content/75">
+                                        {t('editorPicker.noMatches')}
+                                    </p>
+                                ) : catalogueVariants.length > 0 ? (
+                                    catalogueGroups.map((group) => (
+                                        <fieldset
+                                            key={group.key}
+                                            aria-label={group.key}
+                                            data-testid={`createProjectEditorCatalogueGroup_${group.key}`}
+                                            className="min-w-0 space-y-3 p-0"
+                                        >
+                                            <div
+                                                aria-hidden="true"
+                                                className="px-3 pt-2 pb-1 text-sm font-semibold text-base-content/50"
+                                            >
+                                                {group.key}
+                                            </div>
+                                            {group.variants.map((variant) => {
+                                                const installedRelease =
+                                                    installedReleases.find(
+                                                        (candidate) =>
+                                                            candidate.version ===
+                                                                variant.release
+                                                                    .version &&
+                                                            candidate.mono ===
+                                                                variant.mono &&
+                                                            candidate.valid !==
+                                                                false &&
+                                                            Boolean(
+                                                                candidate.editor_path,
+                                                            ),
+                                                    );
+                                                const progress =
+                                                    releaseInstallProgress.find(
+                                                        (candidate) =>
+                                                            candidate.version ===
+                                                                variant.release
+                                                                    .version &&
+                                                            candidate.mono ===
+                                                                variant.mono,
+                                                    );
+
+                                                return (
+                                                    <CreateProjectEditorOption
+                                                        key={variant.key}
+                                                        kind="catalogue"
+                                                        release={
+                                                            variant.release
+                                                        }
+                                                        mono={variant.mono}
+                                                        optionKey={variant.key}
+                                                        selected={
+                                                            selection?.source ===
+                                                                'catalogue' &&
+                                                            selection.key ===
+                                                                variant.key
+                                                        }
+                                                        installedRelease={
+                                                            installedRelease
+                                                        }
+                                                        progress={progress}
+                                                        labels={labels}
+                                                        onSelect={() =>
+                                                            onSelectionChange({
+                                                                source: 'catalogue',
+                                                                key: variant.key,
+                                                                release:
+                                                                    variant.release,
+                                                                mono: variant.mono,
+                                                                installedRelease,
+                                                            })
+                                                        }
+                                                        onCancelInstall={
+                                                            onCancelInstall
+                                                        }
+                                                    />
+                                                );
+                                            })}
+                                        </fieldset>
+                                    ))
+                                ) : null}
                             </div>
                         )}
-
-                        <div
-                            role="listbox"
-                            aria-labelledby={labelledBy}
-                            data-testid="createProjectEditorCatalogueList"
-                            className="min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pl-1 pr-3"
-                        >
-                            {loading &&
-                            catalogueVariants.length === 0 &&
-                            !catalogueError ? (
-                                <p
-                                    className="py-4 text-center text-base-content/75"
-                                    role="status"
-                                >
-                                    {t('editorPicker.loading')}
-                                </p>
-                            ) : catalogueVariants.length === 0 &&
-                              !catalogueError ? (
-                                <p className="py-4 text-center text-base-content/75">
-                                    {t('editorPicker.noMatches')}
-                                </p>
-                            ) : catalogueVariants.length > 0 ? (
-                                catalogueGroups.map((group) => (
-                                    <fieldset
-                                        key={group.key}
-                                        aria-label={group.key}
-                                        data-testid={`createProjectEditorCatalogueGroup_${group.key}`}
-                                        className="min-w-0 space-y-3 p-0"
-                                    >
-                                        <div
-                                            aria-hidden="true"
-                                            className="px-3 pt-2 pb-1 text-sm font-semibold text-base-content/50"
-                                        >
-                                            {group.key}
-                                        </div>
-                                        {group.variants.map((variant) => {
-                                            const installedRelease =
-                                                installedReleases.find(
-                                                    (candidate) =>
-                                                        candidate.version ===
-                                                            variant.release
-                                                                .version &&
-                                                        candidate.mono ===
-                                                            variant.mono &&
-                                                        candidate.valid !==
-                                                            false &&
-                                                        Boolean(
-                                                            candidate.editor_path,
-                                                        ),
-                                                );
-                                            const progress =
-                                                releaseInstallProgress.find(
-                                                    (candidate) =>
-                                                        candidate.version ===
-                                                            variant.release
-                                                                .version &&
-                                                        candidate.mono ===
-                                                            variant.mono,
-                                                );
-
-                                            return (
-                                                <CreateProjectEditorOption
-                                                    key={variant.key}
-                                                    kind="catalogue"
-                                                    release={variant.release}
-                                                    mono={variant.mono}
-                                                    optionKey={variant.key}
-                                                    selected={
-                                                        selection?.source ===
-                                                            'catalogue' &&
-                                                        selection.key ===
-                                                            variant.key
-                                                    }
-                                                    installedRelease={
-                                                        installedRelease
-                                                    }
-                                                    progress={progress}
-                                                    labels={labels}
-                                                    onSelect={() =>
-                                                        onSelectionChange({
-                                                            source: 'catalogue',
-                                                            key: variant.key,
-                                                            release:
-                                                                variant.release,
-                                                            mono: variant.mono,
-                                                            installedRelease,
-                                                        })
-                                                    }
-                                                    onCancelInstall={
-                                                        onCancelInstall
-                                                    }
-                                                />
-                                            );
-                                        })}
-                                    </fieldset>
-                                ))
-                            ) : null}
-                        </div>
                     </div>
                 )}
             </div>

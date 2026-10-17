@@ -194,7 +194,8 @@ export function EngineStatusBadgeContent({
         ) : null;
     }
 
-    if (status.kind === 'auth-required') {
+    if (status.kind === 'auth-required' || status.kind === 'no-access') {
+        const noAccess = status.kind === 'no-access';
         return (
             <span
                 className="flex items-center gap-1"
@@ -202,13 +203,16 @@ export function EngineStatusBadgeContent({
             >
                 <Tooltip
                     placement="top"
-                    tip={t('badge.authRequiredTooltip', {
-                        source: status.source,
-                    })}
+                    tip={t(
+                        noAccess
+                            ? 'badge.noAccessTooltip'
+                            : 'badge.authRequiredTooltip',
+                        { source: status.source },
+                    )}
                     tone="warning"
                 >
                     <StatusBadge tone="warning">
-                        {t('badge.authRequired')}
+                        {t(noAccess ? 'badge.noAccess' : 'badge.authRequired')}
                     </StatusBadge>
                 </Tooltip>
                 {refreshButton}

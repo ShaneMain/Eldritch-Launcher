@@ -545,6 +545,9 @@ export const ProjectSettingsDrawer: React.FC<ProjectSettingsDrawerProps> = (
                                     loadingGodotName={form.loadingGodotName}
                                     renameGodotProject={form.renameGodotProject}
                                     godotError={form.godotError}
+                                    minimumMajorVersion={
+                                        form.minimumMajorVersion
+                                    }
                                     selectableReleases={form.selectableReleases}
                                     compatibleCatalogueReleases={
                                         form.compatibleCatalogueReleases

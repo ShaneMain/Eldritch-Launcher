@@ -22,6 +22,8 @@ type ProjectSettingsProjectSectionProps = {
     loadingGodotName: boolean;
     renameGodotProject: boolean;
     godotError?: string;
+    /** Oldest Godot major version the project can switch to. */
+    minimumMajorVersion: number;
     selectableReleases: InstalledRelease[];
     compatibleCatalogueReleases: Parameters<
         typeof CreateProjectEditorPicker
@@ -64,6 +66,7 @@ export function ProjectSettingsProjectSection({
     loadingGodotName,
     renameGodotProject,
     godotError,
+    minimumMajorVersion,
     selectableReleases,
     compatibleCatalogueReleases,
     compatibleCataloguePrereleases,
@@ -166,6 +169,7 @@ export function ProjectSettingsProjectSection({
                     installedReleases={selectableReleases}
                     availableReleases={compatibleCatalogueReleases}
                     availablePrereleases={compatibleCataloguePrereleases}
+                    minimumForkMajorVersion={minimumMajorVersion}
                     releaseInstallProgress={releaseInstallProgress}
                     loading={releasesLoading}
                     catalogueError={catalogueError}

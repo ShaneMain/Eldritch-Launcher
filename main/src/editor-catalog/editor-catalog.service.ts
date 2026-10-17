@@ -262,7 +262,9 @@ export class EditorCatalogService {
             failures.set(source.id, {
                 state:
                     result.reason instanceof EngineSourceAuthError
-                        ? 'auth-required'
+                        ? result.reason.signedIn
+                            ? 'no-access'
+                            : 'auth-required'
                         : 'error',
                 message: getErrorMessage(result.reason),
             });
@@ -375,7 +377,9 @@ function providerState(
 }
 
 /**
- * Checks whether one provider should be refreshed.
+ * Checks whether one provider should be refreshed. A provider blocked by
+ * GitHub access is always retried, so signing in or granting the GitHub App
+ * access lists its builds the next time the catalog is read.
  *
  * @param catalog - The stored catalog data.
  * @param providerId - The provider to check.
@@ -389,6 +393,8 @@ function isStale(
     return (
         state.lastFetchedAt === null ||
         state.lastFetchedAt + EDITOR_CATALOG_CACHE_TTL_MS < Date.now() ||
+        state.lastFailure?.state === 'auth-required' ||
+        state.lastFailure?.state === 'no-access' ||
         providerNeedsIntegrityRefresh(state)
     );
 }

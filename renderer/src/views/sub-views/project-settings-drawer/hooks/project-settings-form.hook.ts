@@ -212,28 +212,35 @@ export function useProjectSettingsForm({
         settingsSave,
     ]);
 
-    const selectableReleases = useMemo(() => {
-        if (!project) return [];
-        const major = Math.trunc(project.release.version_number);
-        return installedReleases
-            .filter(
-                (release) =>
-                    release.valid !== false &&
-                    Boolean(release.editor_path) &&
-                    Math.trunc(release.version_number) >= major,
-            )
-            .sort(sortReleases);
-    }, [installedReleases, project]);
+    // Editors older than the project's Godot major version are not offered.
+    const minimumMajorVersion = project
+        ? Math.trunc(project.release.version_number)
+        : 0;
+    const selectableReleases = useMemo(
+        () =>
+            project
+                ? installedReleases
+                      .filter(
+                          (release) =>
+                              release.valid !== false &&
+                              Boolean(release.editor_path) &&
+                              Math.trunc(release.version_number) >=
+                                  minimumMajorVersion,
+                      )
+                      .sort(sortReleases)
+                : [],
+        [installedReleases, minimumMajorVersion, project],
+    );
     const compatibleCatalogueReleases = useMemo(
         () =>
             project
                 ? availableReleases.filter(
                       (release) =>
                           Math.trunc(release.version_number) >=
-                          Math.trunc(project.release.version_number),
+                          minimumMajorVersion,
                   )
                 : [],
-        [availableReleases, project],
+        [availableReleases, minimumMajorVersion, project],
     );
     const compatibleCataloguePrereleases = useMemo(
         () =>
@@ -241,10 +248,10 @@ export function useProjectSettingsForm({
                 ? availablePrereleases.filter(
                       (release) =>
                           Math.trunc(release.version_number) >=
-                          Math.trunc(project.release.version_number),
+                          minimumMajorVersion,
                   )
                 : [],
-        [availablePrereleases, project],
+        [availablePrereleases, minimumMajorVersion, project],
     );
     const hasRenameChanges = Boolean(
         project &&
@@ -380,6 +387,7 @@ export function useProjectSettingsForm({
         codeEditorSettings,
         loadingCodeEditors,
         codeEditorLoadFailed,
+        minimumMajorVersion,
         selectableReleases,
         compatibleCatalogueReleases,
         compatibleCataloguePrereleases,
