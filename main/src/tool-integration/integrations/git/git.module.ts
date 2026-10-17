@@ -3,6 +3,7 @@ import { ToolIntegrationModule } from '../../tool-integration.module.js';
 import { GitController } from './git.controller.js';
 import { GitService } from './git.service.js';
 import { GitCloneService } from './git-clone.service.js';
+import { GitCloneLfsService } from './git-clone-lfs.service.js';
 import { GitCredentialSessionService } from './git-credential-session.service.js';
 import { GitIdentitySettingsService } from './git-identity-settings.service.js';
 import { GitPushService } from './git-push.service.js';
@@ -17,6 +18,7 @@ import { PublicGitSourceService } from './public-git-source.service.js';
         GitToolIntegration,
         GitToolConfigurationService,
         GitCredentialSessionService,
+        GitCloneLfsService,
         GitCloneService,
         GitService,
         GitPushService,

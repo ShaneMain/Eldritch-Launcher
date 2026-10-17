@@ -176,7 +176,7 @@ for (const source of ['public-git-url', 'github'] as const) {
                         choices: [{ id: 'installed:official:4.8-beta2:standard', version: '4.8-beta2', source: 'official', flavor: 'gdscript', prerelease: true, installed: true, recommended: true }],
                     },
                 })),
-                'projects.importRemoteProject': () => ({ ok: true, jobId: 'fixture-clone', repositoryPath: root, hasSubmodules: false, projects: [
+                'projects.importRemoteProject': () => ({ ok: true, jobId: 'fixture-clone', repositoryPath: root, hasSubmodules: false, gitLfs: { status: 'not-used' }, projects: [
                     { name: 'Same', relativePath: 'one/project.godot', projectFilePath: `${root}/one/project.godot`, detectedEditor: null },
                     { name: 'Same', relativePath: 'two/project.godot', projectFilePath: `${root}/two/project.godot`, detectedEditor: null },
                 ] }),

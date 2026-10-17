@@ -145,6 +145,7 @@ export class ProjectRemoteImportService implements OnModuleDestroy {
         if (result.ok) {
             logger.info('Remote project import completed', {
                 event: 'remote_project_import_completed',
+                gitLfs: result.gitLfs.status,
                 jobId: job.id,
                 projectCount: result.projects.length,
                 source: request.source,
@@ -189,6 +190,7 @@ export class ProjectRemoteImportService implements OnModuleDestroy {
         }
         if (
             job.stage !== 'cloning' &&
+            job.stage !== 'fetching-lfs' &&
             job.stage !== 'discovering-projects' &&
             job.stage !== 'validating-submodules' &&
             job.stage !== 'initialising-submodules' &&
@@ -403,11 +405,17 @@ export class ProjectRemoteImportService implements OnModuleDestroy {
             );
             logger.info('Remote project submodule initialisation completed', {
                 event: 'remote_project_submodules_completed',
+                gitLfs: result.gitLfs.status,
                 initialisedCount: result.initialisedCount,
                 jobId,
                 projectCount: discovery.projects.length,
             });
-            return { ok: true, jobId, projects: discovery.projects };
+            return {
+                ok: true,
+                jobId,
+                projects: discovery.projects,
+                gitLfs: result.gitLfs,
+            };
         } catch {
             const reason = job.controller.signal.aborted
                 ? 'cancelled'
@@ -571,6 +579,8 @@ export class ProjectRemoteImportService implements OnModuleDestroy {
                 signal: job.controller.signal,
                 onProgress: (percent) =>
                     this.publish(job, 'cloning', true, percent),
+                onGitLfsProgress: (percent) =>
+                    this.publish(job, 'fetching-lfs', true, percent),
             });
             if (!cloneResult.ok) {
                 return this.cloneFailure(job.id, cloneResult);
@@ -635,6 +645,7 @@ export class ProjectRemoteImportService implements OnModuleDestroy {
                 hasSubmodules: await this.submodules.hasSubmodules(
                     destination.finalPath,
                 ),
+                gitLfs: cloneResult.gitLfs,
             };
         } finally {
             await this.cleanupIncomplete(destination);

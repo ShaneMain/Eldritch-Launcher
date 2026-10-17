@@ -2128,6 +2128,7 @@ async function stubRemoteProjectDiscovery(): Promise<void> {
                 jobId: 'remote-discovery-job',
                 repositoryPath: '/home/docs/Godot/Projects/games',
                 hasSubmodules: false,
+                gitLfs: { status: 'not-used' },
                 projects: [
                     {
                         name: 'Root Game',
@@ -2433,6 +2434,7 @@ async function stubRemoteProjectSubmodules(
                 jobId: 'remote-discovery-job',
                 repositoryPath: '/home/docs/Godot/Projects/games',
                 hasSubmodules: true,
+                gitLfs: { status: 'not-used' },
                 projects: [],
             },
         }));

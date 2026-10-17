@@ -219,8 +219,21 @@
             "progress": {
                 "preparing": "İçe aktarma hazırlanıyor...",
                 "cloning": "Depo klonlanıyor...",
+                "fetchingLfs": "Downloading Git LFS files...",
                 "discovering": "Godot projeleri aranıyor...",
                 "cancelling": "İçe aktarma iptal ediliyor..."
+            },
+            "gitLfs": {
+                "unavailable": "Git LFS is not installed, so files tracked by Git LFS in this clone are small pointer files instead of their real content. Install Git LFS (https://git-lfs.com), then run \"git lfs install\" and \"git lfs pull\" in the cloned folder.",
+                "failed": "The clone was kept, but its Git LFS files could not be downloaded ({{reason}}), so they are still pointer files. Run \"git lfs pull\" in the cloned folder to try again.",
+                "reasons": {
+                    "authentication-failed": "access was denied",
+                    "quota-exceeded": "the repository's Git LFS bandwidth or storage quota is exceeded",
+                    "objects-missing": "some files are missing from the Git LFS server",
+                    "network-failed": "a network error occurred",
+                    "timed-out": "the download took too long",
+                    "unknown": "Git LFS reported an error"
+                }
             },
             "submodules": {
                 "title": "Bu depo Git alt modülleri kullanıyor",
@@ -236,6 +249,7 @@
                     "validating": "{{path}} doğrulanıyor",
                     "initialising": "{{path}} başlatılıyor",
                     "initialised": "{{path}} başlatıldı",
+                    "fetching-lfs": "Downloading Git LFS files for {{path}}",
                     "scanning-projects": "Godot projeleri aranıyor",
                     "complete": "Bulunan Godot projeleri: {{count}}",
                     "stopped": "{{path}} konumunda durdu"

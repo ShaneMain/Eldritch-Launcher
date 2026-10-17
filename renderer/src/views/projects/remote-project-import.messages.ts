@@ -1,4 +1,5 @@
 import type {
+    RemoteProjectGitLfsOutcome,
     RemoteProjectImportProgress,
     RemoteProjectSubmoduleActivity,
 } from '@shared/contracts';
@@ -50,6 +51,7 @@ export function getRemoteProjectProgressKey(
     progress: RemoteProjectImportProgress | null,
 ): string {
     if (progress?.stage === 'cloning') return 'cloning';
+    if (progress?.stage === 'fetching-lfs') return 'fetchingLfs';
     if (progress?.stage === 'cancelling') return 'cancelling';
     if (progress?.stage === 'discovering-projects') return 'discovering';
     return 'preparing';
@@ -73,7 +75,8 @@ export function getRemoteProjectSubmoduleActivityMessage(
     if (
         activity.type === 'validating' ||
         activity.type === 'initialising' ||
-        activity.type === 'initialised'
+        activity.type === 'initialised' ||
+        activity.type === 'fetching-lfs'
     ) {
         return translate(key, { path: activity.path });
     }
@@ -84,4 +87,28 @@ export function getRemoteProjectSubmoduleActivityMessage(
         return translate(key, { path: activity.path ?? '' });
     }
     return translate(key);
+}
+
+/**
+ * Returns the warning for a clone whose Git LFS files are still pointers.
+ *
+ * @param outcome - Git LFS outcome reported by the clone, if any.
+ * @param translate - Translation function for the active locale.
+ * @returns Translated warning, or null when LFS content is complete or unused.
+ */
+export function getRemoteProjectGitLfsWarning(
+    outcome: RemoteProjectGitLfsOutcome | null,
+    translate: (key: string, values?: Record<string, unknown>) => string,
+): string | null {
+    if (outcome?.status === 'unavailable') {
+        return translate('addProject.remote.gitLfs.unavailable');
+    }
+    if (outcome?.status === 'failed') {
+        return translate('addProject.remote.gitLfs.failed', {
+            reason: translate(
+                `addProject.remote.gitLfs.reasons.${outcome.reason}`,
+            ),
+        });
+    }
+    return null;
 }

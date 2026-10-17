@@ -12,7 +12,9 @@ import { formatGitAlternateObjectPath } from './git-alternate-object-path.util.j
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { GitCredentialSessionService } from './git-credential-session.service.js';
 import {
+    createGitCommandConfigEnvironment,
     createGitHttpsSafetyArguments,
+    createGitLfsEndpoint,
     createGitNetworkEnvironment,
     createIsolatedGitConfig,
 } from './git-network-process.util.js';
@@ -576,23 +578,14 @@ function createGitLfsPushEnvironment(
     endpoint: string,
     storage: string,
 ): NodeJS.ProcessEnv {
-    const entries = [
+    return createGitCommandConfigEnvironment(environment, [
         ['credential.helper', ''],
         ['lfs.url', endpoint],
         ['lfs.pushurl', endpoint],
         ['lfs.storage', storage],
         ['lfs.standalonetransferagent', ''],
         ['lfs.basictransfersonly', 'true'],
-    ] as const;
-    const configuredEnvironment: NodeJS.ProcessEnv = {
-        ...environment,
-        GIT_CONFIG_COUNT: String(entries.length),
-    };
-    entries.forEach(([key, value], index) => {
-        configuredEnvironment[`GIT_CONFIG_KEY_${index}`] = key;
-        configuredEnvironment[`GIT_CONFIG_VALUE_${index}`] = value;
-    });
-    return configuredEnvironment;
+    ]);
 }
 
 /**
@@ -721,18 +714,6 @@ async function reconcileLocalUpstream(
         }
     }
     return true;
-}
-
-/**
- * Derives the standard GitHub Git LFS API endpoint from a validated clone URL.
- *
- * @param canonicalUrl - Validated token-free HTTPS clone URL.
- * @returns Repository-specific Git LFS API endpoint.
- */
-function createGitLfsEndpoint(canonicalUrl: string): string {
-    const url = new URL(canonicalUrl);
-    url.pathname = `${url.pathname}/info/lfs`;
-    return url.toString();
 }
 
 type OriginState =

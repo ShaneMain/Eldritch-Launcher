@@ -108,3 +108,40 @@ export function formatGitCurlResolve(
     const formattedAddress = net.isIP(address) === 6 ? `[${address}]` : address;
     return `http.curloptResolve=${hostname}:443:${formattedAddress}`;
 }
+
+/**
+ * Adds command-scoped Git configuration through `GIT_CONFIG_*` variables, which
+ * Git and the Git LFS executable read above repository and `.lfsconfig` values.
+ *
+ * @param environment - Controlled child process environment without command config.
+ * @param entries - Exact configuration keys and values for this command.
+ * @returns Environment carrying the command-scoped configuration.
+ */
+export function createGitCommandConfigEnvironment(
+    environment: NodeJS.ProcessEnv,
+    entries: ReadonlyArray<readonly [string, string]>,
+): NodeJS.ProcessEnv {
+    const configuredEnvironment: NodeJS.ProcessEnv = {
+        ...environment,
+        GIT_CONFIG_COUNT: String(entries.length),
+    };
+    entries.forEach(([key, value], index) => {
+        configuredEnvironment[`GIT_CONFIG_KEY_${index}`] = key;
+        configuredEnvironment[`GIT_CONFIG_VALUE_${index}`] = value;
+    });
+    return configuredEnvironment;
+}
+
+/**
+ * Derives Git LFS's default API endpoint for a validated HTTPS repository URL.
+ *
+ * @param canonicalUrl - Validated token-free HTTPS repository URL.
+ * @returns Repository-specific Git LFS API endpoint.
+ */
+export function createGitLfsEndpoint(canonicalUrl: string): string {
+    const url = new URL(canonicalUrl);
+    url.pathname = url.pathname.endsWith('.git')
+        ? `${url.pathname}/info/lfs`
+        : `${url.pathname}.git/info/lfs`;
+    return url.toString();
+}

@@ -78,7 +78,7 @@ describe('ProjectRemoteImportService', () => {
                 '[application]\nconfig/name="Game"\n',
             );
             request.onProgress(50);
-            return { ok: true };
+            return { ok: true, gitLfs: { status: 'not-used' } };
         });
     });
 
@@ -297,7 +297,7 @@ describe('ProjectRemoteImportService', () => {
                 path.join(racedDestination, 'other-process.txt'),
                 'keep',
             );
-            return { ok: true };
+            return { ok: true, gitLfs: { status: 'not-used' } };
         });
         const service = createService();
 
@@ -366,6 +366,80 @@ describe('ProjectRemoteImportService', () => {
             reason: 'cancelled',
         });
         expect(await fs.readdir(parentDirectory)).toEqual([]);
+    });
+
+    it('publishes and cancels the Git LFS download stage', async () => {
+        clone.clone.mockImplementationOnce(async (request) => {
+            const cancelled = Promise.withResolvers<{
+                ok: false;
+                reason: 'cancelled';
+            }>();
+            request.signal.addEventListener(
+                'abort',
+                () => cancelled.resolve({ ok: false, reason: 'cancelled' }),
+                { once: true },
+            );
+            await fs.mkdir(request.destinationPath);
+            request.onProgress(100);
+            request.onGitLfsProgress();
+            request.onGitLfsProgress(35);
+            return cancelled.promise;
+        });
+        const service = createService();
+        const importing = service.importRemoteProject({
+            source: 'public-git-url',
+            url: 'https://example.com/team/game.git',
+            parentDirectory,
+            directoryName: 'game',
+        });
+        await vi.waitFor(() =>
+            expect(progress.publish).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    stage: 'fetching-lfs',
+                    canCancel: true,
+                    percent: 35,
+                }),
+            ),
+        );
+        const jobId = progress.publish.mock.calls.find(
+            ([value]) => value.stage === 'fetching-lfs',
+        )?.[0].jobId;
+
+        await expect(service.cancelRemoteProjectImport(jobId)).resolves.toEqual(
+            { jobId, status: 'cancelling' },
+        );
+        await expect(importing).resolves.toMatchObject({
+            ok: false,
+            reason: 'cancelled',
+        });
+        expect(await fs.readdir(parentDirectory)).toEqual([]);
+    });
+
+    it('keeps the clone and returns the Git LFS warning outcome', async () => {
+        clone.clone.mockImplementationOnce(async (request) => {
+            await fs.mkdir(request.destinationPath);
+            await fs.writeFile(
+                path.join(request.destinationPath, 'project.godot'),
+                'config_version=5\n',
+            );
+            return { ok: true, gitLfs: { status: 'unavailable' } };
+        });
+        const service = createService();
+
+        const result = await service.importRemoteProject({
+            source: 'public-git-url',
+            url: 'https://example.com/team/game.git',
+            parentDirectory,
+            directoryName: 'game',
+        });
+
+        expect(result).toMatchObject({
+            ok: true,
+            gitLfs: { status: 'unavailable' },
+        });
+        await expect(
+            fs.stat(path.join(parentDirectory, 'game', 'project.godot')),
+        ).resolves.toBeDefined();
     });
 
     it('aborts an active clone and cleans attempt-owned paths on shutdown', async () => {
@@ -517,7 +591,7 @@ describe('ProjectRemoteImportService', () => {
     it('preserves a cloned repository when no projects are discovered', async () => {
         clone.clone.mockImplementationOnce(async (request) => {
             await fs.mkdir(request.destinationPath);
-            return { ok: true };
+            return { ok: true, gitLfs: { status: 'not-used' } };
         });
         discovery.discover.mockResolvedValueOnce({ ok: true, projects: [] });
         const service = createService();
@@ -561,7 +635,11 @@ describe('ProjectRemoteImportService', () => {
                 type: 'initialising',
                 path: 'addons/extension',
             });
-            return { ok: true, initialisedCount: 1 };
+            return {
+                ok: true,
+                initialisedCount: 1,
+                gitLfs: { status: 'pulled' },
+            };
         });
         discovery.discover.mockResolvedValueOnce({
             ok: true,
@@ -574,6 +652,7 @@ describe('ProjectRemoteImportService', () => {
             ok: true,
             jobId: imported.jobId,
             projects: [nestedProject],
+            gitLfs: { status: 'pulled' },
         });
 
         expect(progress.publish).toHaveBeenCalledWith(

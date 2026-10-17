@@ -18,6 +18,7 @@ describe('GitSubmoduleService', () => {
     };
     const publicSources = { inspect: vi.fn() };
     const logger = { warn: vi.fn() };
+    const lfs = { pull: vi.fn() };
 
     beforeEach(async () => {
         vi.clearAllMocks();
@@ -95,6 +96,15 @@ describe('GitSubmoduleService', () => {
             }
             return { success: true, exitCode: 0 };
         });
+        lfs.pull
+            .mockImplementationOnce(async (request) => {
+                request.onStart();
+                return { status: 'pulled' };
+            })
+            .mockResolvedValueOnce({
+                status: 'failed',
+                reason: 'network-failed',
+            });
         const onActivity = vi.fn();
         const service = createService();
 
@@ -105,7 +115,11 @@ describe('GitSubmoduleService', () => {
                 signal: new AbortController().signal,
                 onActivity,
             }),
-        ).resolves.toEqual({ ok: true, initialisedCount: 2 });
+        ).resolves.toEqual({
+            ok: true,
+            initialisedCount: 2,
+            gitLfs: { status: 'failed', reason: 'network-failed' },
+        });
 
         expect(executeStreaming).toHaveBeenCalledTimes(2);
         for (const [, request] of executeStreaming.mock.calls) {
@@ -122,9 +136,77 @@ describe('GitSubmoduleService', () => {
                 GIT_TERMINAL_PROMPT: '0',
             });
         }
-        expect(onActivity).toHaveBeenCalledWith({
+        expect(
+            lfs.pull.mock.calls.map(([request]) => [
+                request.repositoryPath,
+                request.canonicalUrl,
+                request.interactive,
+            ]),
+        ).toEqual([
+            [childPath, 'https://example.com/addons/extension.git', false],
+            [
+                path.join(childPath, 'vendor', 'library'),
+                'https://example.com/vendor/library.git',
+                false,
+            ],
+        ]);
+        expect(lfs.pull.mock.calls[0]?.[0].environment).toBe(
+            executeStreaming.mock.calls[0]?.[1].env,
+        );
+        const activities = onActivity.mock.calls.map(([activity]) => activity);
+        expect(activities).toContainEqual({
             type: 'initialised',
             path: 'addons/extension/vendor/library',
+        });
+        expect(
+            activities.findIndex(
+                (activity) =>
+                    activity.type === 'fetching-lfs' &&
+                    activity.path === 'addons/extension',
+            ),
+        ).toBe(
+            activities.findIndex(
+                (activity) =>
+                    activity.type === 'initialised' &&
+                    activity.path === 'addons/extension',
+            ) - 1,
+        );
+        expect(closeCredential).toHaveBeenCalledOnce();
+    });
+
+    it('stops when a submodule Git LFS download is cancelled', async () => {
+        await fs.writeFile(
+            path.join(repositoryPath, '.gitmodules'),
+            '[submodule "assets"]\n',
+        );
+        execute.mockImplementation(async (_toolId, request) => {
+            const key = request.args.at(-1);
+            return {
+                success: true,
+                stdout: request.args.includes('--name-only')
+                    ? 'submodule.assets.path\n'
+                    : key === 'submodule.assets.path'
+                      ? 'assets\n'
+                      : 'https://example.com/assets.git\n',
+                stderr: '',
+                exitCode: 0,
+            };
+        });
+        executeStreaming.mockResolvedValue({ success: true, exitCode: 0 });
+        lfs.pull.mockResolvedValueOnce({ status: 'cancelled' });
+        const onActivity = vi.fn();
+
+        await expect(
+            createService().initialise({
+                repositoryPath,
+                supportDirectory,
+                signal: new AbortController().signal,
+                onActivity,
+            }),
+        ).resolves.toEqual({ ok: false, reason: 'cancelled' });
+        expect(onActivity).not.toHaveBeenCalledWith({
+            type: 'initialised',
+            path: 'assets',
         });
         expect(closeCredential).toHaveBeenCalledOnce();
     });
@@ -182,6 +264,7 @@ describe('GitSubmoduleService', () => {
             { execute, executeStreaming } as never,
             credentials as never,
             publicSources as never,
+            lfs as never,
             logger as never,
         );
     }

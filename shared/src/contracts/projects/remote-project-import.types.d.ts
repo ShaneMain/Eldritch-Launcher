@@ -68,6 +68,24 @@ export type RemoteDetectedProjectEditor =
           baseVersion: string;
       };
 
+export type RemoteProjectGitLfsFailureReason =
+    | 'authentication-failed'
+    | 'quota-exceeded'
+    | 'objects-missing'
+    | 'network-failed'
+    | 'timed-out'
+    | 'unknown';
+
+/**
+ * Whether Git LFS content arrived in a clone. `unavailable` and `failed`
+ * keep the clone; LFS-tracked files then remain pointer files.
+ */
+export type RemoteProjectGitLfsOutcome =
+    | { status: 'not-used' }
+    | { status: 'pulled' }
+    | { status: 'unavailable' }
+    | { status: 'failed'; reason: RemoteProjectGitLfsFailureReason };
+
 export type RemoteProjectImportResult =
     | {
           ok: true;
@@ -75,6 +93,7 @@ export type RemoteProjectImportResult =
           repositoryPath: string;
           projects: RemoteDiscoveredProject[];
           hasSubmodules: boolean;
+          gitLfs: RemoteProjectGitLfsOutcome;
       }
     | {
           ok: false;
@@ -88,6 +107,7 @@ export type RemoteProjectImportProgressStage =
     | 'validating-source'
     | 'validating-destination'
     | 'cloning'
+    | 'fetching-lfs'
     | 'cancelling'
     | 'finalising'
     | 'discovering-projects'
@@ -111,6 +131,7 @@ export type RemoteProjectSubmoduleActivity =
     | { type: 'validating'; path: string }
     | { type: 'initialising'; path: string }
     | { type: 'initialised'; path: string }
+    | { type: 'fetching-lfs'; path: string }
     | { type: 'scanning-projects' }
     | { type: 'complete'; projectCount: number }
     | { type: 'stopped'; path?: string };
@@ -120,6 +141,7 @@ export type InitialiseRemoteProjectSubmodulesResult =
           ok: true;
           jobId: string;
           projects: RemoteDiscoveredProject[];
+          gitLfs: RemoteProjectGitLfsOutcome;
       }
     | {
           ok: false;
