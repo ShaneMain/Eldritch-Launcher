@@ -55,6 +55,7 @@ const PRIVATE_FORK: EngineSource = {
 function createController(
     catalog: EditorCatalogResult,
     addOutcome: unknown = { ok: true, source: PUBLIC_FORK },
+    engineStatus: unknown = { kind: 'not-fork' },
 ) {
     const sources = {
         list: vi.fn(async () => [PUBLIC_FORK, PRIVATE_FORK]),
@@ -70,7 +71,9 @@ function createController(
     return new EngineSourcesController(
         sources as never,
         catalogService as never,
-        {} as never,
+        {
+            getProjectEngineStatus: vi.fn(async () => engineStatus),
+        } as never,
         configService as never,
     );
 }
@@ -148,6 +151,37 @@ describe('EngineSourcesController', () => {
             ok: false,
             reason: 'no-access',
             githubAppInstallUrl: INSTALL_URL,
+        });
+    });
+
+    it('names the GitHub App installation for a pin the app cannot see', async () => {
+        const controller = createController(
+            { releases: [], providers: [] },
+            undefined,
+            { kind: 'no-access', source: 'Eldritch/Engine' },
+        );
+
+        await expect(
+            controller.getProjectEngineStatus('/projects/game'),
+        ).resolves.toEqual({
+            kind: 'no-access',
+            source: 'Eldritch/Engine',
+            githubAppInstallUrl: INSTALL_URL,
+        });
+    });
+
+    it('returns other engine statuses unchanged', async () => {
+        const controller = createController(
+            { releases: [], providers: [] },
+            undefined,
+            { kind: 'auth-required', source: 'Eldritch/Engine' },
+        );
+
+        await expect(
+            controller.getProjectEngineStatus('/projects/game'),
+        ).resolves.toEqual({
+            kind: 'auth-required',
+            source: 'Eldritch/Engine',
         });
     });
 

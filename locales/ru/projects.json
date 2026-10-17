@@ -125,7 +125,8 @@
             "editorActions": "Параметры",
             "download": "Скачать {{version}}",
             "useFallback": "Использовать {{version}}",
-            "addMissing": "Добавить с отсутствующим редактором"
+            "addMissing": "Добавить с отсутствующим редактором",
+            "addSourceAndInstall": "Добавить {{source}} и установить закреплённую сборку"
         },
         "errors": {
             "projectExists": "Проект '{{path}}' уже существует",
@@ -177,14 +178,14 @@
                 "empty": "Соответствующие репозитории не загружены.",
                 "loadMore": "Загрузить больше",
                 "alreadyAdded": "Уже добавлено",
-                "openConnections": "Подключить GitHub",
+                "openConnections": "Войти в GitHub",
                 "visibility": {
                     "public": "Общественный",
                     "private": "Частный",
                     "internal": "Внутренний"
                 },
                 "errors": {
-                    "connectionRequired": "Подключите или повторно подключите GitHub перед импортом репозитория.",
+                    "connectionRequired": "Войдите в GitHub, чтобы выбрать репозиторий для импорта.",
                     "temporarilyUnavailable": "GitHub временно недоступен. Повторите попытку позже.",
                     "sessionExpired": "Срок действия сеанса репозитория истек. Загрузите список еще раз."
                 },
@@ -340,7 +341,16 @@
             "details": "Сведения о требуемом редакторе",
             "summary": "Выбрано: {{count}} · Загрузок: {{downloads}}",
             "download": "Загрузка",
-            "missing": "Нет редактора"
+            "missing": "Нет редактора",
+            "pinnedSource": {
+                "adding": "Добавление {{source}}…",
+                "authRequired": "{{source}} — приватный репозиторий. Войдите в GitHub, чтобы установить закреплённую сборку.",
+                "noAccess": "Приложение GitHub не видит {{source}}. Дайте ему доступ и вернитесь сюда.",
+                "failed": "Не удалось добавить {{source}}. Проверьте подключение и повторите попытку.",
+                "buildMissing": "{{source}} не публикует закреплённую сборку для этого компьютера.",
+                "signIn": "Войти в GitHub",
+                "giveAppAccess": "Дать приложению доступ"
+            }
         }
     },
     "messages": {

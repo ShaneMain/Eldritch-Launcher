@@ -8,6 +8,7 @@ import {
     type SelectFieldOption,
 } from '../../../components/ui/select-field.component';
 import type { LocalImportRow } from '../local-import-editor.model';
+import type { PinnedSourceStates } from '../pinned-sources.model';
 import type { RemoteProjectCodeEditorChoice } from '../remote-project-import.model';
 import {
     ProjectImportReviewList,
@@ -36,6 +37,10 @@ type RemoteProjectReviewProps = {
         file: string,
         choice: RemoteProjectCodeEditorChoice,
     ) => void;
+    /** Pinned fork sources that could not be added yet. */
+    pinnedSources: PinnedSourceStates;
+    /** Adds the pinned sources again after signing in or granting access. */
+    onPinnedSourceRetry: () => void;
 };
 
 /** Renders discovered remote projects with the shared compact import controls.
@@ -60,6 +65,8 @@ export function RemoteProjectReview({
     conflicts,
     onNameChange,
     onEditingChange,
+    pinnedSources,
+    onPinnedSourceRetry,
 }: RemoteProjectReviewProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [draft, setDraft] = useState('');
@@ -181,6 +188,8 @@ export function RemoteProjectReview({
                             onEditingChange(false);
                         }}
                         onEditorChange={onGodotEditorChange}
+                        pinnedSources={pinnedSources}
+                        onPinnedSourceRetry={onPinnedSourceRetry}
                     />
                 </div>
             )}

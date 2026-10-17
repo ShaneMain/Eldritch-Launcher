@@ -125,7 +125,8 @@
             "editorActions": "Seçenekler",
             "download": "{{version}} indir",
             "useFallback": "{{version}} kullan",
-            "addMissing": "Eksik editörle ekle"
+            "addMissing": "Eksik editörle ekle",
+            "addSourceAndInstall": "{{source}} ekle ve sabitlenmiş derlemeyi kur"
         },
         "errors": {
             "projectExists": "'{{path}}' projesi zaten mevcut",
@@ -177,14 +178,14 @@
                 "empty": "Eşleşen kod deposu yüklenmedi.",
                 "loadMore": "Daha fazlasını yükle",
                 "alreadyAdded": "Zaten eklendi",
-                "openConnections": "GitHub'ı bağla",
+                "openConnections": "GitHub'da oturum aç",
                 "visibility": {
                     "public": "halka açık",
                     "private": "Özel",
                     "internal": "Dahili"
                 },
                 "errors": {
-                    "connectionRequired": "Bir depoyu içe aktarmadan önce GitHub'ı bağlayın veya yeniden bağlayın.",
+                    "connectionRequired": "İçe aktarılacak bir depo seçmek için GitHub'da oturum açın.",
                     "temporarilyUnavailable": "GitHub geçici olarak kullanılamıyor. Daha sonra tekrar deneyin.",
                     "sessionExpired": "Depo oturumunun süresi doldu. Listeyi tekrar yükleyin."
                 },
@@ -340,7 +341,16 @@
             "details": "Gerekli editör ayrıntıları",
             "summary": "{{count}} seçili · {{downloads}} indirme",
             "download": "İndirme",
-            "missing": "Editör eksik"
+            "missing": "Editör eksik",
+            "pinnedSource": {
+                "adding": "{{source}} ekleniyor…",
+                "authRequired": "{{source}} özel bir depo. Sabitlenmiş derlemesini kurmak için GitHub'da oturum açın.",
+                "noAccess": "GitHub uygulaması {{source}} deposunu göremiyor. Erişim verin, ardından buraya dönün.",
+                "failed": "{{source}} eklenemedi. Bağlantınızı kontrol edip yeniden deneyin.",
+                "buildMissing": "{{source}} bu bilgisayar için sabitlenmiş derlemeyi yayımlamıyor.",
+                "signIn": "GitHub'da oturum aç",
+                "giveAppAccess": "Uygulamaya erişim ver"
+            }
         }
     },
     "messages": {

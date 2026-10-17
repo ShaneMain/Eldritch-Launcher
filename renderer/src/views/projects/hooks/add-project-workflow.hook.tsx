@@ -15,7 +15,11 @@ import type React from 'react';
 import { useState } from 'react';
 import type { ConfirmButton } from '../../../components/confirm.component';
 import type { DialogTone } from '../../../components/dialog.component';
-import { appBridge, projectsBridge } from '../../../renderer.bridge.ts';
+import {
+    appBridge,
+    engineSourcesBridge,
+    projectsBridge,
+} from '../../../renderer.bridge.ts';
 import {
     ProjectEditorRecoveryActions,
     ProjectEditorRecoveryDetails,
@@ -25,6 +29,7 @@ import {
     type LocalImportRow,
     prepareLocalImportRow,
 } from '../local-import-editor.model';
+import { getForkSourceNames } from '../pinned-sources.model';
 import { findDownloadableProjectEditor } from '../project-editor-resolution.model.ts';
 import { getImportConflicts } from '../project-import-conflict.model';
 
@@ -447,6 +452,9 @@ export function useAddProjectWorkflow({
         previousEditorId?: string,
     ): Promise<LocalImportRow[]> => {
         const inspected = await projectsBridge.inspectProjectImports(paths);
+        const forkSources = getForkSourceNames(
+            await engineSourcesBridge.listSources(),
+        );
         const rows = inspected.map((row) =>
             prepareLocalImportRow(
                 {
@@ -464,6 +472,7 @@ export function useAddProjectWorkflow({
                 availableReleases,
                 availablePrereleases,
                 forkReleases,
+                forkSources,
             ),
         );
         for (const row of rows) {

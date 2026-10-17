@@ -125,7 +125,8 @@
             "editorActions": "Opcje",
             "download": "Pobierz {{version}}",
             "useFallback": "Użyj {{version}}",
-            "addMissing": "Dodaj z brakującym edytorem"
+            "addMissing": "Dodaj z brakującym edytorem",
+            "addSourceAndInstall": "Dodaj {{source}} i zainstaluj przypiętą kompilację"
         },
         "errors": {
             "projectExists": "Projekt '{{path}}' już istnieje",
@@ -177,14 +178,14 @@
                 "empty": "Nie załadowano żadnych pasujących repozytoriów.",
                 "loadMore": "Załaduj więcej",
                 "alreadyAdded": "Już dodano",
-                "openConnections": "Połącz GitHub",
+                "openConnections": "Zaloguj się do GitHub",
                 "visibility": {
                     "public": "Publiczne",
                     "private": "Prywatny",
                     "internal": "Wewnętrzne"
                 },
                 "errors": {
-                    "connectionRequired": "Połącz lub ponownie podłącz GitHub przed zaimportowaniem repozytorium.",
+                    "connectionRequired": "Zaloguj się do GitHub, aby wybrać repozytorium do zaimportowania.",
                     "temporarilyUnavailable": "GitHub jest chwilowo niedostępny. Spróbuj ponownie później.",
                     "sessionExpired": "Sesja repozytorium wygasła. Załaduj listę ponownie."
                 },
@@ -340,7 +341,16 @@
             "details": "Szczegóły wymaganego edytora",
             "summary": "Wybrano: {{count}} · Pobrania: {{downloads}}",
             "download": "Pobieranie",
-            "missing": "Brak edytora"
+            "missing": "Brak edytora",
+            "pinnedSource": {
+                "adding": "Dodawanie {{source}}…",
+                "authRequired": "{{source}} jest prywatne. Zaloguj się do GitHub, aby zainstalować przypiętą kompilację.",
+                "noAccess": "Aplikacja GitHub nie widzi {{source}}. Daj jej dostęp, a następnie wróć tutaj.",
+                "failed": "Nie udało się dodać {{source}}. Sprawdź połączenie i spróbuj ponownie.",
+                "buildMissing": "{{source}} nie publikuje przypiętej kompilacji dla tego komputera.",
+                "signIn": "Zaloguj się do GitHub",
+                "giveAppAccess": "Daj aplikacji dostęp"
+            }
         }
     },
     "messages": {

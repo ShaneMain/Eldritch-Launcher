@@ -109,17 +109,24 @@ export class EngineSourcesController implements EngineSourcesBridge {
 
     /**
      * Reports how far a project's pinned fork revision is behind its source.
+     * A `no-access` status names the GitHub App page that grants access.
      *
      * @param projectPath - Registered project directory.
      * @param options - Set `force` to bypass the cache.
      * @returns The engine pin status.
      */
     @EngineSourcesHandler('getProjectEngineStatus')
-    getProjectEngineStatus(
+    async getProjectEngineStatus(
         projectPath: string,
         options?: { force?: boolean },
     ): Promise<ProjectEngineStatus> {
-        return this.engineStatus.getProjectEngineStatus(projectPath, options);
+        const status = await this.engineStatus.getProjectEngineStatus(
+            projectPath,
+            options,
+        );
+        return status.kind === 'no-access'
+            ? { ...status, githubAppInstallUrl: this.githubAppInstallUrl() }
+            : status;
     }
 
     /**

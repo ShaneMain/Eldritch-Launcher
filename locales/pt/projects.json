@@ -125,7 +125,8 @@
             "editorActions": "Opções",
             "download": "Transferir {{version}}",
             "useFallback": "Usar {{version}}",
-            "addMissing": "Adicionar com editor em falta"
+            "addMissing": "Adicionar com editor em falta",
+            "addSourceAndInstall": "Adicionar {{source}} e instalar a compilação fixada"
         },
         "errors": {
             "projectExists": "O projeto '{{path}}' já existe",
@@ -177,14 +178,14 @@
                 "empty": "Nenhum repositório correspondente foi carregado.",
                 "loadMore": "Carregar mais",
                 "alreadyAdded": "Já adicionado",
-                "openConnections": "Ligar o GitHub",
+                "openConnections": "Iniciar sessão no GitHub",
                 "visibility": {
                     "public": "Público",
                     "private": "Privado",
                     "internal": "Interno"
                 },
                 "errors": {
-                    "connectionRequired": "Conecte ou reconecte o GitHub antes de importar um repositório.",
+                    "connectionRequired": "Inicie sessão no GitHub para escolher um repositório a importar.",
                     "temporarilyUnavailable": "GitHub está temporariamente indisponível. Tente novamente mais tarde.",
                     "sessionExpired": "A sessão do repositório expirou. Carregue a lista novamente."
                 },
@@ -340,7 +341,16 @@
             "details": "Detalhes do editor necessário",
             "summary": "{{count}} selecionados · {{downloads}} transferências",
             "download": "Transferência",
-            "missing": "Editor em falta"
+            "missing": "Editor em falta",
+            "pinnedSource": {
+                "adding": "A adicionar {{source}}…",
+                "authRequired": "{{source}} é privado. Inicie sessão no GitHub para instalar a compilação fixada.",
+                "noAccess": "A aplicação GitHub não consegue ver {{source}}. Dê-lhe acesso e depois volte aqui.",
+                "failed": "Não foi possível adicionar {{source}}. Verifique a ligação e tente novamente.",
+                "buildMissing": "{{source}} não publica a compilação fixada para este computador.",
+                "signIn": "Iniciar sessão no GitHub",
+                "giveAppAccess": "Dar acesso à aplicação"
+            }
         }
     },
     "messages": {

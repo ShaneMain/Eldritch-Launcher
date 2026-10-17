@@ -29,15 +29,19 @@ import {
 import { useRelease } from '../../../hooks/release.hook';
 import {
     appBridge,
+    engineSourcesBridge,
     projectsBridge,
     subscribeAppEvent,
 } from '../../../renderer.bridge';
 import { getProjectPathSuffixDisplay } from '../../sub-views/create-project/create-project.model';
+import { usePinnedSources } from '../hooks/pinned-sources.hook';
 import { useRemoteProjectGitIdentity } from '../hooks/remote-project-git-identity.hook';
 import {
+    getActionInstallVersion,
     type LocalImportRow,
     prepareLocalImportRow,
 } from '../local-import-editor.model';
+import { getForkSourceNames } from '../pinned-sources.model';
 import { getImportConflicts } from '../project-import-conflict.model';
 import {
     getRemoteProjectGitLfsWarning,
@@ -127,6 +131,8 @@ export const RemoteProjectImportModal: React.FC<
         forkReleases,
         reloadReleases,
     } = useRelease();
+    const pinnedSources = usePinnedSources();
+    const [addingPinnedSources, setAddingPinnedSources] = useState(false);
 
     const {
         getIdentitySettings,
@@ -569,6 +575,9 @@ export const RemoteProjectImportModal: React.FC<
             const inspected = await projectsBridge.inspectProjectImports(
                 discovered.map((project) => project.projectFilePath),
             );
+            const forkSources = getForkSourceNames(
+                await engineSourcesBridge.listSources(),
+            );
             const nextRows = inspected.map((inspection) => {
                 const refreshed = refreshedResults.get(
                     inspection.projectFilePath,
@@ -591,6 +600,7 @@ export const RemoteProjectImportModal: React.FC<
                     availableReleases,
                     availablePrereleases,
                     forkReleases,
+                    forkSources,
                 );
             });
             setReviewRows(nextRows);
@@ -863,24 +873,66 @@ export const RemoteProjectImportModal: React.FC<
     );
     const selectedDownloadCount = new Set(
         selectedImportRows.flatMap((row) => {
-            const action = row.editorActions.find(
-                (candidate) => candidate.id === row.editorActionId,
+            const version = getActionInstallVersion(
+                row.editorActions.find(
+                    (candidate) => candidate.id === row.editorActionId,
+                ),
             );
-            return action?.download
+            return version
                 ? [
-                      `${action.download.version}:${row.editorRequest?.flavor ?? row.editorResolution?.requested.flavor}`,
+                      `${version}:${row.editorRequest?.flavor ?? row.editorResolution?.requested.flavor}`,
                   ]
                 : [];
         }),
     ).size;
 
+    /**
+     * Adds the pinned fork sources of chosen add-source actions in place;
+     * blocked rows keep the review open with their fix.
+     *
+     * @param rows - Selected rows.
+     * @returns Rows offering the exact pinned builds, or null while blocked.
+     */
+    const addSelectedPinnedSources = async (
+        rows: LocalImportRow[],
+    ): Promise<LocalImportRow[] | null> => {
+        setAddingPinnedSources(true);
+        try {
+            const result = await pinnedSources.add(rows);
+            const resolved = new Map(
+                result.rows.map((row) => [row.projectFilePath, row]),
+            );
+            setReviewRows((current) =>
+                current.map((row) => {
+                    const next = resolved.get(row.projectFilePath);
+                    return next ? { ...next, name: row.name } : row;
+                }),
+            );
+            setEditorActionIds((current) => ({
+                ...current,
+                ...Object.fromEntries(
+                    result.rows.map((row) => [
+                        row.projectFilePath,
+                        row.editorActionId,
+                    ]),
+                ),
+            }));
+            return result.ready ? result.rows : null;
+        } finally {
+            setAddingPinnedSources(false);
+        }
+    };
+
     const registerSelectedProjects = async () => {
-        const selected = selectedImportRows.map((project) => ({
+        if (addingPinnedSources) return;
+        if (importConflicts.some(Boolean)) return;
+        if (selectedImportRows.length === 0) return;
+        const resolved = await addSelectedPinnedSources(selectedImportRows);
+        if (!resolved) return;
+        const selected = resolved.map((project) => ({
             ...project,
             name: project.name.trim(),
         }));
-        if (importConflicts.some(Boolean)) return;
-        if (selected.length === 0) return;
         setStep('registering-projects');
         const previousSuccesses = registrationOutcomes.filter(
             (outcome) => outcome.status === 'added',
@@ -950,14 +1002,6 @@ export const RemoteProjectImportModal: React.FC<
 
     if (!open || !source) return null;
 
-    const connectionActionReasons: RemoteProjectRepositoryFailure[] = [
-        'no-usable-connection',
-        'secure-storage-unavailable',
-        'reauthorisation-required',
-    ];
-    const showConnectionsAction =
-        repositoryError !== null &&
-        connectionActionReasons.includes(repositoryError);
     const sourceIcon =
         source === 'github' ? (
             <GitBranch aria-hidden="true" />
@@ -1047,7 +1091,6 @@ export const RemoteProjectImportModal: React.FC<
                 selectedRepository={selectedRepository}
                 search={repositorySearch}
                 cursor={repositoryCursor}
-                showConnectionsAction={showConnectionsAction}
                 t={t}
                 onSearchChange={setRepositorySearch}
                 onSelect={setSelectedRepository}
@@ -1240,6 +1283,8 @@ export const RemoteProjectImportModal: React.FC<
                 onToggleAll={toggleAllProjects}
                 onToggleProject={toggleProject}
                 onCodeEditorChange={setProjectCodeEditorChoice}
+                pinnedSources={pinnedSources.states}
+                onPinnedSourceRetry={() => void registerSelectedProjects()}
             />
         );
         footer =
@@ -1281,12 +1326,16 @@ export const RemoteProjectImportModal: React.FC<
                         data-testid="btnAddDiscoveredProjects"
                         className="btn btn-primary text-base"
                         disabled={
+                            addingPinnedSources ||
                             reviewEditing ||
                             selectedCount === 0 ||
                             importConflicts.some(Boolean)
                         }
                         onClick={() => void registerSelectedProjects()}
                     >
+                        {addingPinnedSources && (
+                            <span className="loading loading-spinner loading-xs" />
+                        )}
                         {t('addProject.remote.actions.addProjects', {
                             count: selectedCount,
                         })}

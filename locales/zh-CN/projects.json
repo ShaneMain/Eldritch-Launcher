@@ -125,7 +125,8 @@
             "editorActions": "选项",
             "download": "下载 {{version}}",
             "useFallback": "使用 {{version}}",
-            "addMissing": "使用缺失编辑器添加"
+            "addMissing": "使用缺失编辑器添加",
+            "addSourceAndInstall": "添加 {{source}} 并安装固定的构建"
         },
         "errors": {
             "projectExists": "项目 '{{path}}' 已存在",
@@ -177,14 +178,14 @@
                 "empty": "没有加载匹配的存储库。",
                 "loadMore": "加载更多",
                 "alreadyAdded": "已添加",
-                "openConnections": "连接 GitHub",
+                "openConnections": "登录 GitHub",
                 "visibility": {
                     "public": "公共",
                     "private": "私人",
                     "internal": "内部"
                 },
                 "errors": {
-                    "connectionRequired": "在导入存储库之前连接或重新连接 GitHub。",
+                    "connectionRequired": "登录 GitHub 以选择要导入的存储库。",
                     "temporarilyUnavailable": "GitHub 暂时不可用。稍后再试。",
                     "sessionExpired": "存储库会话已过期。再次加载列表。"
                 },
@@ -340,7 +341,16 @@
             "details": "所需编辑器详情",
             "summary": "已选 {{count}} 项 · {{downloads}} 项下载",
             "download": "下载",
-            "missing": "缺少编辑器"
+            "missing": "缺少编辑器",
+            "pinnedSource": {
+                "adding": "正在添加 {{source}}…",
+                "authRequired": "{{source}} 是私有的。登录 GitHub 以安装其固定的构建。",
+                "noAccess": "GitHub 应用无法访问 {{source}}。授予访问权限后再回到这里。",
+                "failed": "无法添加 {{source}}。请检查网络连接后重试。",
+                "buildMissing": "{{source}} 未发布适用于此计算机的固定构建。",
+                "signIn": "登录 GitHub",
+                "giveAppAccess": "授予应用访问权限"
+            }
         }
     },
     "messages": {

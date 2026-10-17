@@ -52,7 +52,8 @@
         "noAccess": "Your GitHub sign-in cannot see {{source}}. Install the Eldritch Launcher GitHub App on {{owner}} and give it access to the repository; its builds appear the next time you open this list.",
         "signIn": "Sign in to GitHub",
         "installApp": "Install GitHub App on {{owner}}",
-        "installAppAnywhere": "Install GitHub App"
+        "installAppAnywhere": "Install GitHub App",
+        "giveAppAccess": "Dar acceso a la aplicación"
     },
     "drawer": {
         "empty": "No builds found for this source.",
@@ -71,8 +72,7 @@
         "newerBuild": "Newer build: {{tag}}",
         "newerBuildUnavailable": "The newer build is not in the editor list yet. Refresh the editor list and try again.",
         "updateFailed": "Could not update the engine pin",
-        "noAccess": "Engine: no access",
-        "noAccessTooltip": "Your GitHub sign-in cannot access {{source}}. Install the Eldritch Launcher GitHub App on its owner with access to the repository.",
+        "noAccess": "La aplicación de GitHub no puede ver {{source}}.",
         "unavailable": "Engine status unavailable",
         "errorTooltip": "Could not check {{source}}: {{message}}",
         "refresh": "Check engine status",

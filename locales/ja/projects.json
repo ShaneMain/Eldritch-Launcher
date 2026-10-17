@@ -125,7 +125,8 @@
             "editorActions": "オプション",
             "download": "{{version}} をダウンロード",
             "useFallback": "{{version}} を使用",
-            "addMissing": "不足しているエディターで追加"
+            "addMissing": "不足しているエディターで追加",
+            "addSourceAndInstall": "{{source}} を追加して固定ビルドをインストール"
         },
         "errors": {
             "projectExists": "プロジェクト '{{path}}' は既に存在します",
@@ -177,14 +178,14 @@
                 "empty": "一致するリポジトリがロードされていません。",
                 "loadMore": "さらにロードする",
                 "alreadyAdded": "すでに追加されています",
-                "openConnections": "GitHub に接続",
+                "openConnections": "GitHub にサインイン",
                 "visibility": {
                     "public": "公共",
                     "private": "プライベート",
                     "internal": "内部"
                 },
                 "errors": {
-                    "connectionRequired": "リポジトリをインポートする前に、GitHub に接続または再接続します。",
+                    "connectionRequired": "インポートするリポジトリを選ぶには GitHub にサインインしてください。",
                     "temporarilyUnavailable": "GitHub が一時的に利用できなくなりました。後でもう一度試してください。",
                     "sessionExpired": "リポジトリ セッションの有効期限が切れました。リストを再度ロードします。"
                 },
@@ -340,7 +341,16 @@
             "details": "必要なエディターの詳細",
             "summary": "選択: {{count}} · ダウンロード: {{downloads}}",
             "download": "ダウンロード",
-            "missing": "エディターなし"
+            "missing": "エディターなし",
+            "pinnedSource": {
+                "adding": "{{source}} を追加しています…",
+                "authRequired": "{{source}} は非公開です。固定ビルドをインストールするには GitHub にサインインしてください。",
+                "noAccess": "GitHub アプリから {{source}} を参照できません。アクセスを許可してから、ここに戻ってください。",
+                "failed": "{{source}} を追加できませんでした。接続を確認して、もう一度お試しください。",
+                "buildMissing": "{{source}} はこのコンピューター向けの固定ビルドを公開していません。",
+                "signIn": "GitHub にサインイン",
+                "giveAppAccess": "アプリにアクセスを許可"
+            }
         }
     },
     "messages": {

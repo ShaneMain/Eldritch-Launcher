@@ -125,7 +125,8 @@
             "editorActions": "Opzioni",
             "download": "Scarica {{version}}",
             "useFallback": "Usa {{version}}",
-            "addMissing": "Aggiungi con editor mancante"
+            "addMissing": "Aggiungi con editor mancante",
+            "addSourceAndInstall": "Aggiungi {{source}} e installa la build fissata"
         },
         "errors": {
             "projectExists": "Il progetto '{{path}}' esiste già",
@@ -177,14 +178,14 @@
                 "empty": "Nessun repository corrispondente è caricato.",
                 "loadMore": "Carica di più",
                 "alreadyAdded": "Già aggiunto",
-                "openConnections": "Connetti GitHub",
+                "openConnections": "Accedi a GitHub",
                 "visibility": {
                     "public": "Pubblico",
                     "private": "Privato",
                     "internal": "Interno"
                 },
                 "errors": {
-                    "connectionRequired": "Connetti o riconnetti GitHub prima di importare un repository.",
+                    "connectionRequired": "Accedi a GitHub per scegliere un repository da importare.",
                     "temporarilyUnavailable": "GitHub è temporaneamente non disponibile. Riprova più tardi.",
                     "sessionExpired": "La sessione del repository è scaduta. Carica nuovamente l'elenco."
                 },
@@ -340,7 +341,16 @@
             "details": "Dettagli dell’editor richiesto",
             "summary": "{{count}} selezionati · {{downloads}} download",
             "download": "Download",
-            "missing": "Editor mancante"
+            "missing": "Editor mancante",
+            "pinnedSource": {
+                "adding": "Aggiunta di {{source}}…",
+                "authRequired": "{{source}} è privato. Accedi a GitHub per installare la sua build fissata.",
+                "noAccess": "L'app GitHub non può vedere {{source}}. Concedile l'accesso, poi torna qui.",
+                "failed": "Impossibile aggiungere {{source}}. Controlla la connessione e riprova.",
+                "buildMissing": "{{source}} non pubblica la build fissata per questo computer.",
+                "signIn": "Accedi a GitHub",
+                "giveAppAccess": "Concedi l'accesso all'app"
+            }
         }
     },
     "messages": {

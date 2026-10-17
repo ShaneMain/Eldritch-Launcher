@@ -125,7 +125,8 @@
             "editorActions": "Options",
             "download": "Download {{version}}",
             "useFallback": "Use {{version}}",
-            "addMissing": "Add With Missing Editor"
+            "addMissing": "Add With Missing Editor",
+            "addSourceAndInstall": "Add {{source}} and install the pinned build"
         },
         "errors": {
             "projectExists": "Project '{{path}}' already exists",
@@ -180,14 +181,14 @@
                 "manageConnections": "Manage accounts and access",
                 "loadMore": "Load more",
                 "alreadyAdded": "Already added",
-                "openConnections": "Connect GitHub",
+                "openConnections": "Sign in to GitHub",
                 "visibility": {
                     "public": "Public",
                     "private": "Private",
                     "internal": "Internal"
                 },
                 "errors": {
-                    "connectionRequired": "Connect or reconnect GitHub before importing a repository.",
+                    "connectionRequired": "Sign in to GitHub to choose a repository to import.",
                     "temporarilyUnavailable": "GitHub is temporarily unavailable. Try again later.",
                     "sessionExpired": "The repository session expired. Load the list again."
                 }
@@ -340,7 +341,16 @@
             "details": "Editor requirement details",
             "summary": "{{count}} selected · Downloads: {{downloads}}",
             "download": "Download",
-            "missing": "Missing editor"
+            "missing": "Missing editor",
+            "pinnedSource": {
+                "adding": "Adding {{source}}…",
+                "authRequired": "{{source}} is private. Sign in to GitHub to install its pinned build.",
+                "noAccess": "The GitHub App can't see {{source}}. Give it access, then come back here.",
+                "failed": "Could not add {{source}}. Check your connection and try again.",
+                "buildMissing": "{{source}} doesn't publish the pinned build for this computer.",
+                "signIn": "Sign in to GitHub",
+                "giveAppAccess": "Give the app access"
+            }
         }
     },
     "messages": {

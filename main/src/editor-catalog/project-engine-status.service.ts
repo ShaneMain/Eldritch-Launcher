@@ -103,11 +103,19 @@ export function findNewerForkBuild(
     return newest;
 }
 
+/**
+ * Engine pin status as checked here; the controller adds the GitHub App
+ * installation page to `no-access`, which comes from runtime configuration.
+ */
+export type ProjectEngineCheck =
+    | Exclude<ProjectEngineStatus, { kind: 'no-access' }>
+    | { kind: 'no-access'; source: string };
+
 /** Cached status of one project pin. */
 type CachedStatus = {
     key: string;
     checkedAt: number;
-    promise: Promise<ProjectEngineStatus>;
+    promise: Promise<ProjectEngineCheck>;
 };
 
 /** Reports how far fork-pinned projects are behind their engine source. */
@@ -143,7 +151,7 @@ export class ProjectEngineStatusService {
     async getProjectEngineStatus(
         projectPath: string,
         options: { force?: boolean } = {},
-    ): Promise<ProjectEngineStatus> {
+    ): Promise<ProjectEngineCheck> {
         const project = (await this.projects.list()).find(
             (candidate) => candidate.path === projectPath,
         );
@@ -209,7 +217,7 @@ export class ProjectEngineStatusService {
     private async check(
         fork: ForkBuildIdentity,
         mono: boolean,
-    ): Promise<ProjectEngineStatus> {
+    ): Promise<ProjectEngineCheck> {
         const source = await this.sources.findFork(fork.source);
         if (!source) {
             return { kind: 'unknown-source', source: fork.source };

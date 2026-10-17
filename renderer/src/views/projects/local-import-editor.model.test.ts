@@ -4,7 +4,10 @@ import type {
     ReleaseSummary,
 } from '@shared/contracts';
 import { describe, expect, it } from 'vitest';
-import { prepareLocalImportRow } from './local-import-editor.model';
+import {
+    prepareLocalImportRow,
+    resolveAddedSourceAction,
+} from './local-import-editor.model';
 
 const beta: ReleaseSummary = {
     version: '4.8-beta2',
@@ -149,6 +152,80 @@ describe('fork-pinned import rows', () => {
 
         expect(prepared.editorActions).toEqual([
             expect.objectContaining({ id: 'missing', kind: 'missing' }),
+        ]);
+    });
+
+    it('offers to add a source that is not added and install the exact pin', () => {
+        const prepared = prepareLocalImportRow(
+            missingForkRow,
+            [official],
+            [],
+            [],
+            ['Other/Engine'],
+        );
+
+        expect(prepared.editorActionId).toBe('add-source');
+        expect(prepared.editorActions).toEqual([
+            expect.objectContaining({
+                id: 'add-source',
+                kind: 'add-source',
+                version: FORK_VERSION,
+                flavor: 'dotnet',
+                pinnedSource: FORK.source,
+            }),
+            expect.objectContaining({ id: 'missing' }),
+        ]);
+    });
+
+    it('does not offer to add a source that is already added', () => {
+        const prepared = prepareLocalImportRow(
+            missingForkRow,
+            [official],
+            [],
+            [otherFork],
+            ['eldritch-game-studio/eldritch-engine'],
+        );
+
+        expect(prepared.editorActions.map((action) => action.id)).toEqual([
+            'missing',
+        ]);
+    });
+
+    it('installs the exact pinned build once the added source lists it', () => {
+        const pinned = dotnetRelease(FORK_VERSION, FORK);
+        const prepared = prepareLocalImportRow(missingForkRow, [], [], [], []);
+
+        const resolved = resolveAddedSourceAction(prepared, [
+            otherFork,
+            pinned,
+        ]);
+
+        expect(resolved.editorActionId).toBe('download');
+        expect(resolved.editorActions).toEqual([
+            expect.objectContaining({
+                id: 'download',
+                kind: 'download',
+                download: pinned,
+                options: { resolution: 'add_missing' },
+            }),
+            expect.objectContaining({ id: 'missing' }),
+        ]);
+    });
+
+    it('never substitutes another build when the added source lacks the pin', () => {
+        const prepared = prepareLocalImportRow(
+            missingForkRow,
+            [official],
+            [],
+            [],
+            [],
+        );
+
+        const resolved = resolveAddedSourceAction(prepared, [otherFork]);
+
+        expect(resolved.editorActionId).toBe('missing');
+        expect(resolved.editorActions.map((action) => action.id)).toEqual([
+            'missing',
         ]);
     });
 });

@@ -66,7 +66,12 @@ export type AddEngineSourceResult =
 export type ProjectEngineStatus =
     | { kind: 'not-fork' }
     | { kind: 'auth-required'; source: string }
-    | { kind: 'no-access'; source: string }
+    | {
+          kind: 'no-access';
+          source: string;
+          /** GitHub App installation page that grants it the repository. */
+          githubAppInstallUrl: string;
+      }
     | { kind: 'unknown-source'; source: string }
     | { kind: 'error'; source: string; message: string }
     | {

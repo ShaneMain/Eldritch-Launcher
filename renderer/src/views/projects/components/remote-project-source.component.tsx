@@ -1,6 +1,12 @@
 import type { RemoteRepositorySummary } from '@shared/contracts';
 import type { TFunction } from 'i18next';
-import { Check, FolderGit2, SearchX, TriangleAlert } from 'lucide-react';
+import {
+    Check,
+    FolderGit2,
+    KeyRound,
+    SearchX,
+    TriangleAlert,
+} from 'lucide-react';
 import type { RefObject } from 'react';
 import { SearchField } from '../../../components/ui/search-field.component';
 import { TextField } from '../../../components/ui/text-field.component';
@@ -78,6 +84,13 @@ export function RemoteProjectPublicSource({
     );
 }
 
+/** Repository failures that a GitHub sign-in fixes. */
+const SIGN_IN_FAILURES: readonly RemoteProjectRepositoryFailure[] = [
+    'no-usable-connection',
+    'secure-storage-unavailable',
+    'reauthorisation-required',
+];
+
 type RemoteProjectRepositorySourceProps = {
     loading: boolean;
     loadingMore: boolean;
@@ -86,7 +99,6 @@ type RemoteProjectRepositorySourceProps = {
     selectedRepository: RemoteRepositorySummary | null;
     search: string;
     cursor: string | null;
-    showConnectionsAction: boolean;
     t: TFunction;
     onSearchChange: (value: string) => void;
     onSelect: (repository: RemoteRepositorySummary) => void;
@@ -106,7 +118,6 @@ export function RemoteProjectRepositorySource({
     selectedRepository,
     search,
     cursor,
-    showConnectionsAction,
     t,
     onSearchChange,
     onSelect,
@@ -116,7 +127,8 @@ export function RemoteProjectRepositorySource({
     onOpenConnections,
     onRefreshRepositories,
 }: RemoteProjectRepositorySourceProps) {
-    const connectionRequired = error === 'no-usable-connection';
+    // Signed out, or the sign-in needs renewing: one neutral sign-in prompt.
+    const signInRequired = error !== null && SIGN_IN_FAILURES.includes(error);
 
     return (
         <div className="flex h-full min-h-0 flex-col gap-4">
@@ -136,22 +148,25 @@ export function RemoteProjectRepositorySource({
                     <span className="loading loading-spinner loading-sm" />
                     {t('addProject.remote.github.loading')}
                 </div>
-            ) : connectionRequired ? (
-                <div className="flex flex-col gap-3">
-                    <p>
+            ) : signInRequired ? (
+                <div
+                    className="flex flex-col items-start gap-3 rounded-md bg-base-200/70 p-4 text-base"
+                    data-testid="remoteProjectSignInPrompt"
+                >
+                    <p className="flex items-center gap-2">
+                        <KeyRound aria-hidden="true" size={18} />
                         {t(
                             'addProject.remote.github.errors.connectionRequired',
                         )}
                     </p>
-                    <div>
-                        <button
-                            type="button"
-                            className="btn btn-primary text-base"
-                            onClick={onOpenConnections}
-                        >
-                            {t('addProject.remote.github.openConnections')}
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        className="btn btn-primary text-base"
+                        data-testid="btnRemoteProjectSignIn"
+                        onClick={onOpenConnections}
+                    >
+                        {t('addProject.remote.github.openConnections')}
+                    </button>
                 </div>
             ) : error ? (
                 <div className="flex flex-col gap-3">
@@ -167,15 +182,6 @@ export function RemoteProjectRepositorySource({
                         </span>
                     </div>
                     <div className="flex gap-2">
-                        {showConnectionsAction && (
-                            <button
-                                type="button"
-                                className="btn btn-primary text-base"
-                                onClick={onOpenConnections}
-                            >
-                                {t('addProject.remote.github.openConnections')}
-                            </button>
-                        )}
                         <button
                             type="button"
                             className="btn btn-ghost text-base"

@@ -125,7 +125,8 @@
             "editorActions": "選項",
             "download": "下載 {{version}}",
             "useFallback": "使用 {{version}}",
-            "addMissing": "使用缺失的編輯器新增"
+            "addMissing": "使用缺失的編輯器新增",
+            "addSourceAndInstall": "新增 {{source}} 並安裝固定的建置"
         },
         "errors": {
             "projectExists": "專案 '{{path}}' 已存在",
@@ -177,14 +178,14 @@
                 "empty": "沒有載入匹配的存儲庫。",
                 "loadMore": "加載更多",
                 "alreadyAdded": "已新增",
-                "openConnections": "連接 GitHub",
+                "openConnections": "登入 GitHub",
                 "visibility": {
                     "public": "公有",
                     "private": "私人",
                     "internal": "內部"
                 },
                 "errors": {
-                    "connectionRequired": "在匯入儲存庫之前連接或重新連接 GitHub。",
+                    "connectionRequired": "登入 GitHub 以選擇要匯入的儲存庫。",
                     "temporarilyUnavailable": "GitHub 暫時無法使用。稍後再試。",
                     "sessionExpired": "儲存庫會話已過期。再次載入列表。"
                 },
@@ -340,7 +341,16 @@
             "details": "所需編輯器詳細資訊",
             "summary": "已選 {{count}} 項 · {{downloads}} 項下載",
             "download": "下載",
-            "missing": "缺少編輯器"
+            "missing": "缺少編輯器",
+            "pinnedSource": {
+                "adding": "正在新增 {{source}}…",
+                "authRequired": "{{source}} 是私人的。登入 GitHub 以安裝其固定的建置。",
+                "noAccess": "GitHub 應用程式無法存取 {{source}}。授予存取權後再回到這裡。",
+                "failed": "無法新增 {{source}}。請檢查網路連線後重試。",
+                "buildMissing": "{{source}} 未發布適用於此電腦的固定建置。",
+                "signIn": "登入 GitHub",
+                "giveAppAccess": "授予應用程式存取權"
+            }
         }
     },
     "messages": {

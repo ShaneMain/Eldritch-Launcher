@@ -5,6 +5,7 @@ import {
     CircleX,
     Download,
     FolderCheck,
+    Plus,
     TriangleAlert,
 } from 'lucide-react';
 import { type ReactNode, type RefObject, useId } from 'react';
@@ -14,6 +15,11 @@ import { SelectField } from '../../../components/ui/select-field.component';
 import { Tooltip } from '../../../components/ui/tooltip.component';
 import { TooltipIconButton } from '../../../components/ui/tooltip-icon-button.component';
 import type { LocalImportRow } from '../local-import-editor.model';
+import {
+    getRowPinnedSource,
+    type PinnedSourceStates,
+} from '../pinned-sources.model';
+import { PinnedSourceNotice } from './pinned-source-notice.component';
 
 export type ProjectImportReviewListItem = {
     id: string;
@@ -45,6 +51,10 @@ type ProjectImportReviewListProps = {
     onSave: (id: string) => void;
     onCancel: () => void;
     onEditorChange: (id: string, editorActionId: string) => void;
+    /** Pinned fork sources that could not be added yet, by lower-case `owner/repo`. */
+    pinnedSources?: PinnedSourceStates;
+    /** Adds the pinned sources again after signing in or granting access. */
+    onPinnedSourceRetry?: () => void;
 };
 
 /** Renders the shared compact project import rows and their inline controls.
@@ -62,6 +72,8 @@ export function ProjectImportReviewList({
     onSave,
     onCancel,
     onEditorChange,
+    pinnedSources = {},
+    onPinnedSourceRetry = () => undefined,
 }: ProjectImportReviewListProps) {
     const descriptionId = useId();
     return (
@@ -92,10 +104,15 @@ export function ProjectImportReviewList({
                 );
                 const request =
                     row.editorRequest ?? row.editorResolution?.requested;
+                const pinnedSource = getRowPinnedSource(row);
+                const pinnedSourceState = pinnedSource
+                    ? pinnedSources[pinnedSource.toLowerCase()]
+                    : undefined;
                 const status = !item.selected
                     ? 'skipped'
                     : (item.conflict ??
-                      (action?.kind === 'download'
+                      (action?.kind === 'download' ||
+                      action?.kind === 'add-source'
                           ? 'download'
                           : action?.kind === 'missing'
                             ? 'missing'
@@ -267,16 +284,52 @@ export function ProjectImportReviewList({
                                             ? t(
                                                   'addProject.editorResolution.addMissing',
                                               )
-                                            : t(
-                                                  candidate.kind === 'download'
-                                                      ? 'addProject.editorResolution.download'
-                                                      : 'addProject.editorResolution.useFallback',
-                                                  {
-                                                      version: `${candidate.name && candidate.name !== candidate.version ? `${candidate.name} (${candidate.version})` : (candidate.version ?? '')}${candidate.flavor ? ` · ${t(`installEditor:table.${candidate.flavor}`)}` : ''}${candidate.recommended ? ` - ${t('welcome:onboarding.setup.recommended')}` : ''}`,
-                                                  },
-                                              ),
+                                            : candidate.kind === 'add-source'
+                                              ? t(
+                                                    'addProject.editorResolution.addSourceAndInstall',
+                                                    {
+                                                        source: candidate.pinnedSource,
+                                                    },
+                                                )
+                                              : t(
+                                                    candidate.kind ===
+                                                        'download'
+                                                        ? 'addProject.editorResolution.download'
+                                                        : 'addProject.editorResolution.useFallback',
+                                                    {
+                                                        version: `${candidate.name && candidate.name !== candidate.version ? `${candidate.name} (${candidate.version})` : (candidate.version ?? '')}${candidate.flavor ? ` · ${t(`installEditor:table.${candidate.flavor}`)}` : ''}${candidate.recommended ? ` - ${t('welcome:onboarding.setup.recommended')}` : ''}`,
+                                                    },
+                                                ),
                                 }))}
                             />
+                            {pinnedSource &&
+                            pinnedSourceState &&
+                            item.selected ? (
+                                <PinnedSourceNotice
+                                    source={pinnedSource}
+                                    state={pinnedSourceState}
+                                    t={t}
+                                    onRetry={onPinnedSourceRetry}
+                                />
+                            ) : (
+                                action?.kind === 'add-source' && (
+                                    // The select truncates; the chosen action reads in full here.
+                                    <p
+                                        className="flex items-start gap-1 text-sm text-base-content/60"
+                                        data-testid="pinnedSourceAddHint"
+                                    >
+                                        <Plus
+                                            size={14}
+                                            className="mt-0.5 shrink-0"
+                                            aria-hidden="true"
+                                        />
+                                        {t(
+                                            'addProject.editorResolution.addSourceAndInstall',
+                                            { source: action.pinnedSource },
+                                        )}
+                                    </p>
+                                )
+                            )}
                             {item.secondaryControl}
                         </div>
                         <Tooltip

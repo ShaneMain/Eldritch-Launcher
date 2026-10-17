@@ -6,6 +6,7 @@ import type {
 import { Download, Plus, RefreshCcw, TriangleAlert } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GitHubAppAccessButton } from '../../../components/github-connection/github-app-access-button.component';
 import { GitHubSignInButton } from '../../../components/github-connection/github-sign-in-button.component';
 import { Tooltip } from '../../../components/ui/tooltip.component';
 import { useAlerts } from '../../../hooks/alerts.hook';
@@ -198,6 +199,11 @@ function ForkEngineStatusBadge({ project }: EngineStatusBadgeProps) {
             onInstallNewerBuild={confirmInstallNewerBuild}
             onAddSource={(source) => void addPinnedSource(source)}
             onSignedIn={() => loadStatus(true)}
+            onAccessGranted={async () => {
+                // The catalog retries the fork on its next read.
+                await reloadReleases();
+                await loadStatus(true);
+            }}
         />
     );
 }
@@ -222,6 +228,8 @@ type EngineStatusBadgeContentProps = {
     onInstallNewerBuild: (release: ReleaseSummary) => void;
     onAddSource: (source: string) => void;
     onSignedIn: () => Promise<void>;
+    /** Re-checks after the user returns from granting the GitHub App access. */
+    onAccessGranted: () => Promise<void>;
 };
 
 /**
@@ -241,6 +249,7 @@ export function EngineStatusBadgeContent({
     onInstallNewerBuild,
     onAddSource,
     onSignedIn,
+    onAccessGranted,
 }: EngineStatusBadgeContentProps) {
     const refreshButton = (
         <Tooltip placement="top" tip={t('badge.refresh')} tone="default">
@@ -312,14 +321,30 @@ export function EngineStatusBadgeContent({
         );
     }
 
-    if (status.kind === 'no-access' || status.kind === 'error') {
-        const tip =
-            status.kind === 'error'
-                ? t('badge.errorTooltip', {
-                      source: status.source,
-                      message: status.message,
-                  })
-                : t('badge.noAccessTooltip', { source: status.source });
+    if (status.kind === 'no-access') {
+        return (
+            <span
+                className="flex flex-wrap items-center gap-1 text-xs text-warning"
+                data-testid="engineStatusBadge"
+            >
+                <TriangleAlert size={12} aria-hidden="true" />
+                {t('badge.noAccess', { source: status.source })}
+                <GitHubAppAccessButton
+                    installUrl={status.githubAppInstallUrl}
+                    label={t('access.giveAppAccess')}
+                    className="btn btn-primary btn-outline btn-xs"
+                    data-testid="btnEngineStatusGiveAccess"
+                    onReturn={onAccessGranted}
+                />
+            </span>
+        );
+    }
+
+    if (status.kind === 'error') {
+        const tip = t('badge.errorTooltip', {
+            source: status.source,
+            message: status.message,
+        });
         return (
             <span
                 className="flex items-center gap-1 text-base-content/50"
@@ -332,11 +357,7 @@ export function EngineStatusBadgeContent({
                         aria-label={tip}
                     >
                         <TriangleAlert size={12} aria-hidden="true" />
-                        {t(
-                            status.kind === 'no-access'
-                                ? 'badge.noAccess'
-                                : 'badge.unavailable',
-                        )}
+                        {t('badge.unavailable')}
                     </span>
                 </Tooltip>
                 {refreshButton}

@@ -1,7 +1,11 @@
 import type { ProjectDetails } from '@shared/contracts';
 import { useState } from 'react';
 import { Dialog } from '../../../components/dialog.component';
-import type { LocalImportRow } from '../local-import-editor.model';
+import { usePinnedSources } from '../hooks/pinned-sources.hook';
+import {
+    getActionInstallVersion,
+    type LocalImportRow,
+} from '../local-import-editor.model';
 import { getImportConflicts } from '../project-import-conflict.model';
 import {
     ProjectImportReviewList,
@@ -28,6 +32,7 @@ export function ProjectImportReview({
     onConfirm,
     onCancel,
 }: Props) {
+    const [currentRows, setCurrentRows] = useState(rows);
     const [editorIds, setEditorIds] = useState(
         rows.map((row) => row.editorActionId),
     );
@@ -35,7 +40,9 @@ export function ProjectImportReview({
     const [skipped, setSkipped] = useState(new Set<number>());
     const [editing, setEditing] = useState<number | null>(null);
     const [draft, setDraft] = useState('');
-    const selected = rows.flatMap((row, index) =>
+    const [confirming, setConfirming] = useState(false);
+    const pinnedSources = usePinnedSources();
+    const selected = currentRows.flatMap((row, index) =>
         skipped.has(index)
             ? []
             : [
@@ -48,20 +55,22 @@ export function ProjectImportReview({
     );
     const conflicts = getImportConflicts(selected, existing, platform);
     let selectedIndex = 0;
-    const items: ProjectImportReviewListItem[] = rows.map((row, index) => {
-        const selected = !skipped.has(index);
-        return {
-            id: String(index),
-            row,
-            name: names[index],
-            selected,
-            editorActionId: editorIds[index],
-            conflict: selected ? conflicts[selectedIndex++] : undefined,
-            path:
-                row.directory ??
-                row.projectFilePath.replace(/[\\/][^\\/]*$/, ''),
-        };
-    });
+    const items: ProjectImportReviewListItem[] = currentRows.map(
+        (row, index) => {
+            const selected = !skipped.has(index);
+            return {
+                id: String(index),
+                row,
+                name: names[index],
+                selected,
+                editorActionId: editorIds[index],
+                conflict: selected ? conflicts[selectedIndex++] : undefined,
+                path:
+                    row.directory ??
+                    row.projectFilePath.replace(/[\\/][^\\/]*$/, ''),
+            };
+        },
+    );
 
     /** Saves the current inline name and returns to the compact display.
      * @param id - Stable row index being edited.
@@ -74,6 +83,35 @@ export function ProjectImportReview({
             ),
         );
         setEditing(null);
+    };
+
+    /** Adds pinned fork sources first, then confirms once every chosen
+     * editor can be installed; blocked rows show their fix in place. */
+    const confirm = async () => {
+        if (confirming) return;
+        setConfirming(true);
+        try {
+            const result = await pinnedSources.add(selected);
+            const resolved = new Map(
+                result.rows.map((row) => [row.projectFilePath, row]),
+            );
+            setCurrentRows((current) =>
+                current.map((row) => {
+                    const next = resolved.get(row.projectFilePath);
+                    return next ? { ...next, name: row.name } : row;
+                }),
+            );
+            setEditorIds((current) =>
+                current.map(
+                    (id, index) =>
+                        resolved.get(currentRows[index].projectFilePath)
+                            ?.editorActionId ?? id,
+                ),
+            );
+            if (result.ready) onConfirm(result.rows);
+        } finally {
+            setConfirming(false);
+        }
     };
 
     return (
@@ -89,13 +127,16 @@ export function ProjectImportReview({
                             count: selected.length,
                             downloads: new Set(
                                 selected.flatMap((row) => {
-                                    const action = row.editorActions.find(
-                                        (candidate) =>
-                                            candidate.id === row.editorActionId,
+                                    const version = getActionInstallVersion(
+                                        row.editorActions.find(
+                                            (candidate) =>
+                                                candidate.id ===
+                                                row.editorActionId,
+                                        ),
                                     );
-                                    return action?.download
+                                    return version
                                         ? [
-                                              `${action.download.version}:${row.editorRequest?.flavor}`,
+                                              `${version}:${row.editorRequest?.flavor}`,
                                           ]
                                         : [];
                                 }),
@@ -113,12 +154,16 @@ export function ProjectImportReview({
                         type="button"
                         className="btn btn-primary text-base"
                         disabled={
+                            confirming ||
                             editing !== null ||
                             selected.length === 0 ||
                             conflicts.some(Boolean)
                         }
-                        onClick={() => onConfirm(selected)}
+                        onClick={() => void confirm()}
                     >
+                        {confirming && (
+                            <span className="loading loading-spinner loading-xs" />
+                        )}
                         {t('addProject.conflicts.continue')}
                     </button>
                 </>
@@ -157,6 +202,8 @@ export function ProjectImportReview({
                         ),
                     );
                 }}
+                pinnedSources={pinnedSources.states}
+                onPinnedSourceRetry={() => void confirm()}
             />
         </Dialog>
     );

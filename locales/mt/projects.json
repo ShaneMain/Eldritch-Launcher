@@ -125,7 +125,8 @@
             "editorActions": "Għażliet",
             "download": "Niżżel {{version}}",
             "useFallback": "Uża {{version}}",
-            "addMissing": "Żid b’editur nieqes"
+            "addMissing": "Żid b’editur nieqes",
+            "addSourceAndInstall": "Żid {{source}} u installa l-build iffissat"
         },
         "errors": {
             "projectExists": "Proġett '{{path}}' diġà jeżisti",
@@ -177,14 +178,14 @@
                 "empty": "L-ebda repożitorji li jaqblu ma huma mgħobbija.",
                 "loadMore": "Tagħbija aktar",
                 "alreadyAdded": "Diġà miżjud",
-                "openConnections": "Qabbad GitHub",
+                "openConnections": "Idħol f'GitHub",
                 "visibility": {
                     "public": "Pubbliku",
                     "private": "Privat",
                     "internal": "Intern"
                 },
                 "errors": {
-                    "connectionRequired": "Qabbad jew erġa' qabbad GitHub qabel ma timporta repożitorju.",
+                    "connectionRequired": "Idħol f'GitHub biex tagħżel repożitorju biex timporta.",
                     "temporarilyUnavailable": "GitHub mhux disponibbli temporanjament. Erġa' pprova aktar tard.",
                     "sessionExpired": "Is-sessjoni tar-repożitorju skadiet. Erġa' tagħbija l-lista."
                 },
@@ -340,7 +341,16 @@
             "details": "Dettalji tal-editur meħtieġ",
             "summary": "{{count}} magħżula · {{downloads}} downloads",
             "download": "Niżżel",
-            "missing": "Editur nieqes"
+            "missing": "Editur nieqes",
+            "pinnedSource": {
+                "adding": "Qed jiżdied {{source}}…",
+                "authRequired": "{{source}} huwa privat. Idħol f'GitHub biex tinstalla l-build iffissat tiegħu.",
+                "noAccess": "L-app ta' GitHub ma tistax tara {{source}}. Agħtiha aċċess, imbagħad erġa' lura hawn.",
+                "failed": "Ma setax jiżdied {{source}}. Iċċekkja l-konnessjoni tiegħek u erġa' pprova.",
+                "buildMissing": "{{source}} ma jippubblikax il-build iffissat għal dan il-kompjuter.",
+                "signIn": "Idħol f'GitHub",
+                "giveAppAccess": "Agħti aċċess lill-app"
+            }
         }
     },
     "messages": {

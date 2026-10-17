@@ -16,7 +16,6 @@ const defaultProps = {
     selectedRepository: null,
     search: '',
     cursor: null,
-    showConnectionsAction: false,
     t: translate,
     onSearchChange: vi.fn(),
     onSelect: vi.fn(),
@@ -28,19 +27,36 @@ const defaultProps = {
 };
 
 describe('RemoteProjectRepositorySource', () => {
-    it('guides a user to connect GitHub without presenting an error alert', () => {
+    it.each(['no-usable-connection', 'reauthorisation-required'] as const)(
+        'asks a user to sign in to GitHub without an error alert when %s',
+        (error) => {
+            const html = renderToStaticMarkup(
+                <RemoteProjectRepositorySource
+                    {...defaultProps}
+                    error={error}
+                />,
+            );
+
+            expect(html).toContain(
+                'addProject.remote.github.errors.connectionRequired',
+            );
+            expect(html).toContain('btnRemoteProjectSignIn');
+            expect(html).toContain('addProject.remote.github.openConnections');
+            expect(html).not.toContain('role="alert"');
+            expect(html).not.toContain('alert-error');
+        },
+    );
+
+    it('keeps other repository failures as a retryable error', () => {
         const html = renderToStaticMarkup(
             <RemoteProjectRepositorySource
                 {...defaultProps}
-                error="no-usable-connection"
+                error="provider-unavailable"
             />,
         );
 
-        expect(html).toContain(
-            'addProject.remote.github.errors.connectionRequired',
-        );
-        expect(html).toContain('addProject.remote.github.openConnections');
-        expect(html).not.toContain('role="alert"');
+        expect(html).toContain('role="alert"');
+        expect(html).not.toContain('btnRemoteProjectSignIn');
     });
 });
 

@@ -125,7 +125,8 @@
             "editorActions": "Optionen",
             "download": "{{version}} herunterladen",
             "useFallback": "{{version}} verwenden",
-            "addMissing": "Mit fehlendem Editor hinzufügen"
+            "addMissing": "Mit fehlendem Editor hinzufügen",
+            "addSourceAndInstall": "{{source}} hinzufügen und den festgelegten Build installieren"
         },
         "errors": {
             "projectExists": "Projekt '{{path}}' existiert bereits",
@@ -177,14 +178,14 @@
                 "empty": "Keine passenden Repositorys geladen.",
                 "loadMore": "Mehr laden",
                 "alreadyAdded": "Bereits hinzugefügt",
-                "openConnections": "GitHub verbinden",
+                "openConnections": "Bei GitHub anmelden",
                 "visibility": {
                     "public": "Öffentlich",
                     "private": "Privat",
                     "internal": "Intern"
                 },
                 "errors": {
-                    "connectionRequired": "Verbinden Sie GitHub erneut, bevor Sie ein Repository importieren.",
+                    "connectionRequired": "Melden Sie sich bei GitHub an, um ein Repository zum Importieren auszuwählen.",
                     "temporarilyUnavailable": "GitHub ist vorübergehend nicht verfügbar. Versuchen Sie es später erneut.",
                     "sessionExpired": "Die Repository-Sitzung ist abgelaufen. Laden Sie die Liste erneut."
                 },
@@ -340,7 +341,16 @@
             "details": "Details zur Editoranforderung",
             "summary": "{{count}} ausgewählt · {{downloads}} Downloads",
             "download": "Download",
-            "missing": "Editor fehlt"
+            "missing": "Editor fehlt",
+            "pinnedSource": {
+                "adding": "{{source}} wird hinzugefügt…",
+                "authRequired": "{{source}} ist privat. Melden Sie sich bei GitHub an, um den festgelegten Build zu installieren.",
+                "noAccess": "Die GitHub-App kann {{source}} nicht sehen. Gewähren Sie ihr Zugriff und kehren Sie dann hierher zurück.",
+                "failed": "{{source}} konnte nicht hinzugefügt werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+                "buildMissing": "{{source}} veröffentlicht den festgelegten Build für diesen Computer nicht.",
+                "signIn": "Bei GitHub anmelden",
+                "giveAppAccess": "App Zugriff gewähren"
+            }
         }
     },
     "setCodeEditor": {

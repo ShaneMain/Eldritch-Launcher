@@ -125,7 +125,8 @@
             "editorActions": "Opções",
             "download": "Baixar {{version}}",
             "useFallback": "Usar {{version}}",
-            "addMissing": "Adicionar com editor ausente"
+            "addMissing": "Adicionar com editor ausente",
+            "addSourceAndInstall": "Adicionar {{source}} e instalar a build fixada"
         },
         "errors": {
             "projectExists": "O projeto '{{path}}' já existe",
@@ -177,14 +178,14 @@
                 "empty": "Nenhum repositório correspondente foi carregado.",
                 "loadMore": "Carregar mais",
                 "alreadyAdded": "Já adicionado",
-                "openConnections": "Conectar GitHub",
+                "openConnections": "Entrar no GitHub",
                 "visibility": {
                     "public": "Público",
                     "private": "Privado",
                     "internal": "Interno"
                 },
                 "errors": {
-                    "connectionRequired": "Conecte ou reconecte o GitHub antes de importar um repositório.",
+                    "connectionRequired": "Entre no GitHub para escolher um repositório para importar.",
                     "temporarilyUnavailable": "GitHub está temporariamente indisponível. Tente novamente mais tarde.",
                     "sessionExpired": "A sessão do repositório expirou. Carregue a lista novamente."
                 },
@@ -340,7 +341,16 @@
             "details": "Detalhes do editor necessário",
             "summary": "{{count}} selecionados · {{downloads}} downloads",
             "download": "Download",
-            "missing": "Editor ausente"
+            "missing": "Editor ausente",
+            "pinnedSource": {
+                "adding": "Adicionando {{source}}…",
+                "authRequired": "{{source}} é privado. Entre no GitHub para instalar a build fixada.",
+                "noAccess": "O aplicativo do GitHub não consegue ver {{source}}. Dê acesso a ele e depois volte aqui.",
+                "failed": "Não foi possível adicionar {{source}}. Verifique sua conexão e tente novamente.",
+                "buildMissing": "{{source}} não publica a build fixada para este computador.",
+                "signIn": "Entrar no GitHub",
+                "giveAppAccess": "Dar acesso ao aplicativo"
+            }
         }
     },
     "messages": {

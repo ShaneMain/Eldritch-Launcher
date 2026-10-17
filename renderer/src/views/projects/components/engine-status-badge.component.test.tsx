@@ -23,6 +23,7 @@ const getProjectEngineStatus =
     >();
 
 vi.mock('../../../renderer.bridge.ts', () => ({
+    appBridge: { openExternal: vi.fn() },
     engineSourcesBridge: {
         getProjectEngineStatus: (
             projectPath: string,
@@ -142,6 +143,7 @@ async function renderStatus(
             onInstallNewerBuild={vi.fn()}
             onAddSource={vi.fn()}
             onSignedIn={vi.fn(async () => undefined)}
+            onAccessGranted={vi.fn(async () => undefined)}
         />,
     );
 }
@@ -263,14 +265,19 @@ describe('EngineStatusBadge', () => {
         expect(html).toContain('btnEngineStatusAddSource');
     });
 
-    it('tells a signed-in user the GitHub App cannot see the source', async () => {
+    it('offers one action to give the GitHub App access to the source', async () => {
         const html = await renderStatus({
             kind: 'no-access',
             source: 'Eldritch/Engine',
+            githubAppInstallUrl:
+                'https://github.com/apps/eldritch-launcher/installations/new',
         });
 
-        expect(html).toContain('badge.noAccess');
-        expect(html).not.toContain('badge.authRequired');
+        expect(html).toContain('badge.noAccess(source=Eldritch/Engine)');
+        expect(html).toContain('access.giveAppAccess');
+        expect(html).toContain('btnEngineStatusGiveAccess');
+        expect(html).not.toContain('btnEngineStatusSignIn');
+        expect(html).not.toContain('btnRefreshEngineStatus');
     });
 
     it('renders a muted warning for errors', async () => {
