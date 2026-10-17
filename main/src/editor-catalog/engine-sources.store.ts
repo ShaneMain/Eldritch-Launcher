@@ -3,10 +3,10 @@ import logger from 'electron-log';
 import { z } from 'zod';
 import { JsonFileStore } from '../json-store/json-file.store.js';
 import type { JsonStoreCoordinatorService } from '../json-store/json-store-coordinator.service.js';
+import { GITHUB_NAME_PATTERN } from '../utils/github-repository-url.util.js';
 import {
     ENGINE_SOURCES_SCHEMA_VERSION,
     forkSourceId,
-    GITHUB_NAME_PATTERN,
 } from './editor-catalog.constants.js';
 import type { EngineSourcesFile } from './editor-catalog.types.js';
 

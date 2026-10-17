@@ -112,6 +112,16 @@ describe('EngineSourcesPanelView', () => {
         expect(renderPanel()).not.toContain('addEngineSourceError');
     });
 
+    it('asks for one repository URL and starts without a validation error', () => {
+        const html = renderPanel();
+
+        expect(html).toContain('inputEngineSourceUrl');
+        expect(html).toContain('settings.add.url');
+        expect(html).not.toContain('inputEngineSourceOwner');
+        expect(html).not.toContain('inputEngineSourceRepo');
+        expect(html).not.toContain('engineSourceUrlInvalid');
+    });
+
     it('invites adding a fork when only built-in sources exist', () => {
         const html = renderPanel({ sources: [officialStable] });
 

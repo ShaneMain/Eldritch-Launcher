@@ -53,9 +53,6 @@ export const OFFICIAL_ENGINE_SOURCES: readonly EngineSource[] = [
     },
 ];
 
-/** GitHub owner or repository name accepted for a fork source. */
-export const GITHUB_NAME_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,99})$/;
-
 /**
  * Creates the stable catalog ID for a GitHub fork source.
  *

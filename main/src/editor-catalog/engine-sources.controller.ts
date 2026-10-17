@@ -51,7 +51,7 @@ export class EngineSourcesController implements EngineSourcesBridge {
     /**
      * Validates and adds a fork source, then loads its releases.
      *
-     * @param input - Repository owner, name, and optional display name.
+     * @param input - Repository URL and optional display name.
      * @returns The updated sources or the refusal reason.
      */
     @EngineSourcesHandler('addSource')

@@ -28,8 +28,8 @@ export type EngineSourceSummary = EngineSource & {
 
 /** Input accepted when adding a fork source. */
 export type AddEngineSourceInput = {
-    owner: string;
-    repo: string;
+    /** GitHub repository URL, SSH remote, or `owner/repo`. */
+    url: string;
     displayName?: string;
 };
 

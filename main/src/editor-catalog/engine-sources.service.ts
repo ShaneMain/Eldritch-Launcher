@@ -7,9 +7,9 @@ import type {
 } from '@shared/contracts';
 import { z } from 'zod';
 import { isTrustedForkAssetUrl } from '../utils/archive-integrity.util.js';
+import { parseGithubRepositoryUrl } from '../utils/github-repository-url.util.js';
 import {
     forkSourceId,
-    GITHUB_NAME_PATTERN,
     OFFICIAL_ENGINE_SOURCES,
 } from './editor-catalog.constants.js';
 import type { StoredForkSource } from './editor-catalog.types.js';
@@ -85,20 +85,26 @@ export class EngineSourcesService {
     /**
      * Validates a GitHub repository and stores it as a fork source.
      *
-     * @param input - Repository owner, name, and optional display name.
+     * @param input - Repository URL and optional display name.
      * @returns The new source or the reason it was refused.
      */
     async add(input: AddEngineSourceInput): Promise<AddForkSourceOutcome> {
-        const owner = input.owner.trim();
-        const repo = input.repo.trim();
-        const displayName = input.displayName?.trim();
+        const parsed =
+            typeof input?.url === 'string'
+                ? parseGithubRepositoryUrl(input.url)
+                : null;
+        const displayName =
+            typeof input?.displayName === 'string'
+                ? input.displayName.trim()
+                : undefined;
         if (
-            !GITHUB_NAME_PATTERN.test(owner) ||
-            !GITHUB_NAME_PATTERN.test(repo) ||
+            !parsed ||
+            (input.displayName !== undefined && displayName === undefined) ||
             (displayName !== undefined && displayName.length > 100)
         ) {
             return { ok: false, reason: 'invalid' };
         }
+        const { owner, repo } = parsed;
         const sources = await this.list();
         const key = `${owner}/${repo}`.toLowerCase();
         if (

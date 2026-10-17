@@ -9,7 +9,7 @@
         "overview": "GitHub repositories that publish Godot editor builds. Add a fork to install its builds and pin projects to an exact engine revision.",
         "loading": "Loading engine sources...",
         "loadError": "Engine sources could not be loaded.",
-        "noForks": "No forks added yet. To list builds from an engine fork, enter its GitHub owner and repository below; for github.com/owner/repo, enter owner and repo.",
+        "noForks": "No forks added yet. To list builds from an engine fork, paste its GitHub repository URL below.",
         "builtIn": "Built-in",
         "requiresAuth": "GitHub sign-in",
         "state": {
@@ -28,13 +28,14 @@
         },
         "add": {
             "title": "Add a fork",
-            "owner": "Owner",
-            "repo": "Repository",
+            "url": "GitHub repository URL",
+            "urlPlaceholder": "https://github.com/owner/repo",
             "displayName": "Display name",
             "displayNamePlaceholder": "Optional",
             "submit": "Add source",
             "errors": {
-                "invalid": "Enter a valid GitHub owner and repository name.",
+                "invalid": "Enter a valid GitHub repository URL, such as https://github.com/owner/repo.",
+                "invalidUrl": "Enter a GitHub repository URL, such as https://github.com/owner/repo or owner/repo.",
                 "duplicate": "This repository is already an engine source.",
                 "notFound": "The repository was not found. Check the owner and name, or sign in to GitHub if it is private.",
                 "authRequired": "This repository is private. Sign in to GitHub in Settings → Connections, then try again.",

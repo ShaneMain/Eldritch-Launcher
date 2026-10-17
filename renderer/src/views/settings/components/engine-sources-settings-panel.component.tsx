@@ -8,6 +8,7 @@ import { Plus, RefreshCcw, Trash2, TriangleAlert } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { parseGithubRepositoryUrl } from '../../../../../main/src/utils/github-repository-url.util';
 import { StatusBadge } from '../../../components/ui/status-badge.component';
 import { useAlerts } from '../../../hooks/alerts.hook';
 import { useEngineSources } from '../../../hooks/engine-sources.hook';
@@ -132,7 +133,7 @@ export const EngineSourcesSettingsPanel: React.FC<
     /**
      * Adds a fork source and reports a failure reason inline.
      *
-     * @param input - Repository owner, name, and optional display name.
+     * @param input - Repository URL and optional display name.
      * @returns Whether the source was added.
      */
     const handleAdd = async (input: AddEngineSourceInput): Promise<boolean> => {
@@ -434,9 +435,10 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
     addError,
     onAdd,
 }) => {
-    const [owner, setOwner] = useState('');
-    const [repo, setRepo] = useState('');
+    const [url, setUrl] = useState('');
     const [displayName, setDisplayName] = useState('');
+    const repository = parseGithubRepositoryUrl(url);
+    const urlInvalid = url.trim() !== '' && repository === null;
 
     /**
      * Submits the form and clears it after a successful add.
@@ -448,14 +450,15 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
         event: React.FormEvent<HTMLFormElement>,
     ): Promise<void> => {
         event.preventDefault();
+        if (!repository) {
+            return;
+        }
         const added = await onAdd({
-            owner: owner.trim(),
-            repo: repo.trim(),
+            url: url.trim(),
             ...(displayName.trim() ? { displayName: displayName.trim() } : {}),
         });
         if (added) {
-            setOwner('');
-            setRepo('');
+            setUrl('');
             setDisplayName('');
         }
     };
@@ -468,24 +471,16 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
         >
             <h3 className="font-semibold">{t('settings.add.title')}</h3>
             <div className="flex flex-wrap items-end gap-2">
-                <label className="flex flex-col gap-1">
-                    <span className="text-sm">{t('settings.add.owner')}</span>
+                <label className="flex min-w-80 flex-1 flex-col gap-1">
+                    <span className="text-sm">{t('settings.add.url')}</span>
                     <input
-                        className="input input-sm"
-                        value={owner}
+                        className={`input input-sm w-full ${urlInvalid ? 'input-error' : ''}`}
+                        value={url}
                         required
-                        onChange={(event) => setOwner(event.target.value)}
-                        data-testid="inputEngineSourceOwner"
-                    />
-                </label>
-                <label className="flex flex-col gap-1">
-                    <span className="text-sm">{t('settings.add.repo')}</span>
-                    <input
-                        className="input input-sm"
-                        value={repo}
-                        required
-                        onChange={(event) => setRepo(event.target.value)}
-                        data-testid="inputEngineSourceRepo"
+                        placeholder={t('settings.add.urlPlaceholder')}
+                        aria-invalid={urlInvalid}
+                        onChange={(event) => setUrl(event.target.value)}
+                        data-testid="inputEngineSourceUrl"
                     />
                 </label>
                 <label className="flex flex-col gap-1">
@@ -495,7 +490,10 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
                     <input
                         className="input input-sm"
                         value={displayName}
-                        placeholder={t('settings.add.displayNamePlaceholder')}
+                        placeholder={
+                            repository?.repo ??
+                            t('settings.add.displayNamePlaceholder')
+                        }
                         onChange={(event) => setDisplayName(event.target.value)}
                         data-testid="inputEngineSourceDisplayName"
                     />
@@ -503,7 +501,7 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
                 <button
                     type="submit"
                     className="btn btn-primary btn-sm"
-                    disabled={adding || !owner.trim() || !repo.trim()}
+                    disabled={adding || repository === null}
                     data-testid="btnAddEngineSource"
                 >
                     {adding ? (
@@ -514,6 +512,15 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
                     {t('settings.add.submit')}
                 </button>
             </div>
+            {urlInvalid && (
+                <p
+                    className="text-sm text-error"
+                    role="alert"
+                    data-testid="engineSourceUrlInvalid"
+                >
+                    {t('settings.add.errors.invalidUrl')}
+                </p>
+            )}
             {addError && (
                 <p
                     className="text-sm text-error"
