@@ -2,6 +2,7 @@ import type {
     AddProjectOptions,
     AddProjectToListResult,
     RemoteDiscoveredProject,
+    RemoteProjectGitLfsOutcome,
     RemoteProjectImportProgress,
     RemoteProjectImportRequest,
     RemoteProjectSubmoduleActivity,
@@ -38,7 +39,10 @@ import {
     prepareLocalImportRow,
 } from '../local-import-editor.model';
 import { getImportConflicts } from '../project-import-conflict.model';
-import { getRemoteProjectProgressKey } from '../remote-project-import.messages';
+import {
+    getRemoteProjectGitLfsWarning,
+    getRemoteProjectProgressKey,
+} from '../remote-project-import.messages';
 import {
     appendRemoteRepositories,
     filterRemoteRepositories,
@@ -172,6 +176,10 @@ export const RemoteProjectImportModal: React.FC<
     const [submoduleFailure, setSubmoduleFailure] = useState<string | null>(
         null,
     );
+    const [cloneGitLfs, setCloneGitLfs] =
+        useState<RemoteProjectGitLfsOutcome | null>(null);
+    const [submoduleGitLfs, setSubmoduleGitLfs] =
+        useState<RemoteProjectGitLfsOutcome | null>(null);
     const [discoveredProjects, setDiscoveredProjects] = useState<
         RemoteDiscoveredProject[]
     >([]);
@@ -395,6 +403,8 @@ export const RemoteProjectImportModal: React.FC<
         gitIdentity.reset();
         setSubmoduleActivities([]);
         setSubmoduleFailure(null);
+        setCloneGitLfs(null);
+        setSubmoduleGitLfs(null);
         setDiscoveredProjects([]);
         setSelectedProjectPaths(new Set());
         setCodeEditorChoices({});
@@ -633,6 +643,8 @@ export const RemoteProjectImportModal: React.FC<
         setCloneRecoveryAvailable(false);
         setCloneRecoveryError(null);
         setProgress(null);
+        setCloneGitLfs(null);
+        setSubmoduleGitLfs(null);
         importPendingRef.current = true;
         activeJobIdRef.current = null;
         try {
@@ -651,6 +663,7 @@ export const RemoteProjectImportModal: React.FC<
             setCloneJobId(result.jobId);
             setCloneRecoveryAvailable(true);
             setRepositoryPath(result.repositoryPath);
+            setCloneGitLfs(result.gitLfs);
             setDiscoveredProjects(result.projects);
             setSelectedProjectPaths(
                 selectAllDiscoveredProjects(result.projects),
@@ -691,6 +704,7 @@ export const RemoteProjectImportModal: React.FC<
         if (!cloneJobId) return;
         setStep('initialising-submodules');
         setSubmoduleFailure(null);
+        setSubmoduleGitLfs(null);
         setSubmoduleActivities([]);
         setProgress(null);
         importPendingRef.current = true;
@@ -711,6 +725,7 @@ export const RemoteProjectImportModal: React.FC<
                 setStep('submodules');
                 return;
             }
+            setSubmoduleGitLfs(result.gitLfs);
             setDiscoveredProjects(result.projects);
             setSelectedProjectPaths(
                 selectAllDiscoveredProjects(result.projects),
@@ -1415,6 +1430,19 @@ export const RemoteProjectImportModal: React.FC<
         );
     }
 
+    const gitLfsWarnings =
+        step === 'importing'
+            ? []
+            : [
+                  ...new Set(
+                      [cloneGitLfs, submoduleGitLfs]
+                          .map((outcome) =>
+                              getRemoteProjectGitLfsWarning(outcome, t),
+                          )
+                          .filter((warning) => warning !== null),
+                  ),
+              ];
+
     /**
      * Keeps each phase's actions in the import dialog footer.
      * @param content - Current phase content.
@@ -1485,6 +1513,17 @@ export const RemoteProjectImportModal: React.FC<
                     </span>
                 </div>
             )}
+            {gitLfsWarnings.map((warning) => (
+                <div
+                    key={warning}
+                    className="alert alert-warning alert-soft mb-4 text-base text-warning-content dark:text-warning"
+                    role="status"
+                    data-testid="remoteProjectGitLfsWarning"
+                >
+                    <TriangleAlert aria-hidden="true" size={18} />
+                    <span>{warning}</span>
+                </div>
+            ))}
             {content}
         </Dialog>
     );

@@ -5,6 +5,8 @@ import { Injectable, Logger } from '@mariodebono/di';
 import { ToolIntegrationService } from '../../tool-integration.service.js';
 import type { GitCloneRequest, GitCloneResult } from './git-clone.types.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
+import { GitCloneLfsService } from './git-clone-lfs.service.js';
+// biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { GitCredentialSessionService } from './git-credential-session.service.js';
 import {
     createGitHttpsSafetyArguments,
@@ -22,19 +24,22 @@ export class GitCloneService {
      *
      * @param tools - Revalidated tool execution boundary.
      * @param credentials - Attempt-owned rejecting or connected sessions.
+     * @param lfs - Post-clone Git LFS content service.
      * @param logger - Application logger backed by the configured Electron logger.
      */
     constructor(
         private readonly tools: ToolIntegrationService,
         private readonly credentials: GitCredentialSessionService,
+        private readonly lfs: GitCloneLfsService,
         private readonly logger: Logger,
     ) {}
 
     /**
-     * Clones one public or connected HTTPS repository with bounded progress.
+     * Clones one public or connected HTTPS repository with bounded progress,
+     * then downloads its Git LFS content through the same credential session.
      *
      * @param request - Validated source, destination and cancellation request.
-     * @returns A safe terminal clone result.
+     * @returns A safe terminal clone result with the Git LFS outcome.
      */
     async clone(request: GitCloneRequest): Promise<GitCloneResult> {
         const url = validateCloneUrl(request.canonicalUrl);
@@ -96,7 +101,18 @@ export class GitCloneService {
                     this.logger.debug?.('Remote Git clone completed', details);
                 }
                 request.onProgress(100);
-                return { ok: true };
+                const gitLfs = await this.lfs.pull({
+                    repositoryPath: request.destinationPath,
+                    canonicalUrl: url.toString(),
+                    environment,
+                    interactive: request.source === 'connected',
+                    signal: request.signal,
+                    onStart: () => request.onGitLfsProgress(),
+                    onProgress: request.onGitLfsProgress,
+                });
+                return gitLfs.status === 'cancelled'
+                    ? { ok: false, reason: 'cancelled' }
+                    : { ok: true, gitLfs };
             }
             if (result.reason === 'cancelled') {
                 return { ok: false, reason: 'cancelled' };

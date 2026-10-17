@@ -219,8 +219,21 @@
             "progress": {
                 "preparing": "インポートを準備しています...",
                 "cloning": "リポジトリのクローンを作成しています...",
+                "fetchingLfs": "Downloading Git LFS files...",
                 "discovering": "Godot プロジェクトを検索しています...",
                 "cancelling": "インポートをキャンセルしています..."
+            },
+            "gitLfs": {
+                "unavailable": "Git LFS is not installed, so files tracked by Git LFS in this clone are small pointer files instead of their real content. Install Git LFS (https://git-lfs.com), then run \"git lfs install\" and \"git lfs pull\" in the cloned folder.",
+                "failed": "The clone was kept, but its Git LFS files could not be downloaded ({{reason}}), so they are still pointer files. Run \"git lfs pull\" in the cloned folder to try again.",
+                "reasons": {
+                    "authentication-failed": "access was denied",
+                    "quota-exceeded": "the repository's Git LFS bandwidth or storage quota is exceeded",
+                    "objects-missing": "some files are missing from the Git LFS server",
+                    "network-failed": "a network error occurred",
+                    "timed-out": "the download took too long",
+                    "unknown": "Git LFS reported an error"
+                }
             },
             "submodules": {
                 "title": "このリポジトリは Git サブモジュールを使用しています",
@@ -236,6 +249,7 @@
                     "validating": "{{path}} を検証中",
                     "initialising": "{{path}} を初期化中",
                     "initialised": "{{path}} を初期化しました",
+                    "fetching-lfs": "Downloading Git LFS files for {{path}}",
                     "scanning-projects": "Godot プロジェクトを検索中",
                     "complete": "検出された Godot プロジェクト: {{count}}",
                     "stopped": "{{path}} で停止しました"

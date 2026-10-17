@@ -9,6 +9,7 @@ describe('GitCloneService', () => {
     const executeStreaming = vi.fn();
     const closeCredential = vi.fn();
     const logger = { warn: vi.fn() };
+    const lfs = { pull: vi.fn() };
     const credentials = {
         openRejecting: vi.fn(async () => ({
             environment: {
@@ -31,12 +32,38 @@ describe('GitCloneService', () => {
             path.join(os.tmpdir(), 'git-clone-test-'),
         );
         executeStreaming.mockResolvedValue({ success: true, exitCode: 0 });
+        lfs.pull.mockResolvedValue({ status: 'not-used' });
     });
 
     afterEach(async () => {
         await fs.rm(supportDirectory, { recursive: true, force: true });
         vi.unstubAllEnvs();
     });
+
+    function createService(): GitCloneService {
+        return new GitCloneService(
+            { executeStreaming } as never,
+            credentials as never,
+            lfs as never,
+            logger as never,
+        );
+    }
+
+    function connectedRequest(signal = new AbortController().signal) {
+        return {
+            source: 'connected' as const,
+            canonicalUrl: 'https://github.com/owner/game.git',
+            credential: {
+                username: 'x-access-token',
+                password: 'secret-token',
+            },
+            destinationPath: '/projects/.game.clone',
+            supportDirectory,
+            signal,
+            onProgress: vi.fn(),
+            onGitLfsProgress: vi.fn(),
+        };
+    }
 
     it('pins public DNS and isolates inherited Git credentials', async () => {
         vi.stubEnv('GIT_CONFIG_COUNT', '1');
@@ -46,11 +73,7 @@ describe('GitCloneService', () => {
             request.onStderr?.('Receiving objects: 42%');
             return { success: true, exitCode: 0 };
         });
-        const service = new GitCloneService(
-            { executeStreaming } as never,
-            credentials as never,
-            logger as never,
-        );
+        const service = createService();
 
         await expect(
             service.clone({
@@ -61,8 +84,12 @@ describe('GitCloneService', () => {
                 supportDirectory,
                 signal: new AbortController().signal,
                 onProgress,
+                onGitLfsProgress: vi.fn(),
             }),
-        ).resolves.toEqual({ ok: true });
+        ).resolves.toEqual({
+            ok: true,
+            gitLfs: { status: 'not-used' },
+        });
 
         const processRequest = executeStreaming.mock.calls[0]?.[1];
         expect(processRequest.args).toEqual(
@@ -89,11 +116,7 @@ describe('GitCloneService', () => {
     });
 
     it('uses an opaque connected credential session without secret arguments', async () => {
-        const service = new GitCloneService(
-            { executeStreaming } as never,
-            credentials as never,
-            logger as never,
-        );
+        const service = createService();
 
         await service.clone({
             source: 'connected',
@@ -106,6 +129,7 @@ describe('GitCloneService', () => {
             supportDirectory,
             signal: new AbortController().signal,
             onProgress: vi.fn(),
+            onGitLfsProgress: vi.fn(),
         });
 
         const processRequest = executeStreaming.mock.calls[0]?.[1];
@@ -129,11 +153,7 @@ describe('GitCloneService', () => {
             );
             return { success: true, exitCode: 0 };
         });
-        const service = new GitCloneService(
-            { executeStreaming } as never,
-            credentials as never,
-            logger as never,
-        );
+        const service = createService();
 
         await expect(
             service.clone({
@@ -147,8 +167,12 @@ describe('GitCloneService', () => {
                 supportDirectory,
                 signal: new AbortController().signal,
                 onProgress: vi.fn(),
+                onGitLfsProgress: vi.fn(),
             }),
-        ).resolves.toEqual({ ok: true });
+        ).resolves.toEqual({
+            ok: true,
+            gitLfs: { status: 'not-used' },
+        });
 
         expect(logger.warn).toHaveBeenCalledWith(
             'Remote Git clone reported an empty repository',
@@ -173,11 +197,7 @@ describe('GitCloneService', () => {
             reason: 'cancelled',
             exitCode: null,
         });
-        const service = new GitCloneService(
-            { executeStreaming } as never,
-            credentials as never,
-            logger as never,
-        );
+        const service = createService();
 
         await expect(
             service.clone({
@@ -188,6 +208,7 @@ describe('GitCloneService', () => {
                 supportDirectory,
                 signal: new AbortController().signal,
                 onProgress: vi.fn(),
+                onGitLfsProgress: vi.fn(),
             }),
         ).resolves.toEqual({ ok: false, reason: 'cancelled' });
     });
@@ -203,11 +224,7 @@ describe('GitCloneService', () => {
                 exitCode: 128,
             };
         });
-        const service = new GitCloneService(
-            { executeStreaming } as never,
-            credentials as never,
-            logger as never,
-        );
+        const service = createService();
 
         await expect(
             service.clone({
@@ -218,6 +235,7 @@ describe('GitCloneService', () => {
                 supportDirectory,
                 signal: new AbortController().signal,
                 onProgress: vi.fn(),
+                onGitLfsProgress: vi.fn(),
             }),
         ).resolves.toEqual({
             ok: false,
@@ -237,11 +255,7 @@ describe('GitCloneService', () => {
                 exitCode: 128,
             };
         });
-        const service = new GitCloneService(
-            { executeStreaming } as never,
-            credentials as never,
-            logger as never,
-        );
+        const service = createService();
 
         await expect(
             service.clone({
@@ -255,6 +269,7 @@ describe('GitCloneService', () => {
                 supportDirectory,
                 signal: new AbortController().signal,
                 onProgress: vi.fn(),
+                onGitLfsProgress: vi.fn(),
             }),
         ).resolves.toEqual({ ok: false, reason: 'clone-failed' });
 
@@ -272,5 +287,78 @@ describe('GitCloneService', () => {
         expect(JSON.stringify(logger.warn.mock.calls)).not.toContain(
             'unsupported-file-name',
         );
+    });
+
+    it('downloads Git LFS content inside the clone credential session', async () => {
+        lfs.pull.mockImplementationOnce(async (request) => {
+            request.onStart();
+            request.onProgress(40);
+            return { status: 'pulled' };
+        });
+        const signal = new AbortController().signal;
+        const request = connectedRequest(signal);
+
+        await expect(createService().clone(request)).resolves.toEqual({
+            ok: true,
+            gitLfs: { status: 'pulled' },
+        });
+
+        const lfsRequest = lfs.pull.mock.calls[0]?.[0];
+        expect(lfsRequest).toMatchObject({
+            repositoryPath: '/projects/.game.clone',
+            canonicalUrl: 'https://github.com/owner/game.git',
+            interactive: true,
+            signal,
+        });
+        expect(lfsRequest.environment).toEqual(
+            executeStreaming.mock.calls[0]?.[1].env,
+        );
+        expect(lfsRequest.environment).toMatchObject({
+            GIT_ASKPASS: '/attempt/connected-askpass',
+            GODOT_LAUNCHER_GIT_CREDENTIAL_SESSION: 'opaque-ref',
+        });
+        expect(JSON.stringify(lfsRequest)).not.toContain('secret-token');
+        expect(lfs.pull.mock.invocationCallOrder[0]).toBeLessThan(
+            closeCredential.mock.invocationCallOrder[0] ?? 0,
+        );
+        expect(request.onGitLfsProgress.mock.calls).toEqual([[], [40]]);
+        expect(request.onProgress).toHaveBeenLastCalledWith(100);
+    });
+
+    it('keeps a successful clone when Git LFS content is unavailable', async () => {
+        lfs.pull.mockResolvedValueOnce({
+            status: 'failed',
+            reason: 'quota-exceeded',
+        });
+
+        await expect(
+            createService().clone(connectedRequest()),
+        ).resolves.toEqual({
+            ok: true,
+            gitLfs: { status: 'failed', reason: 'quota-exceeded' },
+        });
+        expect(closeCredential).toHaveBeenCalledOnce();
+    });
+
+    it('reports a cancelled Git LFS download as a cancelled clone', async () => {
+        lfs.pull.mockResolvedValueOnce({ status: 'cancelled' });
+
+        await expect(
+            createService().clone(connectedRequest()),
+        ).resolves.toEqual({ ok: false, reason: 'cancelled' });
+        expect(closeCredential).toHaveBeenCalledOnce();
+    });
+
+    it('does not look for Git LFS content after a failed clone', async () => {
+        executeStreaming.mockResolvedValueOnce({
+            success: false,
+            reason: 'command-failed',
+            exitCode: 128,
+        });
+
+        await expect(
+            createService().clone(connectedRequest()),
+        ).resolves.toEqual({ ok: false, reason: 'clone-failed' });
+        expect(lfs.pull).not.toHaveBeenCalled();
     });
 });

@@ -2,8 +2,11 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { Injectable, Logger } from '@mariodebono/di';
+import type { RemoteProjectGitLfsOutcome } from '@shared/contracts';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { ToolIntegrationService } from '../../tool-integration.service.js';
+// biome-ignore lint/style/useImportType: Required for DI constructor metadata
+import { GitCloneLfsService } from './git-clone-lfs.service.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { GitCredentialSessionService } from './git-credential-session.service.js';
 import {
@@ -51,12 +54,14 @@ export class GitSubmoduleService {
      * @param tools - Revalidated Git execution boundary.
      * @param credentials - Attempt-owned rejecting askpass sessions.
      * @param publicSources - Public HTTPS URL and address validator.
+     * @param lfs - Post-checkout Git LFS content service.
      * @param logger - Application logger backed by the configured Electron logger.
      */
     constructor(
         private readonly tools: ToolIntegrationService,
         private readonly credentials: GitCredentialSessionService,
         private readonly publicSources: PublicGitSourceService,
+        private readonly lfs: GitCloneLfsService,
         private readonly logger: Logger,
     ) {}
 
@@ -101,6 +106,7 @@ export class GitSubmoduleService {
                 },
             ];
             let initialisedCount = 0;
+            let gitLfs: RemoteProjectGitLfsOutcome = { status: 'not-used' };
 
             while (pending.length > 0) {
                 if (request.signal.aborted) {
@@ -178,21 +184,39 @@ export class GitSubmoduleService {
                     if (!result.ok) {
                         return { ...result, path: displayPath };
                     }
+                    const submodulePath = path.join(
+                        current.repositoryPath,
+                        ...declaration.path.split('/'),
+                    );
+                    const submoduleLfs = await this.lfs.pull({
+                        repositoryPath: submodulePath,
+                        canonicalUrl: inspected.source.canonicalUrl,
+                        environment,
+                        interactive: false,
+                        signal: request.signal,
+                        onStart: () =>
+                            request.onActivity({
+                                type: 'fetching-lfs',
+                                path: displayPath,
+                            }),
+                        onProgress: () => undefined,
+                    });
+                    if (submoduleLfs.status === 'cancelled') {
+                        return { ok: false, reason: 'cancelled' };
+                    }
+                    gitLfs = mergeGitLfsOutcomes(gitLfs, submoduleLfs);
                     request.onActivity({
                         type: 'initialised',
                         path: displayPath,
                     });
                     pending.push({
-                        repositoryPath: path.join(
-                            current.repositoryPath,
-                            ...declaration.path.split('/'),
-                        ),
+                        repositoryPath: submodulePath,
                         displayPrefix: displayPath,
                         depth: current.depth + 1,
                     });
                 }
             }
-            return { ok: true, initialisedCount };
+            return { ok: true, initialisedCount, gitLfs };
         } finally {
             await askPass.close();
         }
@@ -368,7 +392,9 @@ export class GitSubmoduleService {
         },
         environment: NodeJS.ProcessEnv,
         signal: AbortSignal,
-    ): Promise<GitSubmoduleInitialiseResult> {
+    ): Promise<
+        { ok: true } | Extract<GitSubmoduleInitialiseResult, { ok: false }>
+    > {
         const url = new URL(source.canonicalUrl);
         const args = createGitHttpsSafetyArguments(false);
         for (const address of source.approvedAddresses) {
@@ -391,7 +417,7 @@ export class GitSubmoduleService {
             signal,
             timeoutMs: GIT_SUBMODULE_TIMEOUT_MS,
         });
-        if (result.success) return { ok: true, initialisedCount: 1 };
+        if (result.success) return { ok: true };
         if (result.reason === 'cancelled') {
             return { ok: false, reason: 'cancelled' };
         }
@@ -414,6 +440,29 @@ export class GitSubmoduleService {
 /** Returns whether one filesystem error represents an absent path. */
 function isMissingPath(error: unknown): boolean {
     return error instanceof Error && 'code' in error && error.code === 'ENOENT';
+}
+
+const GIT_LFS_OUTCOME_SEVERITY: Record<
+    RemoteProjectGitLfsOutcome['status'],
+    number
+> = { 'not-used': 0, pulled: 1, unavailable: 2, failed: 3 };
+
+/**
+ * Keeps the outcome that needs the user's attention most, so one submodule
+ * left with pointer files is reported even when others downloaded.
+ *
+ * @param current - Outcome accumulated so far.
+ * @param next - Outcome of the latest submodule.
+ * @returns The more severe outcome; the earlier one on ties.
+ */
+function mergeGitLfsOutcomes(
+    current: RemoteProjectGitLfsOutcome,
+    next: RemoteProjectGitLfsOutcome,
+): RemoteProjectGitLfsOutcome {
+    return GIT_LFS_OUTCOME_SEVERITY[next.status] >
+        GIT_LFS_OUTCOME_SEVERITY[current.status]
+        ? next
+        : current;
 }
 
 /** Returns whether a Git config key safely names one submodule path value. */
