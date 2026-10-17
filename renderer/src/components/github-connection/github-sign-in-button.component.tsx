@@ -6,6 +6,8 @@ import { GitHubConnectionDialog } from './github-connection-dialog.component';
 
 type GitHubSignInButtonProps = {
     label: string;
+    /** Replaces the default icon and label; `label` then names the button. */
+    children?: React.ReactNode;
     className?: string;
     'data-testid'?: string;
     /** Continues the interrupted task once GitHub access is restored. */
@@ -22,6 +24,7 @@ type GitHubSignInButtonProps = {
  */
 export const GitHubSignInButton: React.FC<GitHubSignInButtonProps> = ({
     label,
+    children,
     className = 'btn btn-sm btn-primary',
     'data-testid': testId,
     onSignedIn,
@@ -45,10 +48,15 @@ export const GitHubSignInButton: React.FC<GitHubSignInButtonProps> = ({
                 type="button"
                 className={className}
                 data-testid={testId}
+                aria-label={children ? label : undefined}
                 onClick={() => setOpen(true)}
             >
-                <KeyRound size={14} aria-hidden="true" />
-                {label}
+                {children ?? (
+                    <>
+                        <KeyRound size={14} aria-hidden="true" />
+                        {label}
+                    </>
+                )}
             </button>
             {open && (
                 <GitHubConnectionDialog

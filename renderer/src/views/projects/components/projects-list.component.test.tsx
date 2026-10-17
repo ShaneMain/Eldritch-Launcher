@@ -365,7 +365,7 @@ describe('ProjectsList', () => {
         expect(html).toContain('Visual Studio Code');
     });
 
-    it('offers an exact missing official editor download with its accessible label', () => {
+    it('turns the card button into an exact install-and-open action', () => {
         const missingProject: ProjectDetails = {
             ...baseProject,
             valid: false,
@@ -393,11 +393,13 @@ describe('ProjectsList', () => {
             },
         );
 
-        expect(html).toContain('aria-label="Install required editor"');
-        expect(html).toContain('card.editInGodot');
+        expect(html).toContain('card.installAndOpen');
+        expect(html).not.toContain('card.editInGodot');
+        // Cards use the primary button, so the duplicate icon is gone.
+        expect(html).not.toContain('btnInstallRequiredProjectEditor');
     });
 
-    it('disables the editor download action while that editor downloads', () => {
+    it('disables the install-and-open button while that editor downloads', () => {
         const missingProject: ProjectDetails = {
             ...baseProject,
             valid: false,
@@ -429,10 +431,9 @@ describe('ProjectsList', () => {
         );
 
         expect(
-            html.match(
-                /data-testid="btnInstallRequiredProjectEditor" disabled=""/g,
-            ),
+            html.match(/data-testid="btnEditProjectInGodot" disabled=""/g),
         ).toHaveLength(2);
+        expect(html).toContain('card.installingEditor');
     });
 
     it('uses the GitHub label for a cached GitHub origin', () => {

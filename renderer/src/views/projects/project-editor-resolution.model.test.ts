@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import {
     findDownloadableMissingProjectEditor,
     findDownloadableProjectEditor,
+    getProjectLaunchAction,
 } from './project-editor-resolution.model';
 
 /**
@@ -381,5 +382,45 @@ describe('project editor resolution model', () => {
                 ),
             ).toBeUndefined();
         });
+    });
+});
+
+describe('project launch action', () => {
+    const build = { version: '26.3.rc3.ccb92435b' } as ReleaseSummary;
+    const missingEditor = {
+        valid: false,
+        invalid_reason: 'missing_editor' as const,
+    };
+
+    it('opens a healthy project', () => {
+        expect(
+            getProjectLaunchAction({ valid: true }, true, undefined, false),
+        ).toBe('open');
+    });
+
+    it('installs the exact missing editor, then opens', () => {
+        expect(getProjectLaunchAction(missingEditor, false, build, false)).toBe(
+            'install-and-open',
+        );
+    });
+
+    it('shows progress while that editor installs', () => {
+        expect(getProjectLaunchAction(missingEditor, false, build, true)).toBe(
+            'installing',
+        );
+    });
+
+    it('stays unavailable without an exact build or with another problem', () => {
+        expect(
+            getProjectLaunchAction(missingEditor, false, undefined, false),
+        ).toBe('unavailable');
+        expect(
+            getProjectLaunchAction(
+                { valid: false, invalid_reason: 'missing_project_file' },
+                false,
+                build,
+                false,
+            ),
+        ).toBe('unavailable');
     });
 });

@@ -203,3 +203,35 @@ export function findDownloadableMissingProjectEditor(
             release.assets.some((asset) => asset.mono === project.release.mono),
     );
 }
+
+/** What a project's primary button does. */
+export type ProjectLaunchAction =
+    | 'open'
+    | 'install-and-open'
+    | 'installing'
+    | 'unavailable';
+
+/**
+ * Chooses the primary project action: open it, or install its exact missing
+ * editor first and then open it, so a missing editor is never a dead end.
+ *
+ * @param project - Stored project and its health.
+ * @param releaseInstalled - Whether the project's editor is installed.
+ * @param downloadable - Exact downloadable editor for a missing one.
+ * @param downloading - Whether that editor is installing now.
+ * @returns The action for the primary button.
+ */
+export function getProjectLaunchAction(
+    project: Pick<ProjectDetails, 'valid' | 'invalid_reason'>,
+    releaseInstalled: boolean,
+    downloadable: ReleaseSummary | undefined,
+    downloading: boolean,
+): ProjectLaunchAction {
+    if (downloading) return 'installing';
+    if (project.valid && releaseInstalled) return 'open';
+    const onlyEditorMissing =
+        project.valid || project.invalid_reason === 'missing_editor';
+    return onlyEditorMissing && downloadable
+        ? 'install-and-open'
+        : 'unavailable';
+}

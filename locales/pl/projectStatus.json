@@ -15,14 +15,15 @@
         "descriptions": {
             "no-upstream": "The branch {{branch}} does not track a remote branch.",
             "detached": "HEAD is detached; check out a branch to compare it with its upstream.",
-            "auth-required": "The remote needs credentials. Connect GitHub in Connections settings.",
+            "auth-required": "Zdalne repozytorium wymaga poświadczeń. Zaloguj się do GitHub.",
             "offline": "The remote could not be reached.",
             "error": "Git could not check the upstream."
         },
         "refreshHint": "Click to check again.",
-        "openConnections": "Click to open Connections settings.",
+        "openConnections": "Kliknij, aby zalogować się do GitHub.",
         "refreshing": "Checking remote…",
-        "refreshAll": "Refresh Git status of all projects"
+        "refreshAll": "Refresh Git status of all projects",
+        "signIn": "Zaloguj się do GitHub"
     },
     "settings": {
         "refreshInterval": {

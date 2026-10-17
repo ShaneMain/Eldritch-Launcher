@@ -3,6 +3,10 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import { GitStatusBadgeView } from './git-status-badge.component';
 
+vi.mock('../../../hooks/release.hook', () => ({
+    useRelease: () => ({ reloadReleases: vi.fn() }),
+}));
+
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
         t: (key: string, options?: { n?: number }) =>
@@ -74,7 +78,7 @@ describe('GitStatusBadgeView', () => {
         ).toContain(label);
     });
 
-    it('links auth-required to Connections settings', () => {
+    it('signs in to GitHub in place for auth-required', () => {
         const html = render({
             ...okStatus,
             state: 'auth-required',
@@ -82,9 +86,9 @@ describe('GitStatusBadgeView', () => {
             behind: null,
         });
 
-        expect(html).toContain('href="#/settings/connections"');
+        expect(html).toMatch(/<button[^>]*aria-label="git.signIn"/);
         expect(html).toContain('git.authRequired');
-        expect(html).not.toContain('<button');
+        expect(html).not.toContain('href=');
     });
 
     it('dims stale last-known counts', () => {

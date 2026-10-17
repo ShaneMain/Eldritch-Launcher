@@ -51,7 +51,8 @@ export function ProjectActions({
         <div
             className={`flex shrink-0 items-center ${dense ? 'min-h-8 gap-1' : 'min-h-10 gap-2'} ${compact ? 'self-end' : 'self-start'}`}
         >
-            {downloadableProjectEditor && !releaseInstalled && (
+            {/* Cards install from their primary button; compact rows need this. */}
+            {compact && downloadableProjectEditor && !releaseInstalled && (
                 <Tooltip placement="top" tip={t('card.installRequiredEditor')}>
                     <button
                         type="button"

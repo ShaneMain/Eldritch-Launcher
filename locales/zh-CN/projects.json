@@ -88,7 +88,9 @@
         "opened": "打开于 {{age}}",
         "notOpened": "尚未打开",
         "editInGodot": "在 Godot 中编辑",
-        "installRequiredEditor": "安装所需的编辑器"
+        "installRequiredEditor": "安装所需的编辑器",
+        "installAndOpen": "安装 {{version}} 并打开",
+        "installingEditor": "正在安装编辑器…"
     },
     "table": {
         "moreOptions": "{{project}} 的更多选项",

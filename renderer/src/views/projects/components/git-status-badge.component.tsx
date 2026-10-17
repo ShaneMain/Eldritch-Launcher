@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { appRoutePaths } from '../../../app.routes';
+import { GitHubSignInButton } from '../../../components/github-connection/github-sign-in-button.component';
 import { StatusBadge } from '../../../components/ui/status-badge.component';
 import { Tooltip } from '../../../components/ui/tooltip.component';
 import { useProjectGitStatus } from '../../../hooks/project-git-status.hook';
@@ -39,9 +39,6 @@ const STATE_LABEL_KEYS: Partial<Record<ProjectGitStatus['state'], string>> = {
     offline: 'git.offline',
     error: 'git.error',
 };
-
-const CONNECTIONS_HREF = `#${appRoutePaths.settingsTab('connections')}`;
-
 /**
  * Shows a project's commits behind and ahead of its upstream.
  * @param props - Project path and presentation mode.
@@ -166,13 +163,14 @@ export function GitStatusBadgeView({
             tip={<GitStatusTooltip status={status} t={t} />}
         >
             {authRequired ? (
-                <a
-                    href={CONNECTIONS_HREF}
+                <GitHubSignInButton
+                    label={t('git.signIn')}
                     data-testid="gitStatusBadge"
                     className={className}
+                    onSignedIn={onRefresh}
                 >
                     {content}
-                </a>
+                </GitHubSignInButton>
             ) : (
                 <button
                     type="button"

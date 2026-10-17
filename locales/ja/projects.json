@@ -88,7 +88,9 @@
         "opened": "{{age}}に開きました",
         "notOpened": "まだ開いていません",
         "editInGodot": "Godot で編集",
-        "installRequiredEditor": "必要なエディターをインストール"
+        "installRequiredEditor": "必要なエディターをインストール",
+        "installAndOpen": "{{version}} をインストールして開く",
+        "installingEditor": "エディターをインストール中…"
     },
     "table": {
         "moreOptions": "{{project}} のその他のオプション",

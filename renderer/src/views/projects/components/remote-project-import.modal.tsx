@@ -121,8 +121,12 @@ export const RemoteProjectImportModal: React.FC<
     ]);
     const { preferences, platform } = usePreferences();
     const { addProject, codeEditorSettings, projects } = useProjects();
-    const { availableReleases, availablePrereleases, forkReleases } =
-        useRelease();
+    const {
+        availableReleases,
+        availablePrereleases,
+        forkReleases,
+        reloadReleases,
+    } = useRelease();
 
     const {
         getIdentitySettings,
@@ -1535,9 +1539,11 @@ export const RemoteProjectImportModal: React.FC<
                     setRepositoryError(null);
                     setStep('source');
                     void loadRepositories();
+                    // Private fork pins in the repository need the new sign-in.
+                    void reloadReleases();
                 }}
                 onCancel={cancelConnection}
-                autoStart={connectionFromPicker}
+                autoStart
                 description={t('settings:connections.flow.importDescription')}
                 renderLayout={(content, actions) =>
                     renderDialog(

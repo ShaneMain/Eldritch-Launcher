@@ -1,6 +1,7 @@
 import type React from 'react';
 import { ProjectTagPopover } from '../../../components/project-tags/project-tag-popover.component';
 import { formatRelativeTime } from '../../../i18n/relative-time.util';
+import { getProjectLaunchAction } from '../project-editor-resolution.model';
 import { ProjectActions } from './project-actions.component';
 import { ProjectBadges } from './project-badges.component';
 import { ProjectCard } from './project-card.component';
@@ -68,8 +69,14 @@ export const ProjectListItem: React.FC<ProjectListItemProps> = ({
     const editorMissing =
         !releaseInstalled ||
         (!project.valid && project.invalid_reason === 'missing_editor');
+    const launchAction = getProjectLaunchAction(
+        project,
+        releaseInstalled,
+        downloadableProjectEditor,
+        editorDownloading,
+    );
     const launchDisabled =
-        !project.valid || !releaseInstalled || editorDownloading;
+        launchAction === 'unavailable' || launchAction === 'installing';
     const versionLabel = `${project.version}${project.release.mono ? ' (.NET)' : ''}`;
     const isGitHubProject = projectGitHubUrls.has(project.path);
 
@@ -137,6 +144,8 @@ export const ProjectListItem: React.FC<ProjectListItemProps> = ({
             />
         ),
         launchDisabled,
+        launchAction,
+        installVersion: downloadableProjectEditor?.version,
         lastOpened,
     };
 

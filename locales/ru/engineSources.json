@@ -69,17 +69,20 @@
         "ahead": "+{{count}} not on {{branch}}",
         "upToDate": "Engine up to date",
         "newerBuild": "Newer build: {{tag}}",
-        "installUpdate": "Install & update pin",
-        "installUpdateTooltip": "Install {{version}} and pin this project to it",
         "newerBuildUnavailable": "The newer build is not in the editor list yet. Refresh the editor list and try again.",
         "updateFailed": "Could not update the engine pin",
-        "authRequired": "Engine: auth required",
-        "authRequiredTooltip": "Sign in to GitHub in Settings → Connections to check {{source}}.",
         "noAccess": "Engine: no access",
         "noAccessTooltip": "Your GitHub sign-in cannot access {{source}}. Install the Eldritch Launcher GitHub App on its owner with access to the repository.",
         "unavailable": "Engine status unavailable",
         "errorTooltip": "Could not check {{source}}: {{message}}",
-        "unknownSourceTooltip": "Engine source {{source}} is not configured. Add it in Settings → Engine sources.",
-        "refresh": "Check engine status"
+        "refresh": "Check engine status",
+        "privateSource": "Источник движка {{source}} закрыт.",
+        "sourceNotAdded": "Источник движка {{source}} не добавлен.",
+        "addSource": "Добавить источник",
+        "addSourceFailed": "Не удалось добавить источник движка",
+        "updateAvailable": "Доступна новая сборка",
+        "update": "Обновить",
+        "updateConfirmTitle": "Обновить движок до {{tag}}?",
+        "updateConfirmMessage": "Устанавливает {{version}} и закрепляет за ней проект. Файл .godotlauncher проекта будет перезаписан."
     }
 }

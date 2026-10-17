@@ -69,17 +69,20 @@
         "ahead": "+{{count}} not on {{branch}}",
         "upToDate": "Engine up to date",
         "newerBuild": "Newer build: {{tag}}",
-        "installUpdate": "Install & update pin",
-        "installUpdateTooltip": "Install {{version}} and pin this project to it",
         "newerBuildUnavailable": "The newer build is not in the editor list yet. Refresh the editor list and try again.",
         "updateFailed": "Could not update the engine pin",
-        "authRequired": "Engine: auth required",
-        "authRequiredTooltip": "Sign in to GitHub in Settings → Connections to check {{source}}.",
         "noAccess": "Engine: no access",
         "noAccessTooltip": "Your GitHub sign-in cannot access {{source}}. Install the Eldritch Launcher GitHub App on its owner with access to the repository.",
         "unavailable": "Engine status unavailable",
         "errorTooltip": "Could not check {{source}}: {{message}}",
-        "unknownSourceTooltip": "Engine source {{source}} is not configured. Add it in Settings → Engine sources.",
-        "refresh": "Check engine status"
+        "refresh": "Check engine status",
+        "privateSource": "引擎來源 {{source}} 為私人。",
+        "sourceNotAdded": "尚未新增引擎來源 {{source}}。",
+        "addSource": "新增來源",
+        "addSourceFailed": "無法新增引擎來源",
+        "updateAvailable": "有較新的組建",
+        "update": "更新",
+        "updateConfirmTitle": "將引擎更新至 {{tag}}?",
+        "updateConfirmMessage": "安裝 {{version}} 並將此專案固定至該版本。這會重寫專案的 .godotlauncher 檔案。"
     }
 }

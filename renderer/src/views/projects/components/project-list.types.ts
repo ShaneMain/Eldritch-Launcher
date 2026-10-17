@@ -6,6 +6,7 @@ import type {
     ReleaseSummary,
 } from '@shared/contracts';
 import type React from 'react';
+import type { ProjectLaunchAction } from '../project-editor-resolution.model';
 import type { ProjectViewMode } from '../project-view.types';
 import type { ProjectSections } from '../projects-view.model';
 
@@ -83,5 +84,8 @@ export type ProjectPresentationProps = Pick<
     badges: React.ReactNode;
     tagIndicators: React.ReactNode;
     launchDisabled: boolean;
+    launchAction: ProjectLaunchAction;
+    /** Exact editor version installed by an `install-and-open` launch. */
+    installVersion?: string;
     lastOpened: string;
 };

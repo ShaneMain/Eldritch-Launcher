@@ -3,15 +3,10 @@ import type {
     ProjectEngineStatus,
     ReleaseSummary,
 } from '@shared/contracts';
-import {
-    Download,
-    GitCommitHorizontal,
-    RefreshCcw,
-    TriangleAlert,
-} from 'lucide-react';
+import { Download, Plus, RefreshCcw, TriangleAlert } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StatusBadge } from '../../../components/ui/status-badge.component';
+import { GitHubSignInButton } from '../../../components/github-connection/github-sign-in-button.component';
 import { Tooltip } from '../../../components/ui/tooltip.component';
 import { useAlerts } from '../../../hooks/alerts.hook';
 import { useEngineSources } from '../../../hooks/engine-sources.hook';
@@ -45,10 +40,11 @@ export function EngineStatusBadge({ project }: EngineStatusBadgeProps) {
  */
 function ForkEngineStatusBadge({ project }: EngineStatusBadgeProps) {
     const { t } = useTranslation('engineSources');
-    const { getProjectEngineStatus } = useEngineSources();
-    const { forkReleases, installRelease } = useRelease();
+    const { getProjectEngineStatus, addSource } = useEngineSources();
+    const { forkReleases, installRelease, reloadReleases } = useRelease();
     const { setProjectEditor } = useProjects();
-    const { addAlert } = useAlerts();
+    const { addAlert, addCustomConfirm } = useAlerts();
+    const [addingSource, setAddingSource] = useState(false);
     const [status, setStatus] = useState<ProjectEngineStatus | null>(null);
     const [checking, setChecking] = useState(true);
     const [updating, setUpdating] = useState(false);
@@ -94,6 +90,66 @@ function ForkEngineStatusBadge({ project }: EngineStatusBadgeProps) {
         : undefined;
 
     /**
+     * Adds the pinned fork source so its exact build can be installed.
+     *
+     * @param source - GitHub `owner/repo` of the pin.
+     * @returns A promise that ends after the status is re-checked.
+     */
+    const addPinnedSource = async (source: string): Promise<void> => {
+        setAddingSource(true);
+        try {
+            const result = await addSource({
+                url: `https://github.com/${source}`,
+            });
+            if (!result.ok && result.reason !== 'duplicate') {
+                throw new Error(
+                    t(`settings.add.errors.${addErrorKey[result.reason]}`),
+                );
+            }
+            await reloadReleases();
+            await loadStatus(true);
+        } catch (error) {
+            addAlert(
+                t('badge.addSourceFailed'),
+                error instanceof Error ? error.message : String(error),
+                <TriangleAlert className="inline text-error" />,
+            );
+        } finally {
+            setAddingSource(false);
+        }
+    };
+
+    /**
+     * Confirms, then installs the newer fork build and pins the project to
+     * it; the pin is written to the project's .godotlauncher file.
+     *
+     * @param release - The newer fork build to install.
+     */
+    const confirmInstallNewerBuild = (release: ReleaseSummary): void => {
+        addCustomConfirm(
+            t('badge.updateConfirmTitle', { tag: newerBuild?.tag }),
+            <p>
+                {t('badge.updateConfirmMessage', { version: release.version })}
+            </p>,
+            [
+                {
+                    isCancel: true,
+                    typeClass: 'btn-ghost',
+                    text: t('common:buttons.cancel'),
+                },
+                {
+                    typeClass: 'btn-primary',
+                    text: t('badge.update'),
+                    onClick: () => {
+                        void installNewerBuild(release);
+                        return true;
+                    },
+                },
+            ],
+        );
+    };
+
+    /**
      * Installs the newer fork build and pins the project to it.
      *
      * @param release - The newer fork build to install.
@@ -135,23 +191,37 @@ function ForkEngineStatusBadge({ project }: EngineStatusBadgeProps) {
             status={status}
             checking={checking}
             updating={updating}
+            addingSource={addingSource}
             newerRelease={newerRelease}
             t={t}
             onRefresh={() => void loadStatus(true)}
-            onInstallNewerBuild={(release) => void installNewerBuild(release)}
+            onInstallNewerBuild={confirmInstallNewerBuild}
+            onAddSource={(source) => void addPinnedSource(source)}
+            onSignedIn={() => loadStatus(true)}
         />
     );
 }
+
+const addErrorKey = {
+    invalid: 'invalid',
+    duplicate: 'duplicate',
+    'auth-required': 'authRequired',
+    'no-access': 'noAccess',
+    network: 'network',
+} as const;
 
 type EngineStatusBadgeContentProps = {
     status: ProjectEngineStatus | null;
     checking: boolean;
     updating: boolean;
+    addingSource?: boolean;
     /** Catalog build matching `status.newerBuild`, when available. */
     newerRelease: ReleaseSummary | undefined;
     t: (key: string, options?: Record<string, unknown>) => string;
     onRefresh: () => void;
     onInstallNewerBuild: (release: ReleaseSummary) => void;
+    onAddSource: (source: string) => void;
+    onSignedIn: () => Promise<void>;
 };
 
 /**
@@ -164,10 +234,13 @@ export function EngineStatusBadgeContent({
     status,
     checking,
     updating,
+    addingSource = false,
     newerRelease,
     t,
     onRefresh,
     onInstallNewerBuild,
+    onAddSource,
+    onSignedIn,
 }: EngineStatusBadgeContentProps) {
     const refreshButton = (
         <Tooltip placement="top" tip={t('badge.refresh')} tone="default">
@@ -194,40 +267,59 @@ export function EngineStatusBadgeContent({
         ) : null;
     }
 
-    if (status.kind === 'auth-required' || status.kind === 'no-access') {
-        const noAccess = status.kind === 'no-access';
+    // Each blocked state says why in one line and offers the one fix.
+    if (status.kind === 'auth-required') {
         return (
             <span
-                className="flex items-center gap-1"
+                className="flex flex-wrap items-center gap-1 text-xs text-warning"
                 data-testid="engineStatusBadge"
             >
-                <Tooltip
-                    placement="top"
-                    tip={t(
-                        noAccess
-                            ? 'badge.noAccessTooltip'
-                            : 'badge.authRequiredTooltip',
-                        { source: status.source },
-                    )}
-                    tone="warning"
-                >
-                    <StatusBadge tone="warning">
-                        {t(noAccess ? 'badge.noAccess' : 'badge.authRequired')}
-                    </StatusBadge>
-                </Tooltip>
-                {refreshButton}
+                <TriangleAlert size={12} aria-hidden="true" />
+                {t('badge.privateSource', { source: status.source })}
+                <GitHubSignInButton
+                    label={t('access.signIn')}
+                    className="btn btn-primary btn-outline btn-xs"
+                    data-testid="btnEngineStatusSignIn"
+                    onSignedIn={onSignedIn}
+                />
             </span>
         );
     }
 
-    if (status.kind === 'error' || status.kind === 'unknown-source') {
+    if (status.kind === 'unknown-source') {
+        return (
+            <span
+                className="flex flex-wrap items-center gap-1 text-xs text-warning"
+                data-testid="engineStatusBadge"
+            >
+                <TriangleAlert size={12} aria-hidden="true" />
+                {t('badge.sourceNotAdded', { source: status.source })}
+                <button
+                    type="button"
+                    className="btn btn-primary btn-outline btn-xs"
+                    data-testid="btnEngineStatusAddSource"
+                    disabled={addingSource}
+                    onClick={() => onAddSource(status.source)}
+                >
+                    {addingSource ? (
+                        <span className="loading loading-spinner loading-xs" />
+                    ) : (
+                        <Plus size={12} aria-hidden="true" />
+                    )}
+                    {t('badge.addSource')}
+                </button>
+            </span>
+        );
+    }
+
+    if (status.kind === 'no-access' || status.kind === 'error') {
         const tip =
             status.kind === 'error'
                 ? t('badge.errorTooltip', {
                       source: status.source,
                       message: status.message,
                   })
-                : t('badge.unknownSourceTooltip', { source: status.source });
+                : t('badge.noAccessTooltip', { source: status.source });
         return (
             <span
                 className="flex items-center gap-1 text-base-content/50"
@@ -240,7 +332,11 @@ export function EngineStatusBadgeContent({
                         aria-label={tip}
                     >
                         <TriangleAlert size={12} aria-hidden="true" />
-                        {t('badge.unavailable')}
+                        {t(
+                            status.kind === 'no-access'
+                                ? 'badge.noAccess'
+                                : 'badge.unavailable',
+                        )}
                     </span>
                 </Tooltip>
                 {refreshButton}
@@ -254,17 +350,41 @@ export function EngineStatusBadgeContent({
             className="flex flex-wrap items-center gap-1"
             data-testid="engineStatusBadge"
         >
-            {status.behindBy > 0 ? (
-                <StatusBadge tone="warning">
-                    <GitCommitHorizontal size={12} aria-hidden="true" />
-                    {t('badge.behind', {
-                        count: status.behindBy,
-                        branch: status.branch,
-                    })}
-                </StatusBadge>
+            {newerBuild ? (
+                <Tooltip
+                    placement="top"
+                    tone="default"
+                    tip={
+                        newerRelease
+                            ? t('badge.newerBuild', { tag: newerBuild.tag })
+                            : t('badge.newerBuildUnavailable')
+                    }
+                >
+                    <button
+                        type="button"
+                        className="btn btn-primary btn-outline btn-xs"
+                        data-testid="btnInstallEngineUpdate"
+                        disabled={!newerRelease || updating}
+                        onClick={() =>
+                            newerRelease && onInstallNewerBuild(newerRelease)
+                        }
+                    >
+                        {updating ? (
+                            <span className="loading loading-spinner loading-xs" />
+                        ) : (
+                            <Download size={12} aria-hidden="true" />
+                        )}
+                        {t('badge.updateAvailable')}
+                    </button>
+                </Tooltip>
             ) : (
                 <span className="text-xs text-base-content/50">
-                    {t('badge.upToDate')}
+                    {status.behindBy > 0
+                        ? t('badge.behind', {
+                              count: status.behindBy,
+                              branch: status.branch,
+                          })
+                        : t('badge.upToDate')}
                 </span>
             )}
             {status.aheadBy > 0 && (
@@ -274,42 +394,6 @@ export function EngineStatusBadgeContent({
                         branch: status.branch,
                     })}
                 </span>
-            )}
-            {newerBuild && (
-                <>
-                    <StatusBadge tone="info">
-                        {t('badge.newerBuild', { tag: newerBuild.tag })}
-                    </StatusBadge>
-                    <Tooltip
-                        placement="top"
-                        tone="default"
-                        tip={
-                            newerRelease
-                                ? t('badge.installUpdateTooltip', {
-                                      version: newerBuild.version,
-                                  })
-                                : t('badge.newerBuildUnavailable')
-                        }
-                    >
-                        <button
-                            type="button"
-                            className="btn btn-primary btn-outline btn-xs"
-                            data-testid="btnInstallEngineUpdate"
-                            disabled={!newerRelease || updating}
-                            onClick={() =>
-                                newerRelease &&
-                                onInstallNewerBuild(newerRelease)
-                            }
-                        >
-                            {updating ? (
-                                <span className="loading loading-spinner loading-xs" />
-                            ) : (
-                                <Download size={12} aria-hidden="true" />
-                            )}
-                            {t('badge.installUpdate')}
-                        </button>
-                    </Tooltip>
-                </>
             )}
             {refreshButton}
         </span>

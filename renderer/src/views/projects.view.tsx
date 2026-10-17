@@ -343,11 +343,12 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
      *
      * @param project - Project whose missing editor the user chose to install.
      * @param release - Exact catalogue release to install.
+     * @returns Whether the editor installed and the project now uses it.
      */
     const onInstallRequiredProjectEditor = async (
         project: ProjectDetails,
         release: ReleaseSummary,
-    ): Promise<void> => {
+    ): Promise<boolean> => {
         const target = `${project.release.version}:${project.release.mono}`;
         if (
             projectEditorInstallTargetRef.current.has(target) ||
@@ -357,13 +358,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                     downloadingRelease.mono === project.release.mono,
             )
         ) {
-            return;
+            return false;
         }
 
         projectEditorInstallTargetRef.current.add(target);
         setProjectEditorInstallTargets((current) => [...current, target]);
         try {
-            await queueProjectEditorRepairs([
+            return await queueProjectEditorRepairs([
                 {
                     release,
                     mono: project.release.mono,
@@ -384,6 +385,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                     ? error.message
                     : t('messages.addProjectError'),
             );
+            return false;
         } finally {
             projectEditorInstallTargetRef.current.delete(target);
             setProjectEditorInstallTargets((current) =>
@@ -424,6 +426,24 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
     };
 
     const onLaunchProject = async (project: ProjectDetails) => {
+        const missingEditor = isInstalledRelease(
+            project.release.version,
+            project.release.mono,
+        )
+            ? undefined
+            : findDownloadableMissingProjectEditor(
+                  project,
+                  availableReleases,
+                  availablePrereleases,
+                  forkReleases,
+              );
+        // A missing editor is installed first (exact build only), then opened.
+        if (missingEditor) {
+            if (await onInstallRequiredProjectEditor(project, missingEditor)) {
+                await launchProject(project);
+            }
+            return;
+        }
         if (isInstalledRelease(project.release.version, project.release.mono)) {
             const result = await launchProject(project);
             if (!result?.valid) {

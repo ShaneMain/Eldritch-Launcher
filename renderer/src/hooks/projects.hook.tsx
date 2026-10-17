@@ -84,7 +84,7 @@ interface ProjectsContext {
     ) => Promise<ChangeProjectEditorResult>;
     queueProjectEditorRepairs: (
         requests: ProjectEditorRepairRequest[],
-    ) => Promise<void>;
+    ) => Promise<boolean>;
     setProjectWindowed: (
         project: ProjectDetails,
         openWindowed: boolean,
@@ -445,12 +445,11 @@ export const ProjectsProvider: FC<ProjectsProviderProps> = ({ children }) => {
     /**
      * Installs one queued editor and repairs projects still using that selection.
      *
-     * @param request - Editor release and projects to repair in the background.
-     * @returns A promise that ends after installation and project repair.
+     * @returns Whether the editor installed and every project now uses it.
      */
     const runProjectEditorRepair = async (
         request: ProjectEditorRepairRequest,
-    ): Promise<void> => {
+    ): Promise<boolean> => {
         const installResult = await installRelease(
             request.release,
             request.mono,
@@ -462,7 +461,7 @@ export const ProjectsProvider: FC<ProjectsProviderProps> = ({ children }) => {
                 installResult.error || t('messages.addProjectError'),
                 <TriangleAlert className="stroke-error" />,
             );
-            return;
+            return false;
         }
 
         let assignmentError: string | undefined;
@@ -490,20 +489,21 @@ export const ProjectsProvider: FC<ProjectsProviderProps> = ({ children }) => {
                 <TriangleAlert className="stroke-error" />,
             );
         }
+        return !assignmentError;
     };
 
     /**
      * Runs editor repairs for independent project editor requests.
      *
-     * @param requests - Editor installs and their associated projects.
-     * @returns A promise that ends after all editor repairs finish.
+     * @returns Whether every repair succeeded.
      */
     const queueProjectEditorRepairs = async (
         requests: ProjectEditorRepairRequest[],
-    ): Promise<void> => {
-        await Promise.all(
+    ): Promise<boolean> => {
+        const results = await Promise.all(
             requests.map((request) => runProjectEditorRepair(request)),
         );
+        return results.every(Boolean);
     };
 
     const updateProjectState = (updatedProject: ProjectDetails) => {

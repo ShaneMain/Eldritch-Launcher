@@ -140,6 +140,8 @@ async function renderStatus(
             t={translate}
             onRefresh={vi.fn()}
             onInstallNewerBuild={vi.fn()}
+            onAddSource={vi.fn()}
+            onSignedIn={vi.fn(async () => undefined)}
         />,
     );
 }
@@ -233,8 +235,9 @@ describe('EngineStatusBadge', () => {
             newerRelease,
         );
 
-        expect(html).toContain('badge.newerBuild(tag=native-import-c0ffee1)');
-        expect(html).toContain('badge.installUpdate');
+        expect(html).toContain('badge.updateAvailable');
+        // One action: the separate "behind" warning is folded into it.
+        expect(html).not.toContain('badge.behind');
         expect(html).toMatch(
             /<button[^>]*data-testid="btnInstallEngineUpdate"(?![^>]*disabled)/,
         );
@@ -246,7 +249,18 @@ describe('EngineStatusBadge', () => {
             source: 'Eldritch/Engine',
         });
 
-        expect(html).toContain('badge.authRequired');
+        expect(html).toContain('badge.privateSource(source=Eldritch/Engine)');
+        expect(html).toContain('btnEngineStatusSignIn');
+    });
+
+    it('offers to add a pinned source that is not configured', async () => {
+        const html = await renderStatus({
+            kind: 'unknown-source',
+            source: 'Eldritch/Engine',
+        });
+
+        expect(html).toContain('badge.sourceNotAdded(source=Eldritch/Engine)');
+        expect(html).toContain('btnEngineStatusAddSource');
     });
 
     it('tells a signed-in user the GitHub App cannot see the source', async () => {

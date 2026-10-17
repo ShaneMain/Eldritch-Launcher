@@ -88,7 +88,9 @@
         "opened": "Infetaħ {{age}}",
         "notOpened": "Għadu ma nfetaħx",
         "editInGodot": "Editja f'Godot",
-        "installRequiredEditor": "Installa l-editur meħtieġ"
+        "installRequiredEditor": "Installa l-editur meħtieġ",
+        "installAndOpen": "Installa {{version}} u iftaħ",
+        "installingEditor": "Qed jiġi installat l-editur…"
     },
     "table": {
         "moreOptions": "Aktar għażliet għal {{project}}",

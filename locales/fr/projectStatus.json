@@ -15,14 +15,15 @@
         "descriptions": {
             "no-upstream": "The branch {{branch}} does not track a remote branch.",
             "detached": "HEAD is detached; check out a branch to compare it with its upstream.",
-            "auth-required": "The remote needs credentials. Connect GitHub in Connections settings.",
+            "auth-required": "Le dépôt distant exige des identifiants. Connectez-vous à GitHub.",
             "offline": "The remote could not be reached.",
             "error": "Git could not check the upstream."
         },
         "refreshHint": "Click to check again.",
-        "openConnections": "Click to open Connections settings.",
+        "openConnections": "Cliquez pour vous connecter à GitHub.",
         "refreshing": "Checking remote…",
-        "refreshAll": "Refresh Git status of all projects"
+        "refreshAll": "Refresh Git status of all projects",
+        "signIn": "Se connecter à GitHub"
     },
     "settings": {
         "refreshInterval": {

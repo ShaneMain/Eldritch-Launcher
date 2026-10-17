@@ -1,4 +1,4 @@
-import { ImageOff, Play, TriangleAlert } from 'lucide-react';
+import { Download, ImageOff, Play, TriangleAlert } from 'lucide-react';
 import { CopyBadge } from '../../../components/ui/copy-badge.component';
 import { getInvalidProjectTableKey } from '../projects-view.model';
 import type { ProjectPresentationProps } from './project-list.types';
@@ -19,6 +19,8 @@ export function ProjectCard({
     badges,
     tagIndicators,
     launchDisabled,
+    launchAction,
+    installVersion,
     lastOpened,
 }: ProjectCardProps) {
     return (
@@ -84,8 +86,20 @@ export function ProjectCard({
                         onClick={() => onLaunchProject(project)}
                         className="btn btn-primary gap-2 text-base"
                     >
-                        <Play size={16} />
-                        {t('card.editInGodot')}
+                        {launchAction === 'installing' ? (
+                            <span className="loading loading-spinner loading-xs" />
+                        ) : launchAction === 'install-and-open' ? (
+                            <Download size={16} />
+                        ) : (
+                            <Play size={16} />
+                        )}
+                        {launchAction === 'install-and-open'
+                            ? t('card.installAndOpen', {
+                                  version: installVersion,
+                              })
+                            : launchAction === 'installing'
+                              ? t('card.installingEditor')
+                              : t('card.editInGodot')}
                     </button>
                 </div>
             </div>

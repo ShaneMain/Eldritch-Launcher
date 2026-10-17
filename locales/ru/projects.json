@@ -88,7 +88,9 @@
         "opened": "Открыт {{age}}",
         "notOpened": "Ещё не открывался",
         "editInGodot": "Редактировать в Godot",
-        "installRequiredEditor": "Установить необходимый редактор"
+        "installRequiredEditor": "Установить необходимый редактор",
+        "installAndOpen": "Установить {{version}} и открыть",
+        "installingEditor": "Установка редактора…"
     },
     "table": {
         "moreOptions": "Дополнительные действия для {{project}}",
