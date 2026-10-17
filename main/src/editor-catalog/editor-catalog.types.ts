@@ -37,7 +37,7 @@ export type GithubEditorRelease = {
 
 /** Last refresh failure kept with cached provider data. */
 export type EditorCatalogRefreshFailure = {
-    state: 'auth-required' | 'error';
+    state: 'auth-required' | 'no-access' | 'error';
     message: string;
 };
 

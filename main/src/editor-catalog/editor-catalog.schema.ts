@@ -83,7 +83,7 @@ const EditorCatalogProviderStateSchema = z.object({
     lastPublishedAt: z.iso.datetime().nullable(),
     lastFailure: z
         .object({
-            state: z.enum(['auth-required', 'error']),
+            state: z.enum(['auth-required', 'no-access', 'error']),
             message: z.string(),
         })
         .optional(),

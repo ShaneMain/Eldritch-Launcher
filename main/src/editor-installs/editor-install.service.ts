@@ -444,9 +444,15 @@ export class EditorInstallService {
             } catch (error) {
                 if (error instanceof EngineSourceAuthError) {
                     throw new Error(
-                        t('engineSources:errors.authRequired', {
-                            source: error.source,
-                        }),
+                        t(
+                            error.signedIn
+                                ? 'engineSources:errors.noAccess'
+                                : 'engineSources:errors.authRequired',
+                            {
+                                source: error.source,
+                                owner: error.source.split('/')[0],
+                            },
+                        ),
                         { cause: error },
                     );
                 }

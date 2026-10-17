@@ -99,7 +99,7 @@ export class GithubSourceAccessService {
             return response;
         }
         await response.body?.cancel();
-        throw mapFailure(response, repository);
+        throw mapFailure(response, repository, token !== null);
     }
 
     /**
@@ -162,15 +162,18 @@ function githubHeaders(token: string | null): Record<string, string> {
  * Maps a failed GitHub response to an authorisation or request error.
  * Rejected credentials (401) always need sign-in; 403/404 only do for
  * sources that require authentication, since private repositories answer
- * 404 to unauthorised callers.
+ * 404 to unauthorised callers. A 403/404 despite a token means the signed-in
+ * account, through the GitHub App, cannot see the repository.
  *
  * @param response - The failed response.
  * @param repository - Repository the request belongs to.
+ * @param withToken - Whether the request carried a GitHub token.
  * @returns The error to throw.
  */
 function mapFailure(
     response: Response,
     repository: GithubRepositoryRef,
+    withToken: boolean,
 ): Error {
     const source = `${repository.owner}/${repository.repo}`;
     const rateLimited =
@@ -183,12 +186,14 @@ function mapFailure(
             `GitHub rate limit reached for ${source}`,
         );
     }
-    if (
-        response.status === 401 ||
-        ((response.status === 403 || response.status === 404) &&
-            repository.requiresAuth)
-    ) {
+    if (response.status === 401) {
         return new EngineSourceAuthError(source);
+    }
+    if (
+        (response.status === 403 || response.status === 404) &&
+        repository.requiresAuth
+    ) {
+        return new EngineSourceAuthError(source, withToken);
     }
     return new GithubRequestError(
         response.status,

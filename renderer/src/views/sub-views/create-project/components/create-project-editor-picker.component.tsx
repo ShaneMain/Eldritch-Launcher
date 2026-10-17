@@ -14,10 +14,12 @@ import {
     useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useForkEngineChannels } from '../../../../hooks/fork-engine-channels.hook';
 import {
     buildCreateProjectReleaseRows,
     type CreateProjectEditorSelection,
     getCreateProjectCatalogueVariants,
+    getCreateProjectForkVariants,
     getCreateProjectReleaseKey,
 } from '../create-project.model';
 import {
@@ -35,6 +37,8 @@ type CreateProjectEditorPickerProps = {
     installedReleases: InstalledRelease[];
     availableReleases: ReleaseSummary[];
     availablePrereleases: ReleaseSummary[];
+    /** Oldest Godot major version offered from fork sources. */
+    minimumForkMajorVersion?: number;
     releaseInstallProgress: ReleaseInstallProgress[];
     loading: boolean;
     catalogueError: string | undefined;
@@ -61,6 +65,7 @@ export const CreateProjectEditorPicker: React.FC<
     installedReleases,
     availableReleases,
     availablePrereleases,
+    minimumForkMajorVersion = 0,
     releaseInstallProgress,
     loading,
     catalogueError,
@@ -84,6 +89,7 @@ export const CreateProjectEditorPicker: React.FC<
     );
     const [channel, setChannel] =
         useState<CreateProjectEditorPickerChannel>('stable');
+    const [forkChannelId, setForkChannelId] = useState<string | null>(null);
     const [search, setSearch] = useState('');
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     const [isRetryingCatalogue, setIsRetryingCatalogue] = useState(false);
@@ -92,11 +98,17 @@ export const CreateProjectEditorPicker: React.FC<
         top: 16,
     });
     const wasOpenRef = useRef(false);
+    const { channels: forkChannels, host } =
+        useForkEngineChannels(isPopoverOpen);
+    const forkChannel = forkChannels.find(
+        (candidate) => candidate.id === forkChannelId,
+    );
 
     useEffect(() => {
         if (open && !wasOpenRef.current) {
             setTab(hasInstalledEditors ? 'installed' : 'catalogue');
             setChannel('stable');
+            setForkChannelId(null);
             setSearch('');
         }
 
@@ -110,11 +122,30 @@ export const CreateProjectEditorPicker: React.FC<
 
     const catalogueVariants = useMemo(
         () =>
-            getCreateProjectCatalogueVariants(
-                channel === 'stable' ? availableReleases : availablePrereleases,
-                search,
-            ),
-        [availablePrereleases, availableReleases, channel, search],
+            forkChannel
+                ? host
+                    ? getCreateProjectForkVariants(
+                          forkChannel.releases,
+                          host,
+                          minimumForkMajorVersion,
+                          search,
+                      )
+                    : []
+                : getCreateProjectCatalogueVariants(
+                      channel === 'stable'
+                          ? availableReleases
+                          : availablePrereleases,
+                      search,
+                  ),
+        [
+            availablePrereleases,
+            availableReleases,
+            channel,
+            forkChannel,
+            host,
+            minimumForkMajorVersion,
+            search,
+        ],
     );
     const hasCachedCatalogueReleases =
         (channel === 'stable' ? availableReleases : availablePrereleases)
@@ -409,6 +440,9 @@ export const CreateProjectEditorPicker: React.FC<
                 open={isPopoverOpen}
                 tab={tab}
                 channel={channel}
+                forkChannels={forkChannels}
+                forkChannel={forkChannel}
+                hostKnown={host !== null}
                 search={search}
                 installedRows={installedRows}
                 installedReleases={installedReleases}
@@ -420,7 +454,14 @@ export const CreateProjectEditorPicker: React.FC<
                 retryingCatalogue={isRetryingCatalogue}
                 selection={selection}
                 onTabChange={setTab}
-                onChannelChange={setChannel}
+                onChannelChange={(nextChannel) => {
+                    setForkChannelId(null);
+                    setChannel(nextChannel);
+                }}
+                onForkChannelChange={(channelId) => {
+                    setSearch('');
+                    setForkChannelId(channelId);
+                }}
                 onSearchChange={setSearch}
                 onSelectionChange={handleSelectionChange}
                 onCancelInstall={onCancelInstall}

@@ -263,7 +263,10 @@ export class ProjectEngineStatusService {
             };
         } catch (error) {
             if (error instanceof EngineSourceAuthError) {
-                return { kind: 'auth-required', source: fork.source };
+                return {
+                    kind: error.signedIn ? 'no-access' : 'auth-required',
+                    source: fork.source,
+                };
             }
             logger.warn(`Failed to check engine pin ${fork.source}`, error);
             return {

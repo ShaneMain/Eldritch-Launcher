@@ -1,6 +1,7 @@
 import type { ReleaseSummary } from '@shared/contracts';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
+import type { ForkEngineChannel } from '../../../hooks/fork-engine-channels.model.ts';
 import { InstallEditorFork } from './install-editor-fork.component.tsx';
 
 vi.mock('../../../hooks/release.hook.tsx', () => ({
@@ -9,6 +10,10 @@ vi.mock('../../../hooks/release.hook.tsx', () => ({
         getInstalledRelease: vi.fn(() => undefined),
         getReleaseInstallProgress: vi.fn(() => undefined),
     }),
+}));
+
+vi.mock('../../../renderer.bridge.ts', () => ({
+    appBridge: { openExternal: vi.fn() },
 }));
 
 vi.mock('react-i18next', () => ({
@@ -39,6 +44,14 @@ const forkRelease: ReleaseSummary = {
     },
 };
 
+const channel: ForkEngineChannel = {
+    id: 'fork:eldritch/engine',
+    label: 'Eldritch Engine',
+    source: 'Eldritch/Engine',
+    access: { kind: 'ok' },
+    releases: [forkRelease],
+};
+
 /**
  * Renders the fork list with stable test props.
  *
@@ -50,10 +63,8 @@ function renderFork(
 ): string {
     return renderToStaticMarkup(
         <InstallEditorFork
-            sourceId="fork:eldritch/engine"
-            releases={[forkRelease]}
+            channel={channel}
             host={{ platform: 'linux', arch: 'x64' }}
-            authRequired={false}
             search=""
             searchPlaceholder="Search"
             t={(key) => key}
@@ -79,6 +90,24 @@ describe('InstallEditorFork', () => {
         expect(html).not.toContain('drawer.noPlatformBuild');
     });
 
+    it('keeps every build row at full height inside the scrolling list', () => {
+        const html = renderFork({
+            channel: {
+                ...channel,
+                releases: Array.from({ length: 20 }, (_, index) => ({
+                    ...forkRelease,
+                    version: `${forkRelease.version}.${index}`,
+                })),
+            },
+        });
+
+        const rows = html.match(/<article class="[^"]*"/g) ?? [];
+        expect(rows).toHaveLength(20);
+        for (const row of rows) {
+            expect(row).toContain('shrink-0');
+        }
+    });
+
     it('replaces install actions when the host platform has no build', () => {
         const html = renderFork({ host: { platform: 'win32', arch: 'x64' } });
 
@@ -87,9 +116,65 @@ describe('InstallEditorFork', () => {
     });
 
     it('asks the user to sign in for sources that require auth', () => {
-        const html = renderFork({ authRequired: true, releases: [] });
+        const html = renderFork({
+            channel: {
+                ...channel,
+                access: {
+                    kind: 'auth-required',
+                    installUrl:
+                        'https://github.com/apps/eldritch-launcher/installations/new',
+                },
+                releases: [],
+            },
+        });
 
-        expect(html).toContain('drawer.authRequired');
+        expect(html).toContain('forkSourceAccess_auth-required');
+        expect(html).toContain('access.authRequired');
+        expect(html).toContain('href="#/settings/connections"');
+        expect(html).toContain('btnForkSourceInstallApp');
         expect(html).not.toContain('drawer.empty');
+    });
+
+    it('offers the GitHub App install when the signed-in account has no access', () => {
+        const html = renderFork({
+            channel: {
+                ...channel,
+                access: {
+                    kind: 'no-access',
+                    installUrl:
+                        'https://github.com/apps/eldritch-launcher/installations/new',
+                },
+                releases: [],
+            },
+        });
+
+        expect(html).toContain('forkSourceAccess_no-access');
+        expect(html).toContain('access.noAccess');
+        expect(html).toContain('btnForkSourceInstallApp');
+        expect(html).not.toContain('linkForkSourceSignIn');
+        expect(html).not.toContain('drawer.empty');
+    });
+
+    it('explains why a reachable source lists no builds', () => {
+        const html = renderFork({ channel: { ...channel, releases: [] } });
+
+        expect(html).toContain('drawer.empty');
+        expect(html).toContain('drawer.emptyHint');
+    });
+
+    it('shows the refresh failure of a source without builds', () => {
+        const html = renderFork({
+            channel: {
+                ...channel,
+                access: {
+                    kind: 'error',
+                    message: 'GitHub request failed: 500',
+                },
+                releases: [],
+            },
+        });
+
+        expect(html).toContain('GitHub request failed: 500');
+        expect(html).not.toContain('drawer.emptyHint');
     });
 });

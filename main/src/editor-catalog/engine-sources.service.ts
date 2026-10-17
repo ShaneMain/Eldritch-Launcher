@@ -15,10 +15,7 @@ import {
 import type { StoredForkSource } from './editor-catalog.types.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { EngineSourcesStore } from './engine-sources.store.js';
-import {
-    EngineSourceAuthError,
-    GithubRequestError,
-} from './github-source.errors.js';
+import { EngineSourceAuthError } from './github-source.errors.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { GithubSourceAccessService } from './github-source-access.service.js';
 
@@ -119,23 +116,21 @@ export class EngineSourcesService {
         let repository: z.infer<typeof GithubRepositorySchema>;
         try {
             repository = await this.access.withToken(async (token) => {
-                // Without a login a private repository answers 404, so ask
-                // for sign-in instead of reporting it missing.
+                // A private repository answers 404 to callers who cannot
+                // see it: without a login, ask for sign-in; with one, the
+                // GitHub App has no access to it (or it does not exist).
                 const response = await this.access.request(
                     `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`,
                     token,
-                    { owner, repo, requiresAuth: !token },
+                    { owner, repo, requiresAuth: true },
                 );
                 return GithubRepositorySchema.parse(await response.json());
             });
         } catch (error) {
             if (error instanceof EngineSourceAuthError) {
-                return { ok: false, reason: 'auth-required' };
-            }
-            if (error instanceof GithubRequestError && error.status !== 0) {
                 return {
                     ok: false,
-                    reason: error.status === 404 ? 'not-found' : 'network',
+                    reason: error.signedIn ? 'no-access' : 'auth-required',
                 };
             }
             return { ok: false, reason: 'network' };

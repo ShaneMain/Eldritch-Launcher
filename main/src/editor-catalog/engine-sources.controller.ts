@@ -1,3 +1,5 @@
+// biome-ignore lint/style/useImportType: Required for DI constructor metadata
+import { ConfigService } from '@mariodebono/di-config';
 import {
     BridgeController,
     createIpcHandleTyped,
@@ -11,6 +13,8 @@ import type {
     EngineSourcesBridge,
     ProjectEngineStatus,
 } from '@shared/contracts';
+import { githubAppInstallationUrl } from '../app-integrations/providers/github/github-app-integration.constants.js';
+import type { AppConfig } from '../config/index.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { EditorCatalogService } from './editor-catalog.service.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
@@ -29,11 +33,13 @@ export class EngineSourcesController implements EngineSourcesBridge {
      * @param sources - Engine source registry.
      * @param catalog - Editor catalog holding source refresh state.
      * @param engineStatus - Project engine pin status checks.
+     * @param configService - Runtime configuration naming the GitHub App.
      */
     constructor(
         private readonly sources: EngineSourcesService,
         private readonly catalog: EditorCatalogService,
         private readonly engineStatus: ProjectEngineStatusService,
+        private readonly configService: ConfigService<AppConfig>,
     ) {}
 
     /**
@@ -60,7 +66,9 @@ export class EngineSourcesController implements EngineSourcesBridge {
     ): Promise<AddEngineSourceResult> {
         const added = await this.sources.add(input);
         if (!added.ok) {
-            return added;
+            return added.reason === 'no-access'
+                ? { ...added, githubAppInstallUrl: this.githubAppInstallUrl() }
+                : added;
         }
         return {
             ok: true,
@@ -123,6 +131,7 @@ export class EngineSourcesController implements EngineSourcesBridge {
     private async summarize(
         catalog: EditorCatalogResult,
     ): Promise<EngineSourceSummary[]> {
+        const installUrl = this.githubAppInstallUrl();
         return (await this.sources.list()).map((source) => {
             const status = catalog.providers.find(
                 (provider) => provider.id === source.id,
@@ -135,7 +144,25 @@ export class EngineSourcesController implements EngineSourcesBridge {
                         : (status?.state ?? 'pending'),
                 lastFetchedAt: status?.lastFetchedAt ?? null,
                 ...(status?.refreshError ? { error: status.refreshError } : {}),
+                buildCount: catalog.releases.filter(
+                    (release) => release.providerId === source.id,
+                ).length,
+                ...(source.requiresAuth
+                    ? { githubAppInstallUrl: installUrl }
+                    : {}),
             };
         });
+    }
+
+    /**
+     * Builds the page where the GitHub App is installed on an account or
+     * organisation, granting it access to private engine repositories.
+     *
+     * @returns The GitHub App installation URL.
+     */
+    private githubAppInstallUrl(): string {
+        return githubAppInstallationUrl(
+            this.configService.getOrThrow('githubAppSlug'),
+        );
     }
 }

@@ -1,24 +1,20 @@
 import type { ReleaseSummary } from '@shared/contracts';
-import { KeyRound } from 'lucide-react';
 import type React from 'react';
+import { ForkSourceAccessNotice } from '../../../components/fork-source-access-notice.component.tsx';
 import { SearchField } from '../../../components/ui/search-field.component.tsx';
+import {
+    type ForkEngineChannel,
+    type ForkEngineHost,
+    toHostRelease,
+} from '../../../hooks/fork-engine-channels.model.ts';
 import { InstallEditorVariantAction } from './install-editor-variant-action.component.tsx';
 
 type Translate = (key: string, options?: Record<string, unknown>) => string;
 
-/** Current operating system and processor architecture. */
-export type InstallEditorHostPlatform = {
-    platform: string;
-    arch: string;
-};
-
 type InstallEditorForkProps = {
-    sourceId: string;
-    releases: ReleaseSummary[];
+    channel: ForkEngineChannel;
     /** Unknown until the main process reports it. */
-    host: InstallEditorHostPlatform | null;
-    authRequired: boolean;
-    sourceError?: string;
+    host: ForkEngineHost | null;
     search: string;
     searchPlaceholder: string;
     t: Translate;
@@ -28,17 +24,15 @@ type InstallEditorForkProps = {
 };
 
 /**
- * Renders the builds published by one fork engine source.
+ * Renders the builds published by one fork engine source, or why none can
+ * be listed.
  *
- * @param props - The source builds, host platform, and install actions.
- * @returns The fork build list, or a sign-in notice for private sources.
+ * @param props - The fork channel, search, and install actions.
+ * @returns The fork build list.
  */
 export const InstallEditorFork: React.FC<InstallEditorForkProps> = ({
-    sourceId,
-    releases,
+    channel,
     host,
-    authRequired,
-    sourceError,
     search,
     searchPlaceholder,
     t,
@@ -46,21 +40,15 @@ export const InstallEditorFork: React.FC<InstallEditorForkProps> = ({
     onInstall,
     onReinstall,
 }) => {
-    if (authRequired) {
+    const { access } = channel;
+    if (access.kind === 'auth-required' || access.kind === 'no-access') {
         return (
-            <div
-                role="alert"
-                className="alert alert-warning alert-soft text-warning-content dark:text-warning"
-                data-testid="forkSourceAuthRequired"
-            >
-                <KeyRound size={16} aria-hidden="true" />
-                <span>{t('drawer.authRequired')}</span>
-            </div>
+            <ForkSourceAccessNotice access={access} source={channel.source} />
         );
     }
 
     const query = search.trim().toLowerCase();
-    const rows = releases
+    const rows = channel.releases
         .filter(
             (release) =>
                 !query ||
@@ -79,7 +67,7 @@ export const InstallEditorFork: React.FC<InstallEditorForkProps> = ({
         <div className="flex h-full min-h-0 flex-col gap-2">
             <div className="flex shrink-0 justify-end">
                 <SearchField
-                    key={sourceId}
+                    key={channel.id}
                     placeholder={searchPlaceholder}
                     value={search}
                     onChange={onSearchChange}
@@ -89,13 +77,24 @@ export const InstallEditorFork: React.FC<InstallEditorForkProps> = ({
             </div>
 
             {rows.length === 0 ? (
-                <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1 text-base-content/75">
+                <div
+                    className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1 px-6 text-center text-base-content/75"
+                    data-testid="installEditorForkEmpty"
+                >
                     <span>{t('drawer.empty')}</span>
-                    {sourceError && (
-                        <span className="text-sm text-error">
-                            {sourceError}
-                        </span>
-                    )}
+                    {access.kind === 'error'
+                        ? access.message && (
+                              <span className="text-sm text-error">
+                                  {access.message}
+                              </span>
+                          )
+                        : !query && (
+                              <span className="text-sm">
+                                  {t('drawer.emptyHint', {
+                                      source: channel.source,
+                                  })}
+                              </span>
+                          )}
                 </div>
             ) : (
                 <div
@@ -120,7 +119,7 @@ export const InstallEditorFork: React.FC<InstallEditorForkProps> = ({
 
 type ForkReleaseRowProps = {
     release: ReleaseSummary;
-    host: InstallEditorHostPlatform | null;
+    host: ForkEngineHost | null;
     t: Translate;
     onInstall: (release: ReleaseSummary, mono: boolean) => Promise<void>;
     onReinstall: (release: ReleaseSummary, mono: boolean) => Promise<void>;
@@ -140,21 +139,13 @@ const ForkReleaseRow: React.FC<ForkReleaseRowProps> = ({
     onReinstall,
 }) => {
     // Fork sources may publish only some platforms; offer only host assets.
-    const hostRelease: ReleaseSummary | null = host
-        ? {
-              ...release,
-              assets: release.assets.filter(
-                  (asset) =>
-                      asset.platform_tags[0] === host.platform &&
-                      asset.platform_tags[1] === host.arch,
-              ),
-          }
-        : null;
+    const hostRelease = host ? toHostRelease(release, host) : null;
     const revision = release.fork?.revision ?? '';
 
     return (
+        // Rows keep their height so the scrolling list never overlaps them.
         <article
-            className="flex min-h-14 flex-col items-stretch gap-3 px-3 py-3 hover:bg-base-content/5 sm:flex-row sm:items-center"
+            className="flex min-h-14 shrink-0 flex-col items-stretch gap-3 px-3 py-3 hover:bg-base-content/5 sm:flex-row sm:items-center"
             data-testid={`forkReleaseRow_${revision.slice(0, 7)}`}
         >
             <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5">

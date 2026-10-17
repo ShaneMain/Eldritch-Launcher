@@ -441,6 +441,68 @@ describe('EditorCatalogService', () => {
         expect(result.providers[0].refreshError).toBeUndefined();
     });
 
+    it('reports no-access when the signed-in account cannot see a fork', async () => {
+        const { service, githubAdapter } = createService(
+            createEmptyEditorCatalog(),
+            false,
+            { sources: [FORK_SOURCE], token: 'ghu_token' },
+        );
+        githubAdapter.fetchProvider.mockRejectedValueOnce(
+            new EngineSourceAuthError(
+                'Eldritch-Game-Studio/Eldritch-Engine',
+                true,
+            ),
+        );
+
+        const result = await service.refreshCatalog();
+
+        expect(result.providers).toEqual([
+            expect.objectContaining({
+                id: FORK_SOURCE.id,
+                state: 'no-access',
+                refreshError:
+                    'The signed-in GitHub account cannot access Eldritch-Game-Studio/Eldritch-Engine',
+            }),
+        ]);
+    });
+
+    it.each(['auth-required', 'no-access'] as const)(
+        'retries a fork blocked by %s on the next catalog read, so a new sign-in or GitHub App grant lists its builds',
+        async (state) => {
+            const catalog = createCatalogWithRelease(
+                createRelease('official-stable', '4.5-stable'),
+            );
+            catalog.providers[FORK_SOURCE.id] = {
+                integrityMetadataRefreshed: true,
+                templateMetadataRefreshed: true,
+                lastFetchedAt: Date.now(),
+                lastPublishedAt: null,
+                lastFailure: { state, message: 'blocked' },
+                releases: [],
+            };
+            const { service, githubAdapter } = createService(catalog, false, {
+                sources: [OFFICIAL_ENGINE_SOURCES[0], FORK_SOURCE],
+                token: 'ghu_token',
+            });
+
+            const result = await service.getCatalog();
+
+            expect(githubAdapter.fetchProvider).toHaveBeenCalledExactlyOnceWith(
+                source(FORK_SOURCE.id),
+                null,
+                'ghu_token',
+            );
+            expect(
+                result.providers.find(({ id }) => id === FORK_SOURCE.id),
+            ).toMatchObject({ state: 'ok' });
+            expect(
+                result.releases.filter(
+                    (release) => release.providerId === FORK_SOURCE.id,
+                ),
+            ).toHaveLength(1);
+        },
+    );
+
     it('retries an official source anonymously when the token is refused', async () => {
         const { service, githubAdapter } = createService(
             createEmptyEditorCatalog(),

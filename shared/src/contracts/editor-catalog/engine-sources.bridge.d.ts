@@ -24,6 +24,13 @@ export type EngineSourceSummary = EngineSource & {
     state: EditorCatalogProviderHealth | 'pending';
     lastFetchedAt: number | null;
     error?: string;
+    /** Installable builds currently listed for this source. */
+    buildCount: number;
+    /**
+     * GitHub App installation page, present for sources that need a GitHub
+     * login, used to grant the app access to the repository.
+     */
+    githubAppInstallUrl?: string;
 };
 
 /** Input accepted when adding a fork source. */
@@ -33,23 +40,33 @@ export type AddEngineSourceInput = {
     displayName?: string;
 };
 
-/** Reports why a fork source could not be added. */
+/**
+ * Reports why a fork source could not be added. `no-access` means the
+ * repository does not exist or the signed-in account, through the GitHub
+ * App, cannot see it; GitHub answers both the same way.
+ */
 export type AddEngineSourceFailure =
     | 'invalid'
     | 'duplicate'
-    | 'not-found'
     | 'auth-required'
+    | 'no-access'
     | 'network';
 
 /** Result of adding a fork source. */
 export type AddEngineSourceResult =
     | { ok: true; sources: EngineSourceSummary[] }
-    | { ok: false; reason: AddEngineSourceFailure };
+    | {
+          ok: false;
+          reason: AddEngineSourceFailure;
+          /** GitHub App installation page, present for `no-access`. */
+          githubAppInstallUrl?: string;
+      };
 
 /** Engine-pin freshness for a project pinned to a fork build. */
 export type ProjectEngineStatus =
     | { kind: 'not-fork' }
     | { kind: 'auth-required'; source: string }
+    | { kind: 'no-access'; source: string }
     | { kind: 'unknown-source'; source: string }
     | { kind: 'error'; source: string; message: string }
     | {

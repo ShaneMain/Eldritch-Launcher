@@ -1,12 +1,27 @@
 import type { InstalledRelease, ReleaseSummary } from '@shared/contracts';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
+import type { ForkEngineChannel } from '../../../../hooks/fork-engine-channels.model';
 import {
     getCreateProjectCatalogueVariants,
+    getCreateProjectForkVariants,
     getCreateProjectReleaseKey,
 } from '../create-project.model';
 import { CreateProjectEditorPicker } from './create-project-editor-picker.component';
 import { CreateProjectEditorPickerPopover } from './create-project-editor-picker-popover.component';
+
+const forkChannels = vi.hoisted(() => ({ value: [] as ForkEngineChannel[] }));
+
+vi.mock('../../../../hooks/fork-engine-channels.hook', () => ({
+    useForkEngineChannels: () => ({
+        channels: forkChannels.value,
+        host: { platform: 'linux', arch: 'x64' },
+    }),
+}));
+
+vi.mock('../../../../renderer.bridge', () => ({
+    appBridge: { openExternal: vi.fn() },
+}));
 
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
@@ -180,6 +195,9 @@ describe('CreateProjectEditorPicker', () => {
                     open
                     tab="catalogue"
                     channel={channel}
+                    forkChannels={[]}
+                    forkChannel={undefined}
+                    hostKnown
                     search=""
                     installedRows={[]}
                     installedReleases={[]}
@@ -195,6 +213,7 @@ describe('CreateProjectEditorPicker', () => {
                     selection={null}
                     onTabChange={vi.fn()}
                     onChannelChange={vi.fn()}
+                    onForkChannelChange={vi.fn()}
                     onSearchChange={vi.fn()}
                     onSelectionChange={vi.fn()}
                     onCancelInstall={vi.fn()}
@@ -226,6 +245,9 @@ describe('CreateProjectEditorPicker', () => {
                 open
                 tab="catalogue"
                 channel="stable"
+                forkChannels={[]}
+                forkChannel={undefined}
+                hostKnown
                 search=""
                 installedRows={[]}
                 installedReleases={[]}
@@ -238,6 +260,7 @@ describe('CreateProjectEditorPicker', () => {
                 selection={null}
                 onTabChange={vi.fn()}
                 onChannelChange={vi.fn()}
+                onForkChannelChange={vi.fn()}
                 onSearchChange={vi.fn()}
                 onSelectionChange={vi.fn()}
                 onCancelInstall={vi.fn()}
@@ -263,6 +286,9 @@ describe('CreateProjectEditorPicker', () => {
                 open
                 tab="catalogue"
                 channel="stable"
+                forkChannels={[]}
+                forkChannel={undefined}
+                hostKnown
                 search=""
                 installedRows={[]}
                 installedReleases={[]}
@@ -278,6 +304,7 @@ describe('CreateProjectEditorPicker', () => {
                 selection={null}
                 onTabChange={vi.fn()}
                 onChannelChange={vi.fn()}
+                onForkChannelChange={vi.fn()}
                 onSearchChange={vi.fn()}
                 onSelectionChange={vi.fn()}
                 onCancelInstall={vi.fn()}
@@ -305,6 +332,9 @@ describe('CreateProjectEditorPicker', () => {
                 open
                 tab="catalogue"
                 channel="stable"
+                forkChannels={[]}
+                forkChannel={undefined}
+                hostKnown
                 search=""
                 installedRows={[]}
                 installedReleases={[]}
@@ -317,6 +347,7 @@ describe('CreateProjectEditorPicker', () => {
                 selection={null}
                 onTabChange={vi.fn()}
                 onChannelChange={vi.fn()}
+                onForkChannelChange={vi.fn()}
                 onSearchChange={vi.fn()}
                 onSelectionChange={vi.fn()}
                 onCancelInstall={vi.fn()}
@@ -427,5 +458,254 @@ function catalogueRelease(version: string): ReleaseSummary {
                 mono: true,
             },
         ],
+    };
+}
+
+describe('CreateProjectEditorPicker fork channels', () => {
+    it('offers every fork source as a Browse releases channel', () => {
+        forkChannels.value = [forkChannel()];
+        try {
+            const html = renderToStaticMarkup(
+                <CreateProjectEditorPicker
+                    open
+                    installedReleases={[]}
+                    availableReleases={[]}
+                    availablePrereleases={[]}
+                    releaseInstallProgress={[]}
+                    loading={false}
+                    catalogueError={undefined}
+                    selection={null}
+                    onSelectionChange={vi.fn()}
+                    onCancelInstall={vi.fn()}
+                    onRetryCatalogue={vi.fn()}
+                />,
+            );
+
+            expect(html).toContain(
+                'tabCreateProjectForkEditors_fork:redot-engine/redot-engine',
+            );
+            expect(html).toContain('>Redot<');
+        } finally {
+            forkChannels.value = [];
+        }
+    });
+
+    it('lists selectable host builds of the selected fork source', () => {
+        const channel = forkChannel();
+        const html = renderPopover({
+            forkChannels: [channel],
+            forkChannel: channel,
+            catalogueVariants: getCreateProjectForkVariants(
+                channel.releases,
+                { platform: 'linux', arch: 'x64' },
+                0,
+                '',
+            ),
+        });
+
+        expect(html).toMatch(
+            /aria-selected="true"[^>]*tabCreateProjectForkEditors_fork:redot-engine\/redot-engine|tabCreateProjectForkEditors_fork:redot-engine\/redot-engine"[^>]*aria-selected="true"/,
+        );
+        expect(html).toContain(
+            'createProjectCatalogueEditor_catalogue:26.3.stable.85e520394:std',
+        );
+        expect(html).toContain(
+            'createProjectCatalogueEditor_catalogue:26.3.stable.85e520394:mono',
+        );
+        expect(html).not.toContain('createProjectForkEditorsEmpty');
+    });
+
+    it('explains a private fork source instead of an empty list', () => {
+        const channel = forkChannel({
+            access: {
+                kind: 'no-access',
+                installUrl:
+                    'https://github.com/apps/eldritch-launcher/installations/new',
+            },
+            releases: [],
+        });
+        const html = renderPopover({
+            forkChannels: [channel],
+            forkChannel: channel,
+        });
+
+        expect(html).toContain('forkSourceAccess_no-access');
+        expect(html).toContain('btnForkSourceInstallApp');
+        expect(html).not.toContain('createProjectEditorCatalogueList');
+    });
+
+    it('explains a fork source with no builds, or none for this computer', () => {
+        const empty = forkChannel({ releases: [] });
+        const emptyHtml = renderPopover({
+            forkChannels: [empty],
+            forkChannel: empty,
+        });
+        const otherPlatform = forkChannel();
+        const otherPlatformHtml = renderPopover({
+            forkChannels: [otherPlatform],
+            forkChannel: otherPlatform,
+            catalogueVariants: getCreateProjectForkVariants(
+                otherPlatform.releases,
+                { platform: 'darwin', arch: 'arm64' },
+                0,
+                '',
+            ),
+        });
+
+        expect(emptyHtml).toContain('engineSources:drawer.empty');
+        expect(emptyHtml).toContain('engineSources:drawer.emptyHint');
+        expect(otherPlatformHtml).toContain(
+            'engineSources:drawer.noHostBuilds',
+        );
+    });
+
+    it('hides the official catalogue error on a fork channel', () => {
+        const channel = forkChannel();
+        const html = renderPopover({
+            forkChannels: [channel],
+            forkChannel: channel,
+            catalogueError: 'Network unavailable',
+        });
+
+        expect(html).not.toContain('createProjectEditorCatalogueError');
+    });
+});
+
+describe('getCreateProjectForkVariants', () => {
+    it('offers only host builds at or above the minimum major version', () => {
+        const current = forkRelease('26.3.stable.85e520394', 26.3);
+        const old = forkRelease('3.6.stable.0123456789', 3.6);
+        const variants = getCreateProjectForkVariants(
+            [current, old],
+            { platform: 'linux', arch: 'x64' },
+            4,
+            '',
+        );
+
+        expect(variants.map((variant) => variant.key)).toEqual([
+            'catalogue:26.3.stable.85e520394:std',
+            'catalogue:26.3.stable.85e520394:mono',
+        ]);
+        expect(
+            variants.every((variant) =>
+                variant.release.assets.every(
+                    (asset) =>
+                        asset.platform_tags[0] === 'linux' &&
+                        asset.platform_tags[1] === 'x64',
+                ),
+            ),
+        ).toBe(true);
+        expect(variants[0].release.fork?.source).toBe(
+            'Redot-Engine/redot-engine',
+        );
+    });
+
+    it('offers nothing when the source has no build for the host', () => {
+        expect(
+            getCreateProjectForkVariants(
+                [forkRelease('26.3.stable.85e520394', 26.3)],
+                { platform: 'darwin', arch: 'arm64' },
+                0,
+                '',
+            ),
+        ).toEqual([]);
+    });
+});
+
+/**
+ * Renders the picker popover on the Browse releases tab.
+ *
+ * @param overrides - Props to replace.
+ * @returns Static popover markup.
+ */
+function renderPopover(
+    overrides: Partial<
+        React.ComponentProps<typeof CreateProjectEditorPickerPopover>
+    > = {},
+): string {
+    return renderToStaticMarkup(
+        <CreateProjectEditorPickerPopover
+            id="picker"
+            labelledBy="editor"
+            popoverRef={{ current: null }}
+            style={{}}
+            open
+            tab="catalogue"
+            channel="stable"
+            forkChannels={[]}
+            forkChannel={undefined}
+            hostKnown
+            search=""
+            installedRows={[]}
+            installedReleases={[]}
+            catalogueVariants={[]}
+            releaseInstallProgress={[]}
+            loading={false}
+            catalogueError={undefined}
+            hasCachedCatalogueReleases
+            retryingCatalogue={false}
+            selection={null}
+            onTabChange={vi.fn()}
+            onChannelChange={vi.fn()}
+            onForkChannelChange={vi.fn()}
+            onSearchChange={vi.fn()}
+            onSelectionChange={vi.fn()}
+            onCancelInstall={vi.fn()}
+            onRetryCatalogue={vi.fn()}
+            onKeyDown={vi.fn()}
+            registerInstalledOption={vi.fn()}
+            {...overrides}
+        />,
+    );
+}
+
+/**
+ * Creates a Redot-style fork channel with one Linux and Windows build.
+ *
+ * @param overrides - Channel fields to replace.
+ * @returns A fork channel.
+ */
+function forkChannel(
+    overrides: Partial<ForkEngineChannel> = {},
+): ForkEngineChannel {
+    return {
+        id: 'fork:redot-engine/redot-engine',
+        label: 'Redot',
+        source: 'Redot-Engine/redot-engine',
+        access: { kind: 'ok' },
+        releases: [forkRelease('26.3.stable.85e520394', 26.3)],
+        ...overrides,
+    };
+}
+
+/**
+ * Creates a fork build with Standard and .NET assets for Linux and Windows.
+ *
+ * @param version - Fork build version.
+ * @param versionNumber - Godot major.minor of the build.
+ * @returns A fork release.
+ */
+function forkRelease(version: string, versionNumber: number): ReleaseSummary {
+    return {
+        version,
+        version_number: versionNumber,
+        name: `Redot ${version}`,
+        published_at: '2026-10-15T18:44:57.000Z',
+        draft: false,
+        prerelease: false,
+        tag: `redot-${version}`,
+        assets: (['linux', 'win32'] as const).flatMap((platform) =>
+            [false, true].map((mono) => ({
+                name: `${platform}-${mono ? 'mono' : 'std'}.zip`,
+                download_url: `https://api.github.com/repos/Redot-Engine/redot-engine/releases/assets/${platform}${mono}`,
+                platform_tags: [platform, 'x64'],
+                mono,
+            })),
+        ),
+        fork: {
+            sourceId: 'fork:redot-engine/redot-engine',
+            source: 'Redot-Engine/redot-engine',
+            revision: '85e5203945af15755dd2f66cb6fdf7545fd88c0b',
+        },
     };
 }

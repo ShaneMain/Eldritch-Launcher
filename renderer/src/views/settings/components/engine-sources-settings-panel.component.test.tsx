@@ -6,7 +6,17 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import { EngineSourcesPanelView } from './engine-sources-settings-panel.component';
 
+vi.mock('react-i18next', () => ({
+    useTranslation: () => ({ t: (key: string) => key }),
+}));
+
+vi.mock('../../../renderer.bridge', () => ({
+    appBridge: { openExternal: vi.fn() },
+}));
+
 const translate = (key: string) => key;
+const installUrl =
+    'https://github.com/apps/eldritch-launcher/installations/new';
 
 const officialStable: EngineSourceSummary = {
     id: 'official-stable',
@@ -18,6 +28,7 @@ const officialStable: EngineSourceSummary = {
     builtIn: true,
     state: 'ok',
     lastFetchedAt: Date.now(),
+    buildCount: 120,
 };
 
 const privateFork: EngineSourceSummary = {
@@ -30,6 +41,8 @@ const privateFork: EngineSourceSummary = {
     builtIn: false,
     state: 'auth-required',
     lastFetchedAt: null,
+    buildCount: 0,
+    githubAppInstallUrl: installUrl,
 };
 
 /**
@@ -81,6 +94,48 @@ describe('EngineSourcesPanelView', () => {
         expect(html).not.toContain('btnRemoveEngineSource_official-stable');
     });
 
+    it('shows how many builds a refreshed source lists', () => {
+        const html = renderPanel();
+
+        expect(html).toContain('engineSourceBuildCount_official-stable');
+        expect(html).toContain('settings.buildCount');
+        expect(html).not.toContain(`engineSourceBuildCount_${privateFork.id}`);
+    });
+
+    it('explains a reachable fork that lists no builds', () => {
+        const html = renderPanel({
+            sources: [
+                {
+                    ...privateFork,
+                    requiresAuth: false,
+                    state: 'ok',
+                    lastFetchedAt: Date.now(),
+                },
+            ],
+        });
+
+        expect(html).toContain('drawer.emptyHint');
+    });
+
+    it('offers sign-in and the GitHub App for a source that needs a login', () => {
+        const html = renderPanel({ sources: [privateFork] });
+
+        expect(html).toContain('forkSourceAccess_auth-required');
+        expect(html).toContain('linkForkSourceSignIn');
+        expect(html).toContain('btnForkSourceInstallApp');
+    });
+
+    it('asks to install the GitHub App when the signed-in account has no access', () => {
+        const html = renderPanel({
+            sources: [{ ...privateFork, state: 'no-access' }],
+        });
+
+        expect(html).toContain('settings.state.noAccess');
+        expect(html).toContain('forkSourceAccess_no-access');
+        expect(html).toContain('btnForkSourceInstallApp');
+        expect(html).not.toContain('linkForkSourceSignIn');
+    });
+
     it('shows the refresh error message for failed sources', () => {
         const html = renderPanel({
             sources: [
@@ -95,8 +150,8 @@ describe('EngineSourcesPanelView', () => {
     it.each([
         ['invalid', 'settings.add.errors.invalid'],
         ['duplicate', 'settings.add.errors.duplicate'],
-        ['not-found', 'settings.add.errors.notFound'],
         ['auth-required', 'settings.add.errors.authRequired'],
+        ['no-access', 'settings.add.errors.noAccess'],
         ['network', 'settings.add.errors.network'],
     ] satisfies [AddEngineSourceFailure, string][])(
         'renders the %s add-source error',
@@ -107,6 +162,18 @@ describe('EngineSourcesPanelView', () => {
             expect(html).toContain(key);
         },
     );
+
+    it('offers the GitHub App install with a no-access add failure', () => {
+        const html = renderPanel({
+            addError: 'no-access',
+            addErrorInstallUrl: installUrl,
+        });
+
+        expect(html).toContain('btnAddEngineSourceInstallApp');
+        expect(renderPanel({ addError: 'network' })).not.toContain(
+            'btnAddEngineSourceInstallApp',
+        );
+    });
 
     it('renders no add-source error without a failure', () => {
         expect(renderPanel()).not.toContain('addEngineSourceError');

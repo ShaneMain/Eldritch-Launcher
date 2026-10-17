@@ -4,16 +4,24 @@ import type {
     EditorCatalogProviderId,
     EngineSourceSummary,
 } from '@shared/contracts';
-import { Plus, RefreshCcw, Trash2, TriangleAlert } from 'lucide-react';
+import {
+    ExternalLink,
+    Plus,
+    RefreshCcw,
+    Trash2,
+    TriangleAlert,
+} from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { parseGithubRepositoryUrl } from '../../../../../main/src/utils/github-repository-url.util';
+import { ForkSourceAccessNotice } from '../../../components/fork-source-access-notice.component';
 import { StatusBadge } from '../../../components/ui/status-badge.component';
 import { useAlerts } from '../../../hooks/alerts.hook';
 import { useEngineSources } from '../../../hooks/engine-sources.hook';
 import { useRelease } from '../../../hooks/release.hook';
 import { formatRelativeTime } from '../../../i18n/relative-time.util';
+import { appBridge } from '../../../renderer.bridge';
 import { SettingsPanelSection } from './settings-panel-section.component';
 
 type Translate = (key: string, options?: Record<string, unknown>) => string;
@@ -47,6 +55,7 @@ export const EngineSourcesSettingsPanel: React.FC<
     const [addError, setAddError] = useState<AddEngineSourceFailure | null>(
         null,
     );
+    const [addErrorInstallUrl, setAddErrorInstallUrl] = useState<string>();
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -139,10 +148,12 @@ export const EngineSourcesSettingsPanel: React.FC<
     const handleAdd = async (input: AddEngineSourceInput): Promise<boolean> => {
         setAdding(true);
         setAddError(null);
+        setAddErrorInstallUrl(undefined);
         try {
             const result = await addSource(input);
             if (!result.ok) {
                 setAddError(result.reason);
+                setAddErrorInstallUrl(result.githubAppInstallUrl);
                 return false;
             }
             setSources(result.sources);
@@ -172,6 +183,7 @@ export const EngineSourcesSettingsPanel: React.FC<
             actionErrors={actionErrors}
             adding={adding}
             addError={addError}
+            addErrorInstallUrl={addErrorInstallUrl}
             onRetry={() => void load()}
             onRefresh={(source) =>
                 void runSourceAction(source.id, () => refreshSource(source.id))
@@ -193,6 +205,7 @@ type EngineSourcesPanelViewProps = {
     actionErrors: Record<string, string>;
     adding: boolean;
     addError: AddEngineSourceFailure | null;
+    addErrorInstallUrl?: string;
     onRetry: () => void;
     onRefresh: (source: EngineSourceSummary) => void;
     onRemove: (source: EngineSourceSummary) => void;
@@ -216,6 +229,7 @@ export const EngineSourcesPanelView: React.FC<EngineSourcesPanelViewProps> = ({
     actionErrors,
     adding,
     addError,
+    addErrorInstallUrl,
     onRetry,
     onRefresh,
     onRemove,
@@ -282,6 +296,7 @@ export const EngineSourcesPanelView: React.FC<EngineSourcesPanelViewProps> = ({
             t={t}
             adding={adding}
             addError={addError}
+            addErrorInstallUrl={addErrorInstallUrl}
             onAdd={onAdd}
         />
     </SettingsPanelSection>
@@ -372,6 +387,11 @@ const EngineSourceRow: React.FC<EngineSourceRowProps> = ({
                         {t('settings.state.authRequired')}
                     </StatusBadge>
                 )}
+                {source.state === 'no-access' && (
+                    <StatusBadge tone="warning">
+                        {t('settings.state.noAccess')}
+                    </StatusBadge>
+                )}
                 {source.state === 'error' && (
                     <StatusBadge tone="error">
                         {t('settings.state.error')}
@@ -379,6 +399,13 @@ const EngineSourceRow: React.FC<EngineSourceRowProps> = ({
                 )}
                 {source.state === 'pending' && (
                     <StatusBadge>{t('settings.state.pending')}</StatusBadge>
+                )}
+                {source.state === 'ok' && (
+                    <span data-testid={`engineSourceBuildCount_${source.id}`}>
+                        {t('settings.buildCount', {
+                            count: source.buildCount,
+                        })}
+                    </span>
                 )}
                 <span className="text-base-content/60">
                     {source.lastFetchedAt === null
@@ -391,11 +418,25 @@ const EngineSourceRow: React.FC<EngineSourceRowProps> = ({
                           })}
                 </span>
             </div>
-            {source.state === 'auth-required' && (
-                <p className="text-sm text-warning">
-                    {t('settings.authRequiredHint')}
-                </p>
+            {(source.state === 'auth-required' ||
+                source.state === 'no-access') && (
+                <ForkSourceAccessNotice
+                    access={{
+                        kind: source.state,
+                        ...(source.githubAppInstallUrl
+                            ? { installUrl: source.githubAppInstallUrl }
+                            : {}),
+                    }}
+                    source={repository}
+                />
             )}
+            {source.state === 'ok' &&
+                source.kind === 'fork' &&
+                source.buildCount === 0 && (
+                    <p className="text-sm text-base-content/75">
+                        {t('drawer.emptyHint', { source: repository })}
+                    </p>
+                )}
             {source.state === 'error' && source.error && (
                 <p className="text-sm text-error">{source.error}</p>
             )}
@@ -412,14 +453,16 @@ type AddEngineSourceFormProps = {
     t: Translate;
     adding: boolean;
     addError: AddEngineSourceFailure | null;
+    /** GitHub App installation page offered with a `no-access` failure. */
+    addErrorInstallUrl?: string;
     onAdd: (input: AddEngineSourceInput) => Promise<boolean>;
 };
 
 const addErrorKeys: Record<AddEngineSourceFailure, string> = {
     invalid: 'settings.add.errors.invalid',
     duplicate: 'settings.add.errors.duplicate',
-    'not-found': 'settings.add.errors.notFound',
     'auth-required': 'settings.add.errors.authRequired',
+    'no-access': 'settings.add.errors.noAccess',
     network: 'settings.add.errors.network',
 };
 
@@ -433,6 +476,7 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
     t,
     adding,
     addError,
+    addErrorInstallUrl,
     onAdd,
 }) => {
     const [url, setUrl] = useState('');
@@ -529,6 +573,19 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
                 >
                     {t(addErrorKeys[addError])}
                 </p>
+            )}
+            {addError === 'no-access' && addErrorInstallUrl && (
+                <button
+                    type="button"
+                    className="btn btn-sm self-start"
+                    data-testid="btnAddEngineSourceInstallApp"
+                    onClick={() =>
+                        void appBridge.openExternal(addErrorInstallUrl)
+                    }
+                >
+                    <ExternalLink size={14} aria-hidden="true" />
+                    {t('access.installAppAnywhere')}
+                </button>
             )}
         </form>
     );

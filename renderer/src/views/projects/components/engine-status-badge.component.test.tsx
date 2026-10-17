@@ -249,6 +249,16 @@ describe('EngineStatusBadge', () => {
         expect(html).toContain('badge.authRequired');
     });
 
+    it('tells a signed-in user the GitHub App cannot see the source', async () => {
+        const html = await renderStatus({
+            kind: 'no-access',
+            source: 'Eldritch/Engine',
+        });
+
+        expect(html).toContain('badge.noAccess');
+        expect(html).not.toContain('badge.authRequired');
+    });
+
     it('renders a muted warning for errors', async () => {
         const html = await renderStatus({
             kind: 'error',

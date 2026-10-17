@@ -143,22 +143,25 @@ describe('editor catalog release mapper', () => {
         expect(mapped.availableReleases[0]?.fork).toBeUndefined();
     });
 
-    it('does not report auth-required fork sources as catalog failures', () => {
-        const mapped = mapEditorCatalogResult({
-            releases: [],
-            providers: [
-                {
-                    id: 'fork:eldritch/engine',
-                    lastFetchedAt: null,
-                    isStale: true,
-                    state: 'auth-required',
-                    refreshError: 'GitHub login required',
-                },
-            ],
-        });
+    it.each(['auth-required', 'no-access'] as const)(
+        'does not report %s fork sources as catalog failures',
+        (state) => {
+            const mapped = mapEditorCatalogResult({
+                releases: [],
+                providers: [
+                    {
+                        id: 'fork:eldritch/engine',
+                        lastFetchedAt: null,
+                        isStale: true,
+                        state,
+                        refreshError: 'GitHub login required',
+                    },
+                ],
+            });
 
-        expect(mapped.refreshError).toBeUndefined();
-    });
+            expect(mapped.refreshError).toBeUndefined();
+        },
+    );
 });
 
 /**
