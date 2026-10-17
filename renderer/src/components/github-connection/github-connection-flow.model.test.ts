@@ -9,6 +9,7 @@ import {
     getGitHubConnectionFlowState,
     gitHubConfigurationIssueKey,
     hasUsableGitHubConnection,
+    shouldAutoFinishConnectionChoice,
 } from './github-connection-flow.model';
 
 const disconnected: AppIntegrationSummary = {
@@ -133,5 +134,45 @@ describe('GitHub device-flow presentation', () => {
         expect(gitHubConfigurationIssueKey('app-slug-missing')).toBe(
             'githubAuth:configuration.appSlugMissing',
         );
+    });
+});
+
+describe('GitHub installation choice', () => {
+    const choosing = (logins: string[]): AppIntegrationSummary => ({
+        ...disconnected,
+        state: 'selection-required',
+        connectionStage: 'choosing',
+        connectionOptions: logins.map((login) => ({
+            id: `option-${login}`,
+            login,
+            type: 'user',
+        })),
+    });
+
+    it('connects a single installation without asking', () => {
+        expect(
+            shouldAutoFinishConnectionChoice(choosing(['octocat']), null),
+        ).toBe(true);
+    });
+
+    it('asks when there are several installations or none', () => {
+        expect(
+            shouldAutoFinishConnectionChoice(
+                choosing(['octocat', 'octo-org']),
+                null,
+            ),
+        ).toBe(false);
+        expect(shouldAutoFinishConnectionChoice(choosing([]), null)).toBe(
+            false,
+        );
+    });
+
+    it('keeps the chooser open to show a failure', () => {
+        expect(
+            shouldAutoFinishConnectionChoice(
+                choosing(['octocat']),
+                'account-mismatch',
+            ),
+        ).toBe(false);
     });
 });

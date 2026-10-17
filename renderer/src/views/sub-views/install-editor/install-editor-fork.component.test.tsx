@@ -130,7 +130,8 @@ describe('InstallEditorFork', () => {
 
         expect(html).toContain('forkSourceAccess_auth-required');
         expect(html).toContain('access.authRequired');
-        expect(html).toContain('href="#/settings/connections"');
+        expect(html).toContain('btnForkSourceSignIn');
+        expect(html).not.toContain('href="#/settings/connections"');
         expect(html).toContain('btnForkSourceInstallApp');
         expect(html).not.toContain('drawer.empty');
     });
@@ -151,7 +152,7 @@ describe('InstallEditorFork', () => {
         expect(html).toContain('forkSourceAccess_no-access');
         expect(html).toContain('access.noAccess');
         expect(html).toContain('btnForkSourceInstallApp');
-        expect(html).not.toContain('linkForkSourceSignIn');
+        expect(html).not.toContain('btnForkSourceSignIn');
         expect(html).not.toContain('drawer.empty');
     });
 

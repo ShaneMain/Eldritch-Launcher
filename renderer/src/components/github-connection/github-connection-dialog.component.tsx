@@ -24,6 +24,7 @@ export const GitHubConnectionDialog: React.FC<GitHubConnectionDialogProps> = ({
     onConnected,
     onCancel,
     connectionId,
+    autoStart,
     returnFocusRef,
     fallbackReturnFocusRef,
 }) => {
@@ -36,6 +37,7 @@ export const GitHubConnectionDialog: React.FC<GitHubConnectionDialogProps> = ({
             onConnected={onConnected}
             onCancel={onCancel}
             connectionId={connectionId}
+            autoStart={autoStart}
             plainError
             renderLayout={(content, footer, state) => (
                 <Dialog

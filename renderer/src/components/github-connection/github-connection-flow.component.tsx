@@ -21,6 +21,7 @@ import {
     type GitHubConnectionFlowState,
     getGitHubConnectionFlowState,
     gitHubConfigurationIssueKey,
+    shouldAutoFinishConnectionChoice,
 } from './github-connection-flow.model';
 import { GitHubDeviceCode } from './github-device-code.component';
 
@@ -202,7 +203,12 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
             }
 
             if (nextState === 'choosing') {
-                setSelectedOptionIds([]);
+                // Connecting every authorised installation is the usual choice.
+                setSelectedOptionIds(
+                    result.integration.connectionOptions.map(
+                        (option) => option.id,
+                    ),
+                );
                 setFailure(result.ok ? null : result.reason);
                 setState(nextState);
                 return;
@@ -284,17 +290,28 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
         selectedReconnectId,
     ]);
 
+    const showReconnectChoices = !connectionId && reconnectChoices.length > 0;
+
+    // An explicit sign-in skips the intro, unless an existing account must be
+    // picked for reconnection first.
     useEffect(() => {
         if (
             !autoStart ||
             loadingInitialState ||
             initialLoadFailed ||
+            showReconnectChoices ||
             autoStartedRef.current
         )
             return;
         autoStartedRef.current = true;
         handleStart();
-    }, [autoStart, loadingInitialState, initialLoadFailed, handleStart]);
+    }, [
+        autoStart,
+        loadingInitialState,
+        initialLoadFailed,
+        showReconnectChoices,
+        handleStart,
+    ]);
 
     /** Retries the failed initial load or browser authorisation. */
     const handleRetry = useCallback(() => {
@@ -314,6 +331,21 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
             'saving',
         );
     }, [finishConnections, runAction, selectedOptionIds]);
+
+    // A single installation leaves nothing to choose.
+    const autoFinishedRef = useRef(false);
+    useEffect(() => {
+        if (
+            state !== 'choosing' ||
+            busy ||
+            !integration ||
+            autoFinishedRef.current ||
+            !shouldAutoFinishConnectionChoice(integration, failure)
+        )
+            return;
+        autoFinishedRef.current = true;
+        handleFinishConnections();
+    }, [state, busy, integration, failure, handleFinishConnections]);
 
     /** Opens GitHub to install access for another account or organisation. */
     const handleInstallConnection = useCallback(() => {
@@ -368,8 +400,6 @@ export const GitHubConnectionFlow: React.FC<GitHubConnectionFlowProps> = ({
             }
         }
     };
-
-    const showReconnectChoices = !connectionId && reconnectChoices.length > 0;
 
     /** Starts a separate account connection without reusing the selected account. */
     const handleConnectAnother = () => {

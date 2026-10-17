@@ -12,7 +12,7 @@ describe('GitHubDeviceCode', () => {
         expect(html).not.toContain('github-device-user-code');
     });
 
-    it('shows the copyable user code, the GitHub link, and the countdown', () => {
+    it('shows the code, one copy-and-open action, and the countdown', () => {
         const html = renderToStaticMarkup(
             <GitHubDeviceCode
                 authorization={{
@@ -26,8 +26,9 @@ describe('GitHubDeviceCode', () => {
         expect(html).toMatch(
             /data-testid="github-device-user-code"[^>]*>WDJB-MJHT</u,
         );
-        expect(html).toContain('buttons.copy');
-        expect(html).toContain('openGitHub');
+        expect(html).toContain('btnCopyCodeAndOpenGitHub');
+        expect(html).toContain('copyAndOpenGitHub');
+        expect(html).not.toContain('buttons.copy');
         expect(html).toContain('waiting');
         expect(html).not.toContain('codeExpired');
     });

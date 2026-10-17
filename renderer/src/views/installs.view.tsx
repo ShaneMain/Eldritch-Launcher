@@ -51,6 +51,8 @@ export { createReleaseActions };
 type InstallsViewProps = {
     installOpen?: boolean;
     onInstallOpenChange?: (open: boolean) => void;
+    /** Fork source whose builds the install drawer shows when it opens. */
+    installForkSourceId?: string | null;
 };
 
 type CustomEditorMenuState = {
@@ -67,6 +69,7 @@ type CustomEditorMenuState = {
 export const InstallsView: React.FC<InstallsViewProps> = ({
     installOpen: controlledInstallOpen,
     onInstallOpenChange,
+    installForkSourceId,
 }) => {
     const { t } = useTranslation([
         'installs',
@@ -477,6 +480,7 @@ export const InstallsView: React.FC<InstallsViewProps> = ({
             <InstallEditorDrawer
                 open={installOpen}
                 onOpenChange={setInstallOpen}
+                initialForkSourceId={installForkSourceId}
             />
             <CustomEditorManifestDrawer
                 open={customEditorManifestDrawerOpen}

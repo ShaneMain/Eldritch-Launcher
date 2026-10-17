@@ -5,6 +5,7 @@ import type {
     EngineSourceSummary,
 } from '@shared/contracts';
 import {
+    Download,
     ExternalLink,
     Plus,
     RefreshCcw,
@@ -14,8 +15,11 @@ import {
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import { parseGithubRepositoryUrl } from '../../../../../main/src/utils/github-repository-url.util';
+import { appRoutePaths } from '../../../app.routes';
 import { ForkSourceAccessNotice } from '../../../components/fork-source-access-notice.component';
+import { GitHubSignInButton } from '../../../components/github-connection/github-sign-in-button.component';
 import { StatusBadge } from '../../../components/ui/status-badge.component';
 import { useAlerts } from '../../../hooks/alerts.hook';
 import { useEngineSources } from '../../../hooks/engine-sources.hook';
@@ -25,6 +29,32 @@ import { appBridge } from '../../../renderer.bridge';
 import { SettingsPanelSection } from './settings-panel-section.component';
 
 type Translate = (key: string, options?: Record<string, unknown>) => string;
+
+/**
+ * Finds the source that an add request created, when it already lists builds
+ * the user can install next.
+ *
+ * @param sources - Sources returned by the add request.
+ * @param url - Repository URL the user entered.
+ * @returns The added source, or undefined when it has no installable builds.
+ */
+export function findAddedSourceWithBuilds(
+    sources: EngineSourceSummary[],
+    url: string,
+): EngineSourceSummary | undefined {
+    const repository = parseGithubRepositoryUrl(url);
+    if (!repository) {
+        return undefined;
+    }
+    return sources.find(
+        (source) =>
+            source.kind === 'fork' &&
+            source.state === 'ok' &&
+            source.buildCount > 0 &&
+            source.owner.toLowerCase() === repository.owner.toLowerCase() &&
+            source.repo.toLowerCase() === repository.repo.toLowerCase(),
+    );
+}
 
 type EngineSourcesSettingsPanelProps = {
     active: boolean;
@@ -40,6 +70,7 @@ export const EngineSourcesSettingsPanel: React.FC<
     EngineSourcesSettingsPanelProps
 > = ({ active }) => {
     const { t, i18n } = useTranslation(['engineSources', 'common']);
+    const navigate = useNavigate();
     const { addAlert, addCustomConfirm } = useAlerts();
     const { listSources, addSource, removeSource, refreshSource } =
         useEngineSources();
@@ -140,7 +171,8 @@ export const EngineSourcesSettingsPanel: React.FC<
     };
 
     /**
-     * Adds a fork source and reports a failure reason inline.
+     * Adds a fork source, then opens its builds so the user can install one;
+     * a failure reason is reported inline.
      *
      * @param input - Repository URL and optional display name.
      * @returns Whether the source was added.
@@ -158,6 +190,10 @@ export const EngineSourcesSettingsPanel: React.FC<
             }
             setSources(result.sources);
             await reloadReleases();
+            const added = findAddedSourceWithBuilds(result.sources, input.url);
+            if (added) {
+                navigate(appRoutePaths.installForkBuilds(added.id));
+            }
             return true;
         } catch (error) {
             setAddError('network');
@@ -189,6 +225,10 @@ export const EngineSourcesSettingsPanel: React.FC<
                 void runSourceAction(source.id, () => refreshSource(source.id))
             }
             onRemove={confirmRemove}
+            onInstallBuilds={(source) =>
+                navigate(appRoutePaths.installForkBuilds(source.id))
+            }
+            onSignedIn={load}
             onAdd={handleAdd}
         />
     );
@@ -209,6 +249,9 @@ type EngineSourcesPanelViewProps = {
     onRetry: () => void;
     onRefresh: (source: EngineSourceSummary) => void;
     onRemove: (source: EngineSourceSummary) => void;
+    onInstallBuilds: (source: EngineSourceSummary) => void;
+    /** Reloads source state after signing in to GitHub. */
+    onSignedIn: () => Promise<void>;
     onAdd: (input: AddEngineSourceInput) => Promise<boolean>;
 };
 
@@ -233,6 +276,8 @@ export const EngineSourcesPanelView: React.FC<EngineSourcesPanelViewProps> = ({
     onRetry,
     onRefresh,
     onRemove,
+    onInstallBuilds,
+    onSignedIn,
     onAdd,
 }) => (
     <SettingsPanelSection active={active}>
@@ -276,6 +321,8 @@ export const EngineSourcesPanelView: React.FC<EngineSourcesPanelViewProps> = ({
                         actionError={actionErrors[source.id]}
                         onRefresh={onRefresh}
                         onRemove={onRemove}
+                        onInstallBuilds={onInstallBuilds}
+                        onSignedIn={onSignedIn}
                     />
                 ))}
             </ul>
@@ -297,6 +344,7 @@ export const EngineSourcesPanelView: React.FC<EngineSourcesPanelViewProps> = ({
             adding={adding}
             addError={addError}
             addErrorInstallUrl={addErrorInstallUrl}
+            onSignedIn={onSignedIn}
             onAdd={onAdd}
         />
     </SettingsPanelSection>
@@ -310,6 +358,8 @@ type EngineSourceRowProps = {
     actionError?: string;
     onRefresh: (source: EngineSourceSummary) => void;
     onRemove: (source: EngineSourceSummary) => void;
+    onInstallBuilds: (source: EngineSourceSummary) => void;
+    onSignedIn: () => Promise<void>;
 };
 
 /**
@@ -326,8 +376,14 @@ const EngineSourceRow: React.FC<EngineSourceRowProps> = ({
     actionError,
     onRefresh,
     onRemove,
+    onInstallBuilds,
+    onSignedIn,
 }) => {
     const repository = `${source.owner}/${source.repo}`;
+    const installable =
+        source.kind === 'fork' &&
+        source.state === 'ok' &&
+        source.buildCount > 0;
 
     return (
         <li
@@ -348,6 +404,17 @@ const EngineSourceRow: React.FC<EngineSourceRowProps> = ({
                     </StatusBadge>
                 )}
                 <div className="ml-auto flex items-center gap-2">
+                    {installable && (
+                        <button
+                            type="button"
+                            className="btn btn-primary btn-sm"
+                            onClick={() => onInstallBuilds(source)}
+                            data-testid={`btnInstallEngineSourceBuild_${source.id}`}
+                        >
+                            <Download size={14} aria-hidden="true" />
+                            {t('settings.installBuild')}
+                        </button>
+                    )}
                     <button
                         type="button"
                         className="btn btn-ghost btn-sm"
@@ -428,6 +495,7 @@ const EngineSourceRow: React.FC<EngineSourceRowProps> = ({
                             : {}),
                     }}
                     source={repository}
+                    onSignedIn={onSignedIn}
                 />
             )}
             {source.state === 'ok' &&
@@ -455,6 +523,7 @@ type AddEngineSourceFormProps = {
     addError: AddEngineSourceFailure | null;
     /** GitHub App installation page offered with a `no-access` failure. */
     addErrorInstallUrl?: string;
+    onSignedIn: () => Promise<void>;
     onAdd: (input: AddEngineSourceInput) => Promise<boolean>;
 };
 
@@ -477,6 +546,7 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
     adding,
     addError,
     addErrorInstallUrl,
+    onSignedIn,
     onAdd,
 }) => {
     const [url, setUrl] = useState('');
@@ -485,15 +555,11 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
     const urlInvalid = url.trim() !== '' && repository === null;
 
     /**
-     * Submits the form and clears it after a successful add.
+     * Adds the entered repository and clears the form on success.
      *
-     * @param event - Form submission event.
      * @returns A promise that ends after the add request.
      */
-    const handleSubmit = async (
-        event: React.FormEvent<HTMLFormElement>,
-    ): Promise<void> => {
-        event.preventDefault();
+    const submit = async (): Promise<void> => {
         if (!repository) {
             return;
         }
@@ -510,7 +576,10 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
     return (
         <form
             className="flex flex-col gap-3 text-base"
-            onSubmit={(event) => void handleSubmit(event)}
+            onSubmit={(event) => {
+                event.preventDefault();
+                void submit();
+            }}
             data-testid="addEngineSourceForm"
         >
             <h3 className="font-semibold">{t('settings.add.title')}</h3>
@@ -573,6 +642,17 @@ const AddEngineSourceForm: React.FC<AddEngineSourceFormProps> = ({
                 >
                     {t(addErrorKeys[addError])}
                 </p>
+            )}
+            {addError === 'auth-required' && (
+                <GitHubSignInButton
+                    label={t('access.signIn')}
+                    className="btn btn-sm btn-primary self-start"
+                    data-testid="btnAddEngineSourceSignIn"
+                    onSignedIn={async () => {
+                        await onSignedIn();
+                        await submit();
+                    }}
+                />
             )}
             {addError === 'no-access' && addErrorInstallUrl && (
                 <button

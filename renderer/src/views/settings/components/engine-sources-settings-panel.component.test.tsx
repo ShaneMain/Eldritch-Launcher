@@ -4,7 +4,14 @@ import type {
 } from '@shared/contracts';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { EngineSourcesPanelView } from './engine-sources-settings-panel.component';
+import {
+    EngineSourcesPanelView,
+    findAddedSourceWithBuilds,
+} from './engine-sources-settings-panel.component';
+
+vi.mock('../../../hooks/release.hook', () => ({
+    useRelease: () => ({ reloadReleases: vi.fn() }),
+}));
 
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({ t: (key: string) => key }),
@@ -71,6 +78,8 @@ function renderPanel(
             onRetry={vi.fn()}
             onRefresh={vi.fn()}
             onRemove={vi.fn()}
+            onInstallBuilds={vi.fn()}
+            onSignedIn={vi.fn(async () => undefined)}
             onAdd={vi.fn(async () => true)}
             {...overrides}
         />,
@@ -115,13 +124,28 @@ describe('EngineSourcesPanelView', () => {
         });
 
         expect(html).toContain('drawer.emptyHint');
+        expect(html).not.toContain('btnInstallEngineSourceBuild_');
+    });
+
+    it('offers to install a build from a reachable fork with builds', () => {
+        const html = renderPanel({
+            sources: [
+                officialStable,
+                { ...privateFork, state: 'ok', buildCount: 3 },
+            ],
+        });
+
+        expect(html).toContain(`btnInstallEngineSourceBuild_${privateFork.id}`);
+        expect(html).not.toContain(
+            'btnInstallEngineSourceBuild_official-stable',
+        );
     });
 
     it('offers sign-in and the GitHub App for a source that needs a login', () => {
         const html = renderPanel({ sources: [privateFork] });
 
         expect(html).toContain('forkSourceAccess_auth-required');
-        expect(html).toContain('linkForkSourceSignIn');
+        expect(html).toContain('btnForkSourceSignIn');
         expect(html).toContain('btnForkSourceInstallApp');
     });
 
@@ -133,7 +157,7 @@ describe('EngineSourcesPanelView', () => {
         expect(html).toContain('settings.state.noAccess');
         expect(html).toContain('forkSourceAccess_no-access');
         expect(html).toContain('btnForkSourceInstallApp');
-        expect(html).not.toContain('linkForkSourceSignIn');
+        expect(html).not.toContain('btnForkSourceSignIn');
     });
 
     it('shows the refresh error message for failed sources', () => {
@@ -199,5 +223,33 @@ describe('EngineSourcesPanelView', () => {
 
     it('hides the no-forks hint once a fork is configured', () => {
         expect(renderPanel()).not.toContain('engineSourcesNoForks');
+    });
+});
+
+describe('findAddedSourceWithBuilds', () => {
+    const added = { ...privateFork, state: 'ok' as const, buildCount: 4 };
+
+    it('finds the added fork by its URL, ignoring case', () => {
+        expect(
+            findAddedSourceWithBuilds(
+                [officialStable, added],
+                'https://github.com/eldritch-game-studio/eldritch-engine',
+            ),
+        ).toBe(added);
+    });
+
+    it('stays on Settings when the fork has no installable builds yet', () => {
+        expect(
+            findAddedSourceWithBuilds(
+                [{ ...added, buildCount: 0 }],
+                'Eldritch-Game-Studio/Eldritch-Engine',
+            ),
+        ).toBeUndefined();
+        expect(
+            findAddedSourceWithBuilds(
+                [{ ...added, state: 'pending' }],
+                'Eldritch-Game-Studio/Eldritch-Engine',
+            ),
+        ).toBeUndefined();
     });
 });

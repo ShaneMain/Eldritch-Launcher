@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
     appRoutePaths,
+    installSourceParam,
     isConnectionsPathname,
     isSettingsTab,
     settingsTabs,
@@ -31,6 +32,20 @@ describe('settings routes', () => {
         ).toBe(false);
         expect(isConnectionsPathname('/settings/connections/extra')).toBe(
             false,
+        );
+    });
+});
+
+describe('install routes', () => {
+    it('opens the install drawer on one fork source', () => {
+        const url = new URL(
+            appRoutePaths.installForkBuilds('fork:redot-engine/redot-engine'),
+            'app://launcher',
+        );
+
+        expect(url.pathname).toBe(appRoutePaths.installEditor);
+        expect(url.searchParams.get(installSourceParam)).toBe(
+            'fork:redot-engine/redot-engine',
         );
     });
 });

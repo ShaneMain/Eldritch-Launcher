@@ -5,7 +5,6 @@
     "requestingCode": "Requesting a sign-in code from GitHub...",
     "enterCode": "Enter this code on GitHub to authorise Eldritch Launcher:",
     "userCodeLabel": "GitHub sign-in code",
-    "openGitHub": "Open GitHub",
     "openFailed": "Could not open your browser. Visit {{url}} and enter the code.",
     "waiting": "Waiting for you to authorise on GitHub. The code expires in {{time}}.",
     "codeExpired": "This code has expired. Cancel and start again to get a new code.",
@@ -28,5 +27,6 @@
         "openRevocationAction": "Disconnect and open GitHub",
         "localOnlyDetail": "Only this device is signed out. The GitHub authorisation stays active on other devices until you revoke it on GitHub.",
         "localOnlyAction": "Disconnect this device"
-    }
+    },
+    "copyAndOpenGitHub": "Copiar código y abrir GitHub"
 }

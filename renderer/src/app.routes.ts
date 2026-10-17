@@ -21,6 +21,9 @@ export type SettingsTab = (typeof settingsTabs)[number];
 
 export const defaultSettingsTab: SettingsTab = 'projects';
 
+/** Search parameter naming the fork source the install drawer opens on. */
+export const installSourceParam = 'source';
+
 export const appRoutePaths = {
     root: '/',
     projects: '/projects',
@@ -28,6 +31,9 @@ export const appRoutePaths = {
     installs: '/installs',
     exportTemplates: '/export-templates',
     installEditor: '/installs/install',
+    /** Opens the install drawer on the builds of one fork source. */
+    installForkBuilds: (sourceId: string) =>
+        `/installs/install?${installSourceParam}=${encodeURIComponent(sourceId)}`,
     settings: '/settings',
     settingsTab: (tab: SettingsTab) => `/settings/${tab}`,
     help: '/help',

@@ -123,3 +123,18 @@ export function formatDeviceCodeRemaining(remainingMs: number): string {
     const seconds = totalSeconds % 60;
     return `${Math.floor(totalSeconds / 60)}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
+
+/**
+ * Decides whether the chooser can be skipped because only one installation
+ * exists and nothing needs the user's attention.
+ *
+ * @param integration - Summary listing the verified installation options.
+ * @param failure - Failure shown with the chooser, if any.
+ * @returns Whether to connect the single installation without asking.
+ */
+export function shouldAutoFinishConnectionChoice(
+    integration: AppIntegrationSummary,
+    failure: string | null,
+): boolean {
+    return failure === null && integration.connectionOptions.length === 1;
+}

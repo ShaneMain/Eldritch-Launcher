@@ -110,8 +110,10 @@ export async function assessProjectTemplates(
         const projectFile = await templateLstat(
             path.join(project.path, 'project.godot'),
         );
+        // Without a project or editor folder there are no local templates to move.
         if (!projectFile?.isFile()) {
             result.reason = 'missing-project';
+            result.pending = false;
             return result;
         }
         if (
@@ -121,6 +123,7 @@ export async function assessProjectTemplates(
             )?.isDirectory()
         ) {
             result.reason = 'missing-editor';
+            result.pending = false;
             return result;
         }
         if (connection === 'shared') {

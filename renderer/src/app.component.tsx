@@ -1,13 +1,10 @@
 import clsx from 'clsx';
 import {
-    Blocks,
     Cable,
     CircleHelp,
     FileOutput,
     HardDrive,
-    Images,
     Package,
-    Puzzle,
     Settings,
 } from 'lucide-react';
 import { useCallback, useEffect } from 'react';
@@ -26,6 +23,7 @@ import { shouldShowAppLoading } from './app.model';
 import {
     appRoutePaths,
     defaultSettingsTab,
+    installSourceParam,
     isConnectionsPathname,
     isSettingsTab,
     type SettingsTab,
@@ -204,10 +202,14 @@ function InstallsRoute() {
     const location = useLocation();
     const navigate = useNavigate();
     const installOpen = location.pathname === appRoutePaths.installEditor;
+    const installForkSourceId = new URLSearchParams(location.search).get(
+        installSourceParam,
+    );
 
     return (
         <InstallsView
             installOpen={installOpen}
+            installForkSourceId={installForkSourceId}
             onInstallOpenChange={(open) => {
                 if (open) {
                     navigate(appRoutePaths.installEditor);
@@ -298,75 +300,32 @@ function MainLayout() {
                         </NavLink>
                     </li>
                 </ul>
-                {[
-                    [
-                        { key: 'exportTemplates', icon: FileOutput },
-                        { key: 'projectTemplates', icon: Blocks },
-                    ],
-                    [
-                        { key: 'assets', icon: Images },
-                        { key: 'addons', icon: Puzzle },
-                    ],
-                ].map((group) => (
-                    <div key={group[0].key}>
-                        <MenuDivider />
-                        <ul className="menu w-full gap-2 text-base">
-                            {group.map(({ key, icon: Icon }) => (
-                                <li key={key}>
-                                    {key === 'exportTemplates' ? (
-                                        <NavLink
-                                            to={appRoutePaths.exportTemplates}
-                                            data-testid="btnExportTemplates"
-                                            className={viewClassName(
-                                                'exportTemplates',
-                                            )}
-                                        >
-                                            <Icon className="size-5" />
-                                            {t(
-                                                'app.navigation.exportTemplates',
-                                            )}
-                                            {templatesActive && (
-                                                <Tooltip
-                                                    tip={t(
-                                                        'exportTemplates:updatesInProgress',
-                                                    )}
-                                                >
-                                                    <span
-                                                        role="status"
-                                                        aria-label={t(
-                                                            'exportTemplates:updatesInProgress',
-                                                        )}
-                                                        className="loading loading-spinner loading-xs"
-                                                    />
-                                                </Tooltip>
-                                            )}
-                                        </NavLink>
-                                    ) : (
-                                        <Tooltip
-                                            tip={t(
-                                                'app.navigation.notAvailableYet',
-                                            )}
-                                            delay={1000}
-                                            className="p-0! hover:bg-transparent!"
-                                        >
-                                            <button
-                                                type="button"
-                                                aria-disabled="true"
-                                                className="flex w-full cursor-default items-center gap-2 rounded-field px-3 py-1.5 text-left text-base-content/50"
-                                            >
-                                                <Icon
-                                                    className="size-5 shrink-0"
-                                                    aria-hidden="true"
-                                                />
-                                                {t(`app.navigation.${key}`)}
-                                            </button>
-                                        </Tooltip>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                ))}
+                <MenuDivider />
+                <ul className="menu w-full gap-2 text-base">
+                    <li>
+                        <NavLink
+                            to={appRoutePaths.exportTemplates}
+                            data-testid="btnExportTemplates"
+                            className={viewClassName('exportTemplates')}
+                        >
+                            <FileOutput className="size-5" />
+                            {t('app.navigation.exportTemplates')}
+                            {templatesActive && (
+                                <Tooltip
+                                    tip={t('exportTemplates:updatesInProgress')}
+                                >
+                                    <span
+                                        role="status"
+                                        aria-label={t(
+                                            'exportTemplates:updatesInProgress',
+                                        )}
+                                        className="loading loading-spinner loading-xs"
+                                    />
+                                </Tooltip>
+                            )}
+                        </NavLink>
+                    </li>
+                </ul>
                 <div className="flex flex-1"></div>
                 <div className="pt-2">
                     <MenuDivider />

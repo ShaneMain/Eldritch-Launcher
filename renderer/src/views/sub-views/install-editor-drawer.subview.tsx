@@ -24,6 +24,8 @@ import { InstallEditorLatest } from './install-editor/install-editor-latest.comp
 type InstallEditorDrawerProps = {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    /** Fork source whose builds are shown when the drawer opens. */
+    initialForkSourceId?: string | null;
 };
 
 const catalogRefreshCooldownMs = 60_000;
@@ -37,6 +39,7 @@ const catalogRefreshCooldownMs = 60_000;
 export const InstallEditorDrawer: React.FC<InstallEditorDrawerProps> = ({
     open,
     onOpenChange,
+    initialForkSourceId = null,
 }) => {
     const { t } = useTranslation(['installEditor', 'common', 'menus']);
     const { t: tSources } = useTranslation('engineSources');
@@ -70,9 +73,9 @@ export const InstallEditorDrawer: React.FC<InstallEditorDrawerProps> = ({
 
         setShow('latest');
         setChannel('stable');
-        setForkSourceId(null);
+        setForkSourceId(initialForkSourceId);
         setSearch('');
-    }, [open]);
+    }, [open, initialForkSourceId]);
 
     const forkChannel = forkChannels.find(
         (candidate) => candidate.id === forkSourceId,

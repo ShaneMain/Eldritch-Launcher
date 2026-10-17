@@ -40,11 +40,12 @@
                 "invalid": "Enter a valid GitHub repository URL, such as https://github.com/owner/repo.",
                 "invalidUrl": "Enter a GitHub repository URL, such as https://github.com/owner/repo or owner/repo.",
                 "duplicate": "This repository is already an engine source.",
-                "authRequired": "This repository is private. Sign in to GitHub in Settings → Connections, then try again.",
+                "authRequired": "Bu depo özel. Eklemek için GitHub'da oturum açın.",
                 "noAccess": "No repository at this address is visible to your GitHub sign-in. Check the URL. If the repository is private, install the Eldritch Launcher GitHub App on its owner with access to the repository, then try again.",
                 "network": "GitHub could not be reached. Check your connection and try again."
             }
-        }
+        },
+        "installBuild": "Bir derleme yükle"
     },
     "access": {
         "authRequired": "{{source}} is private. Sign in to GitHub to list its builds. If they still don't appear, install the Eldritch Launcher GitHub App on {{owner}} with access to the repository.",

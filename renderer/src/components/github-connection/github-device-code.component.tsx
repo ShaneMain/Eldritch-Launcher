@@ -4,7 +4,6 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { appBridge } from '../../renderer.bridge.ts';
-import { CopyButton } from '../ui/copy-button.component';
 import { formatDeviceCodeRemaining } from './github-connection-flow.model';
 
 type GitHubDeviceCodeProps = {
@@ -48,29 +47,31 @@ export const GitHubDeviceCode: React.FC<GitHubDeviceCodeProps> = ({
     return (
         <div className="flex flex-col gap-[12px]">
             <p>{t('enterCode')}</p>
-            <div className="flex items-center gap-2">
-                <output
-                    className="select-all font-mono text-3xl font-semibold tracking-[0.2em]"
-                    aria-label={t('userCodeLabel')}
-                    data-testid="github-device-user-code"
-                >
-                    {authorization.userCode}
-                </output>
-                <CopyButton value={authorization.userCode} />
-            </div>
+            <output
+                className="select-all font-mono text-3xl font-semibold tracking-[0.2em]"
+                aria-label={t('userCodeLabel')}
+                data-testid="github-device-user-code"
+            >
+                {authorization.userCode}
+            </output>
             <div>
                 <button
                     type="button"
                     data-external-link=""
+                    data-testid="btnCopyCodeAndOpenGitHub"
                     className="btn btn-primary text-base"
                     onClick={() => {
                         setOpenFailed(false);
+                        // The code is pasted on GitHub's page, so copy it first.
+                        void navigator.clipboard
+                            .writeText(authorization.userCode)
+                            .catch(() => undefined);
                         void appBridge
                             .openExternal(authorization.verificationUri)
                             .catch(() => setOpenFailed(true));
                     }}
                 >
-                    {t('openGitHub')}
+                    {t('copyAndOpenGitHub')}
                     <ExternalLink
                         className="size-3.5 shrink-0 opacity-45"
                         aria-hidden="true"

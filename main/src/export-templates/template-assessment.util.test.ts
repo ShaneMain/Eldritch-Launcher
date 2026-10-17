@@ -212,14 +212,32 @@ describe('project template assessment', () => {
             pending: false,
         });
     });
-    it('leaves missing projects pending without creating their directories', async () => {
+    it('does not ask to move templates for a missing project', async () => {
         vi.mocked(templateLstat).mockResolvedValue(undefined);
         expect(await assessProjectTemplates(project, root)).toMatchObject({
             state: 'unavailable',
             reason: 'missing-project',
-            pending: true,
+            pending: false,
         });
         expect(fs.promises.mkdir).not.toHaveBeenCalled();
+    });
+    it('does not ask to move templates when the editor folder is missing', async () => {
+        vi.mocked(templateLstat).mockImplementation(async (name) =>
+            name === path.join(project.path, 'project.godot')
+                ? file
+                : undefined,
+        );
+        expect(await assessProjectTemplates(project, root)).toMatchObject({
+            state: 'unavailable',
+            reason: 'missing-editor',
+            pending: false,
+        });
+        expect(fs.promises.readdir).not.toHaveBeenCalled();
+    });
+    it('does not ask to move templates for an imported project without an editor', async () => {
+        expect(
+            await assessProjectTemplates({ ...project, launch_path: '' }, root),
+        ).toMatchObject({ reason: 'missing-editor', pending: false });
     });
     it('does not follow a foreign template link', async () => {
         vi.mocked(templateConnectionStatus).mockResolvedValue('foreign');

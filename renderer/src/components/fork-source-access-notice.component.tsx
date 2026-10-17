@@ -1,22 +1,22 @@
 import { ExternalLink, KeyRound } from 'lucide-react';
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
-import { appRoutePaths } from '../app.routes';
 import type { ForkEngineAccess } from '../hooks/fork-engine-channels.model.ts';
 import { appBridge } from '../renderer.bridge.ts';
-
-const CONNECTIONS_HREF = `#${appRoutePaths.settingsTab('connections')}`;
+import { GitHubSignInButton } from './github-connection/github-sign-in-button.component';
 
 type ForkSourceAccessNoticeProps = {
     access: Extract<ForkEngineAccess, { kind: 'auth-required' | 'no-access' }>;
     /** GitHub `owner/repo` of the source. */
     source: string;
+    /** Reloads view-local source state after signing in. */
+    onSignedIn?: () => void | Promise<void>;
 };
 
 /**
  * Explains why the builds of a private fork source cannot be listed and
- * links to the fix: signing in to GitHub, or installing the GitHub App on
- * the repository owner when the signed-in account cannot see it.
+ * offers the fix in place: signing in to GitHub, or installing the GitHub
+ * App on the repository owner when the signed-in account cannot see it.
  *
  * @param props - The access failure and the source repository.
  * @returns A warning with the actions that restore access.
@@ -24,6 +24,7 @@ type ForkSourceAccessNoticeProps = {
 export const ForkSourceAccessNotice: React.FC<ForkSourceAccessNoticeProps> = ({
     access,
     source,
+    onSignedIn,
 }) => {
     const { t } = useTranslation('engineSources');
     const owner = source.split('/')[0];
@@ -44,13 +45,11 @@ export const ForkSourceAccessNotice: React.FC<ForkSourceAccessNoticeProps> = ({
                 </span>
                 <div className="flex flex-wrap gap-2">
                     {access.kind === 'auth-required' && (
-                        <a
-                            href={CONNECTIONS_HREF}
-                            className="btn btn-sm btn-primary"
-                            data-testid="linkForkSourceSignIn"
-                        >
-                            {t('access.signIn')}
-                        </a>
+                        <GitHubSignInButton
+                            label={t('access.signIn')}
+                            data-testid="btnForkSourceSignIn"
+                            onSignedIn={onSignedIn}
+                        />
                     )}
                     {installUrl && (
                         <button

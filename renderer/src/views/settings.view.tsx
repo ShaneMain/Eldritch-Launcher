@@ -18,6 +18,7 @@ import { useAppIntegrations } from '../hooks/app-integrations.hook';
 import { useCodeEditorIntegrations } from '../hooks/code-editor-integrations.hook';
 import { usePreferences } from '../hooks/preferences.hook';
 import { useProjects } from '../hooks/projects.hook';
+import { useRelease } from '../hooks/release.hook';
 import { useTheme } from '../hooks/theme.hook';
 import { useToolIntegrations } from '../hooks/tool-integrations.hook';
 import { getCodeEditorProjectUsage } from './projects/project-code-editor-health.model';
@@ -57,6 +58,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     const { t } = useTranslation(['settings', 'common']);
     const { addCustomConfirm } = useAlerts();
     const { projects, rescanCodeEditorIntegration } = useProjects();
+    const { reloadReleases } = useRelease();
     const [localActiveTab, setLocalActiveTab] =
         useState<SettingsTab>('projects');
     const activeTab = controlledActiveTab ?? localActiveTab;
@@ -324,6 +326,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         setGithubConnectionDialog(null);
         void syncAppIntegrations();
     }, [syncAppIntegrations]);
+
+    /** Also reloads the catalog, which retries fork sources that needed sign-in. */
+    const completeGitHubConnection = useCallback(() => {
+        closeGitHubConnection();
+        void reloadReleases();
+    }, [closeGitHubConnection, reloadReleases]);
 
     useEffect(() => {
         if (activeTab !== 'connections') {
@@ -887,7 +895,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             {githubConnectionDialog && (
                 <GitHubConnectionDialog
                     connectionId={githubConnectionDialog.connectionId}
-                    onConnected={closeGitHubConnection}
+                    autoStart
+                    onConnected={completeGitHubConnection}
                     onCancel={closeGitHubConnection}
                 />
             )}

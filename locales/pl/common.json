@@ -27,10 +27,6 @@
         "loadingMessage": "Przygotowywanie...",
         "navigation": {
             "exportTemplates": "Szablony eksportu",
-            "projectTemplates": "Szablony projektów",
-            "assets": "Zasoby",
-            "addons": "Dodatki",
-            "notAvailableYet": "Jeszcze niedostępne",
             "projects": "Projekty",
             "installs": "Instalacje",
             "help": "Pomoc",
