@@ -40,14 +40,14 @@ import {
 export const PROJECT_GIT_STATUS_CONCURRENCY = 4;
 export const GIT_FETCH_TIMEOUT_MS = 30_000;
 const GIT_LOCAL_TIMEOUT_MS = 5_000;
-const LOCAL_ENVIRONMENT = {
+export const LOCAL_ENVIRONMENT = {
     GIT_OPTIONAL_LOCKS: '0',
     GIT_TERMINAL_PROMPT: '0',
     LANG: 'C',
     LC_ALL: 'C',
 } as const;
 /** Keeps fetch from running repository maintenance or recursing. */
-const FETCH_SIDE_EFFECT_ARGUMENTS = [
+export const FETCH_SIDE_EFFECT_ARGUMENTS = [
     '-c',
     'gc.auto=0',
     '-c',
@@ -67,7 +67,7 @@ export type GitHubFetchCredential = { username: string; password: string };
 export type GitHubCredentialSource =
     () => Promise<GitHubFetchCredential | null>;
 
-type UpstreamDetails = {
+export type UpstreamDetails = {
     branch: string;
     upstream: string;
     trackingRef: string;
@@ -75,9 +75,33 @@ type UpstreamDetails = {
     mergeRef: string;
 };
 
-type FetchOutcome =
+export type FetchOutcome =
     | { ok: true }
     | { ok: false; kind: GitFetchFailureKind; message: string | null };
+
+/** Git LFS settings matching the credentials used for one fetch. */
+export type RemoteLfsAccess = {
+    /** Pinned token-free HTTPS URL, or null for the user's own remote setup. */
+    canonicalUrl: string | null;
+    environment: NodeJS.ProcessEnv;
+    credentialHelper?: string;
+    interactive: boolean;
+};
+
+/**
+ * One opened remote: fetch and Git LFS share the same credential session,
+ * which stays open until `close`.
+ */
+export type RemoteAccess = {
+    fetch(): Promise<FetchOutcome>;
+    /** Null when the remote URL could not be read. */
+    lfs: RemoteLfsAccess | null;
+    close(): Promise<void>;
+};
+
+export type LocalGitRunner = (
+    args: readonly string[],
+) => Promise<ToolExecutionResult>;
 
 /**
  * Computes, caches and publishes read-only ahead/behind state for projects.
@@ -90,6 +114,7 @@ export class ProjectGitStatusService {
     private readonly cache = new Map<string, ProjectGitStatus>();
     private readonly inFlight = new Map<string, Promise<ProjectGitStatus>>();
     private readonly queue: Array<() => void> = [];
+    private readonly updating = new Map<string, Promise<void>>();
     private active = 0;
 
     /**
@@ -168,9 +193,12 @@ export class ProjectGitStatusService {
         if (existing) {
             return existing;
         }
-        const run = this.withSlot(() =>
-            this.computeStatus(projectPath, credentialSource),
-        )
+        const run = (this.updating.get(projectPath) ?? Promise.resolve())
+            .then(() =>
+                this.withSlot(() =>
+                    this.computeStatus(projectPath, credentialSource),
+                ),
+            )
             .then((status) => {
                 this.cache.set(projectPath, status);
                 publish(status);
@@ -183,6 +211,37 @@ export class ProjectGitStatusService {
             });
         this.inFlight.set(projectPath, run);
         return run;
+    }
+
+    /**
+     * Runs one update of a project exclusively: it starts after any in-flight
+     * refresh of the project, and refreshes requested meanwhile wait for it.
+     *
+     * @param projectPath - Project path being updated.
+     * @param task - Update work.
+     * @returns The task result.
+     */
+    async runExclusiveUpdate<T>(
+        projectPath: string,
+        task: () => Promise<T>,
+    ): Promise<T> {
+        // Captured before the gate is set: refreshes requested later wait for
+        // this update, so awaiting them here would deadlock.
+        const previous = this.updating.get(projectPath);
+        const refreshing = this.inFlight.get(projectPath);
+        const gate = Promise.withResolvers<void>();
+        const done = gate.promise;
+        this.updating.set(projectPath, done);
+        try {
+            await previous;
+            await refreshing?.catch(() => undefined);
+            return await task();
+        } finally {
+            gate.resolve();
+            if (this.updating.get(projectPath) === done) {
+                this.updating.delete(projectPath);
+            }
+        }
     }
 
     /**
@@ -378,11 +437,6 @@ export class ProjectGitStatusService {
     /**
      * Fetches the upstream branch into its remote-tracking ref.
      *
-     * GitHub HTTPS remotes use the connected GitHub integration through a
-     * destination-bound loopback credential helper, so the token never reaches
-     * argv, disk or the environment. Other remotes use the user's own Git
-     * configuration with every interactive prompt disabled.
-     *
      * @param execute - Validated Git execution session.
      * @param local - Local read-only Git runner for the project.
      * @param projectPath - Project working directory.
@@ -392,17 +446,71 @@ export class ProjectGitStatusService {
      */
     private async fetchUpstream(
         execute: ToolExecutionSession,
-        local: (args: readonly string[]) => Promise<ToolExecutionResult>,
+        local: LocalGitRunner,
         projectPath: string,
         upstream: UpstreamDetails,
         credentialSource: GitHubCredentialSource,
     ): Promise<FetchOutcome> {
+        const access = await this.openRemoteAccess(
+            execute,
+            local,
+            projectPath,
+            upstream,
+            credentialSource,
+        );
+        try {
+            return await access.fetch();
+        } finally {
+            await access.close();
+        }
+    }
+
+    /**
+     * Opens one remote for fetching the upstream and downloading Git LFS
+     * content with the same credentials.
+     *
+     * GitHub HTTPS remotes use the connected GitHub integration through a
+     * destination-bound loopback credential helper, so the token never reaches
+     * argv, disk or the environment. Other remotes use the user's own Git
+     * configuration with every interactive prompt disabled. Fetch only writes
+     * the upstream's remote-tracking ref.
+     *
+     * @param execute - Validated Git execution session.
+     * @param local - Local read-only Git runner for the project.
+     * @param projectPath - Project working directory.
+     * @param upstream - Resolved upstream details.
+     * @param credentialSource - Batch-scoped GitHub credential reader.
+     * @returns The opened remote; callers must `close` it.
+     */
+    async openRemoteAccess(
+        execute: ToolExecutionSession,
+        local: LocalGitRunner,
+        projectPath: string,
+        upstream: UpstreamDetails,
+        credentialSource: GitHubCredentialSource,
+    ): Promise<RemoteAccess> {
+        if (upstream.remote === '.') {
+            return {
+                fetch: async () => ({ ok: true }),
+                lfs: {
+                    canonicalUrl: null,
+                    environment: createNonInteractiveEnvironment(undefined),
+                    interactive: false,
+                },
+                close: async () => undefined,
+            };
+        }
         const remoteUrl = await local(['remote', 'get-url', upstream.remote]);
         if (!remoteUrl.success) {
-            return {
+            const failure: FetchOutcome = {
                 ok: false,
                 kind: 'error',
                 message: sanitizeGitMessage(remoteUrl.stderr),
+            };
+            return {
+                fetch: async () => failure,
+                lfs: null,
+                close: async () => undefined,
             };
         }
         const url = remoteUrl.stdout.trim();
@@ -414,6 +522,12 @@ export class ProjectGitStatusService {
         );
         const hooksDirectory = path.join(supportDirectory, 'hooks');
         let closeCredentialSession: (() => Promise<void>) | undefined;
+        const close = async () => {
+            await closeCredentialSession?.().catch(() => undefined);
+            await fs
+                .rm(supportDirectory, { recursive: true, force: true })
+                .catch(() => undefined);
+        };
         try {
             await fs.mkdir(hooksDirectory, { mode: 0o700 });
             const fetchArguments = [
@@ -428,7 +542,8 @@ export class ProjectGitStatusService {
                     ? await credentialSource()
                     : null;
 
-            let result: ToolExecutionResult;
+            let runFetch: () => Promise<ToolExecutionResult>;
+            let lfs: RemoteLfsAccess;
             if (credential && normalized) {
                 const canonicalUrl = `${normalized}.git`;
                 const session = await this.credentials.openBound(
@@ -438,74 +553,97 @@ export class ProjectGitStatusService {
                 closeCredentialSession = session.close;
                 const configPaths =
                     await createIsolatedGitConfig(supportDirectory);
-                result = await execute({
-                    args: [
-                        ...createGitHttpsSafetyArguments(true),
-                        '-c',
-                        `credential.helper=${session.helper}`,
-                        '-c',
-                        'core.askPass=',
-                        '-c',
-                        `core.hooksPath=${hooksDirectory}`,
-                        ...FETCH_SIDE_EFFECT_ARGUMENTS,
-                        ...fetchArguments,
-                        canonicalUrl,
-                        `+${upstream.mergeRef}:${upstream.trackingRef}`,
-                    ],
-                    cwd: projectPath,
-                    env: createGitNetworkEnvironment(
-                        configPaths,
-                        session.environment,
-                    ),
-                    inheritEnv: false,
-                    timeoutMs: GIT_FETCH_TIMEOUT_MS,
-                });
+                const environment = createGitNetworkEnvironment(
+                    configPaths,
+                    session.environment,
+                );
+                runFetch = () =>
+                    execute({
+                        args: [
+                            ...createGitHttpsSafetyArguments(true),
+                            '-c',
+                            `credential.helper=${session.helper}`,
+                            '-c',
+                            'core.askPass=',
+                            '-c',
+                            `core.hooksPath=${hooksDirectory}`,
+                            ...FETCH_SIDE_EFFECT_ARGUMENTS,
+                            ...fetchArguments,
+                            canonicalUrl,
+                            `+${upstream.mergeRef}:${upstream.trackingRef}`,
+                        ],
+                        cwd: projectPath,
+                        env: environment,
+                        inheritEnv: false,
+                        timeoutMs: GIT_FETCH_TIMEOUT_MS,
+                    });
+                lfs = {
+                    canonicalUrl,
+                    environment,
+                    credentialHelper: session.helper,
+                    interactive: true,
+                };
             } else {
                 const sshCommand =
                     remoteKind === 'ssh'
                         ? await resolveBatchSshCommand(local)
                         : undefined;
-                result = await execute({
-                    args: [
-                        '-c',
-                        'core.askPass=',
-                        '-c',
-                        'credential.interactive=false',
-                        '-c',
-                        `core.hooksPath=${hooksDirectory}`,
-                        ...FETCH_SIDE_EFFECT_ARGUMENTS,
-                        ...fetchArguments,
-                        upstream.remote,
-                        upstream.mergeRef,
-                    ],
-                    cwd: projectPath,
-                    env: createNonInteractiveEnvironment(sshCommand),
-                    inheritEnv: false,
-                    timeoutMs: GIT_FETCH_TIMEOUT_MS,
-                });
-            }
-            if (result.success) {
-                return { ok: true };
+                const environment = createNonInteractiveEnvironment(sshCommand);
+                runFetch = () =>
+                    execute({
+                        args: [
+                            '-c',
+                            'core.askPass=',
+                            '-c',
+                            'credential.interactive=false',
+                            '-c',
+                            `core.hooksPath=${hooksDirectory}`,
+                            ...FETCH_SIDE_EFFECT_ARGUMENTS,
+                            ...fetchArguments,
+                            upstream.remote,
+                            upstream.mergeRef,
+                        ],
+                        cwd: projectPath,
+                        env: environment,
+                        inheritEnv: false,
+                        timeoutMs: GIT_FETCH_TIMEOUT_MS,
+                    });
+                lfs = { canonicalUrl: null, environment, interactive: false };
             }
             return {
-                ok: false,
-                kind: classifyFetchFailure(
-                    result.stderr,
-                    result.reason === 'timed-out',
-                ),
-                message:
-                    sanitizeGitMessage(result.stderr) ??
-                    (result.reason === 'command-failed'
-                        ? 'git fetch failed'
-                        : `Git is ${result.reason}`),
+                fetch: async () => toFetchOutcome(await runFetch()),
+                lfs,
+                close,
             };
-        } finally {
-            await closeCredentialSession?.().catch(() => undefined);
-            await fs
-                .rm(supportDirectory, { recursive: true, force: true })
-                .catch(() => undefined);
+        } catch (error) {
+            await close();
+            throw error;
         }
     }
+}
+
+/**
+ * Classifies one finished fetch.
+ *
+ * @param result - Fetch process result.
+ * @returns Success or a classified failure.
+ */
+function toFetchOutcome(result: ToolExecutionResult): FetchOutcome {
+    if (result.success) {
+        return { ok: true };
+    }
+    return {
+        ok: false,
+        kind: classifyFetchFailure(
+            result.stderr,
+            result.reason === 'timed-out',
+        ),
+        message:
+            sanitizeGitMessage(result.stderr) ??
+            (result.reason === 'command-failed'
+                ? 'git fetch failed'
+                : `Git is ${result.reason}`),
+    };
 }
 
 /**
@@ -515,8 +653,8 @@ export class ProjectGitStatusService {
  * @param branch - Checked-out branch name.
  * @returns Upstream details, or null when no usable upstream is configured.
  */
-async function readUpstream(
-    local: (args: readonly string[]) => Promise<ToolExecutionResult>,
+export async function readUpstream(
+    local: LocalGitRunner,
     branch: string,
 ): Promise<UpstreamDetails | null> {
     const [shortName, trackingRef, remote, merge] = await Promise.all([
@@ -555,7 +693,7 @@ async function readUpstream(
  * @returns `GIT_SSH_COMMAND` value, or undefined to keep the user's choice.
  */
 async function resolveBatchSshCommand(
-    local: (args: readonly string[]) => Promise<ToolExecutionResult>,
+    local: LocalGitRunner,
 ): Promise<string | undefined> {
     if (process.env.GIT_SSH_COMMAND || process.env.GIT_SSH) {
         return undefined;
@@ -573,7 +711,7 @@ async function resolveBatchSshCommand(
  * @param sshCommand - Optional non-interactive SSH command.
  * @returns Child process environment.
  */
-function createNonInteractiveEnvironment(
+export function createNonInteractiveEnvironment(
     sshCommand: string | undefined,
 ): NodeJS.ProcessEnv {
     const environment: NodeJS.ProcessEnv = {};

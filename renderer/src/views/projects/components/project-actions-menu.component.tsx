@@ -1,5 +1,5 @@
 import type { ProjectDetails } from '@shared/contracts';
-import { Download, Trash2, Upload } from 'lucide-react';
+import { ArrowDownToLine, Download, Trash2, Upload } from 'lucide-react';
 import type React from 'react';
 import {
     ActionMenu,
@@ -17,6 +17,9 @@ type ProjectActionsMenuProps = {
     onExportEditorSettings: (project: ProjectDetails) => void;
     onImportEditorSettings: (project: ProjectDetails) => void;
     onRemoveProject: (project: ProjectDetails) => void;
+    /** Whether the project's branch can fast-forward to its upstream. */
+    canUpdateFromUpstream?: boolean;
+    onUpdateFromUpstream?: (project: ProjectDetails) => void;
 };
 
 const iconClassName = 'size-[16px]';
@@ -29,9 +32,21 @@ export const ProjectActionsMenu: React.FC<ProjectActionsMenuProps> = ({
     onExportEditorSettings,
     onImportEditorSettings,
     onRemoveProject,
+    canUpdateFromUpstream = false,
+    onUpdateFromUpstream,
 }) => {
     const items: ActionMenuItem[] = project
         ? [
+              ...(canUpdateFromUpstream && onUpdateFromUpstream
+                  ? [
+                        {
+                            key: 'update-from-upstream',
+                            label: t('update.menu', { ns: 'projectStatus' }),
+                            icon: <ArrowDownToLine className={iconClassName} />,
+                            onSelect: () => onUpdateFromUpstream(project),
+                        },
+                    ]
+                  : []),
               {
                   key: 'export-editor-settings',
                   label: t('project.exportEditorSettings', { ns: 'menus' }),

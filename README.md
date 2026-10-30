@@ -9,6 +9,7 @@ Eldritch Launcher is a fork of [Godot Launcher](https://github.com/godotlauncher
 - **Engine fork sources.** Add your own engine fork repositories by GitHub owner and name in Settings → Engine sources, including private repositories; the fork list starts empty. The launcher lists their releases next to the official Godot releases when the release assets use official Godot archive names (such as `Godot_v4.3-stable_linux.x86_64.zip`) or include a build manifest, and pins projects to the exact engine commit.
 - **GitHub device-flow login.** Sign in to GitHub with the device flow; no token server is involved and nothing secret ships with the app.
 - **"Behind" indicators.** Project cards show when the project's Git branch or its pinned engine build is behind its upstream.
+- **One-click project update.** When a project's branch is only behind its upstream, **Update** on the Git badge or the project menu fast-forwards it (`git merge --ff-only`, never a rebase or merge commit) and downloads Git LFS files with the same credentials. Local commits are refused; local changes that would be overwritten (often editor-regenerated `*.import` or `project.godot` files) are listed and can be kept in `git stash` before updating.
 
 Configuration lives in `~/.eldritch-launcher`, separate from an upstream Godot Launcher install. Projects keep the upstream `.godotlauncher` pin file, so they stay compatible with Godot Launcher.
 

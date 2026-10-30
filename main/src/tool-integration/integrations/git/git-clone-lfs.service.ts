@@ -64,7 +64,9 @@ export class GitCloneLfsService {
         request.onStart();
         const environment = createGitLfsPullEnvironment(request);
         const setup = await this.tools.executeStreaming(GIT_LFS_TOOL_ID, {
-            args: ['install', '--local'],
+            args: request.skipHooks
+                ? ['install', '--local', '--skip-repo']
+                : ['install', '--local'],
             cwd: request.repositoryPath,
             env: environment,
             signal: request.signal,
@@ -193,9 +195,10 @@ export class GitCloneLfsService {
 }
 
 /**
- * Builds the Git LFS environment for one fresh clone. Command-scoped config
- * outranks the cloned repository's `.lfsconfig`, so the endpoint, credential
- * helpers and transfer agents stay launcher-controlled.
+ * Builds the Git LFS environment for one repository. Command-scoped config
+ * outranks the repository's `.lfsconfig`, so for a pinned URL the endpoint,
+ * credential helpers and transfer agents stay launcher-controlled. Without a
+ * pinned URL the caller's non-interactive environment is used unchanged.
  *
  * @param request - Fresh clone request.
  * @returns Environment for `git-lfs install --local` and `git-lfs pull`.
@@ -203,9 +206,15 @@ export class GitCloneLfsService {
 function createGitLfsPullEnvironment(
     request: GitCloneLfsRequest,
 ): NodeJS.ProcessEnv {
+    if (request.canonicalUrl === null) {
+        return request.environment;
+    }
     const endpoint = createGitLfsEndpoint(request.canonicalUrl);
     return createGitCommandConfigEnvironment(request.environment, [
         ['credential.helper', ''],
+        ...(request.credentialHelper
+            ? [['credential.helper', request.credentialHelper] as const]
+            : []),
         ['credential.interactive', request.interactive ? 'true' : 'false'],
         ['credential.useHttpPath', 'true'],
         ['http.sslVerify', 'true'],

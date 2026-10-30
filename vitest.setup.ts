@@ -30,6 +30,7 @@ vi.mock('@mariodebono/di-electron/renderer', () => {
         'releases-updated': 'subscribeReleases',
         'release-install-progress': 'subscribeReleaseInstallProgress',
         'project-git-status-updated': 'subscribeProjectGitStatus',
+        'project-git-update-progress': 'subscribeProjectGitUpdateProgress',
     } as const;
 
     function getLegacyElectronApi(): LegacyElectronApi {

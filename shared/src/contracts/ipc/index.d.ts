@@ -1,6 +1,9 @@
 import type { AppIntegrationSummary } from '../app-integrations/index.js';
 import type { CodeEditorIntegrationSettings } from '../codeEditorIntegration/index.js';
-import type { ProjectGitStatus } from '../project-git-status/index.js';
+import type {
+    ProjectGitStatus,
+    ProjectGitUpdateProgress,
+} from '../project-git-status/index.js';
 import type { ProjectTagsSnapshot } from '../project-tags/index.js';
 import type {
     LaunchProjectResult,
@@ -16,6 +19,7 @@ export type AppEventMap = {
     'projects-updated': ProjectDetails[];
     'project-tags-updated': ProjectTagsSnapshot;
     'project-git-status-updated': ProjectGitStatus;
+    'project-git-update-progress': ProjectGitUpdateProgress;
     'remote-project-import-progress': RemoteProjectImportProgress;
     'code-editor-integrations-updated': CodeEditorIntegrationSettings[];
     'project-launch-code-editor-warning': {

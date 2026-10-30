@@ -148,6 +148,37 @@ describe('GitCloneLfsService with a mocked executor', () => {
         expect(vi.mocked(request.onProgress).mock.calls).toEqual([[20], [100]]);
     });
 
+    it('pins a bound credential helper and leaves existing hooks alone', async () => {
+        withTrackedFiles(succeed, succeed);
+
+        await service.pull(
+            createRequest({ credentialHelper: '!helper', skipHooks: true }),
+        );
+
+        const [, install] = executeStreaming.mock.calls[1];
+        expect(install.args).toEqual(['install', '--local', '--skip-repo']);
+        const env = executeStreaming.mock.calls[2]?.[1].env;
+        expect([env.GIT_CONFIG_KEY_0, env.GIT_CONFIG_VALUE_0]).toEqual([
+            'credential.helper',
+            '',
+        ]);
+        expect([env.GIT_CONFIG_KEY_1, env.GIT_CONFIG_VALUE_1]).toEqual([
+            'credential.helper',
+            '!helper',
+        ]);
+    });
+
+    it("keeps the repository's own LFS configuration without a pinned URL", async () => {
+        withTrackedFiles(succeed, succeed);
+        const request = createRequest({ canonicalUrl: null });
+
+        await service.pull(request);
+
+        const pull = executeStreaming.mock.calls[2]?.[1];
+        expect(pull.env.GIT_CONFIG_COUNT).toBeUndefined();
+        expect(pull.env).toMatchObject(request.environment);
+    });
+
     it('derives the default endpoint for URLs without a .git suffix', async () => {
         withTrackedFiles(succeed, succeed);
 

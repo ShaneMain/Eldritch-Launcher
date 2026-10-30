@@ -112,4 +112,49 @@ describe('GitStatusBadgeView', () => {
             'loading-spinner',
         );
     });
+
+    it('offers Update only when the branch is only behind', () => {
+        const renderWithUpdate = (status: ProjectGitStatus) =>
+            renderToStaticMarkup(
+                <GitStatusBadgeView
+                    status={status}
+                    refreshing={false}
+                    compact={false}
+                    onRefresh={() => undefined}
+                    onUpdate={() => undefined}
+                />,
+            );
+
+        expect(renderWithUpdate({ ...okStatus, behind: 2 })).toContain(
+            'gitUpdateButton',
+        );
+        expect(
+            renderWithUpdate({ ...okStatus, behind: 2, ahead: 1 }),
+        ).not.toContain('gitUpdateButton');
+        expect(renderWithUpdate(okStatus)).not.toContain('gitUpdateButton');
+        expect(
+            renderWithUpdate({ ...okStatus, behind: 2, state: 'offline' }),
+        ).not.toContain('gitUpdateButton');
+    });
+
+    it('shows the running update step', () => {
+        const html = renderToStaticMarkup(
+            <GitStatusBadgeView
+                status={{ ...okStatus, behind: 2 }}
+                refreshing={false}
+                compact={false}
+                onRefresh={() => undefined}
+                onUpdate={() => undefined}
+                updateProgress={{
+                    projectPath: okStatus.projectPath,
+                    stage: 'fetching',
+                    percent: null,
+                }}
+            />,
+        );
+
+        expect(html).toContain('gitUpdateRunning');
+        expect(html).toContain('update.stage.fetching');
+        expect(html).not.toContain('gitUpdateButton');
+    });
 });

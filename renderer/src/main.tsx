@@ -4,6 +4,7 @@ import { I18nextProvider } from 'react-i18next';
 import { HashRouter } from 'react-router';
 import App from './app.component.tsx';
 import './index.css';
+import { ProjectGitUpdateToasts } from './components/project-git-update-toasts.component.tsx';
 import { AlertsProvider } from './hooks/alerts.hook.tsx';
 import { AppProvider } from './hooks/app.hook.tsx';
 import { AppNavigationProvider } from './hooks/app-navigation.hook.tsx';
@@ -32,6 +33,7 @@ ReactDOM.createRoot(rootElement).render(
                                         <ProjectsProvider>
                                             <ProjectTagsProvider>
                                                 <App />
+                                                <ProjectGitUpdateToasts />
                                             </ProjectTagsProvider>
                                         </ProjectsProvider>
                                     </AlertsProvider>

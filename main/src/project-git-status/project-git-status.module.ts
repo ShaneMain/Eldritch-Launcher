@@ -6,8 +6,9 @@ import { ToolIntegrationModule } from '../tool-integration/tool-integration.modu
 import { ProjectGitStatusController } from './project-git-status.controller.js';
 import { ProjectGitStatusService } from './project-git-status.service.js';
 import { ProjectGitStatusAutoRefreshService } from './project-git-status-auto-refresh.service.js';
+import { ProjectGitUpdateService } from './project-git-update.service.js';
 
-/** Provides read-only ahead/behind status for registered projects. */
+/** Provides ahead/behind status and fast-forward updates for projects. */
 @Module({
     imports: [
         ProjectsStoreModule,
@@ -18,6 +19,7 @@ import { ProjectGitStatusAutoRefreshService } from './project-git-status-auto-re
     providers: [
         ProjectGitStatusService,
         ProjectGitStatusAutoRefreshService,
+        ProjectGitUpdateService,
         ProjectGitStatusController,
     ],
 })

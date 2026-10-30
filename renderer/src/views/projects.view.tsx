@@ -21,6 +21,12 @@ import { WaitingForDialogOverlay } from '../components/waiting-for-dialog-overla
 import { useAlerts } from '../hooks/alerts.hook';
 import { useAppNavigation } from '../hooks/app-navigation.hook';
 import { usePreferences } from '../hooks/preferences.hook';
+import { useProjectGitStatus } from '../hooks/project-git-status.hook';
+import {
+    canUpdateProjectGitStatus,
+    useProjectGitUpdateAction,
+    useProjectGitUpdateProgress,
+} from '../hooks/project-git-update.hook';
 import { useProjectTags } from '../hooks/project-tags.hook';
 import { useProjects } from '../hooks/projects.hook';
 import { useRelease } from '../hooks/release.hook';
@@ -258,6 +264,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
         importProjectEditorSettings,
         removeProject,
     });
+    const menuProjectPath = projectActionsMenu?.project.path ?? '';
+    const { status: menuProjectGitStatus } =
+        useProjectGitStatus(menuProjectPath);
+    const menuProjectUpdating = Boolean(
+        useProjectGitUpdateProgress(menuProjectPath),
+    );
+    const updateProjectFromUpstream = useProjectGitUpdateAction();
     const {
         handleAddProjectResult,
         onAddProject,
@@ -845,6 +858,14 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                 }
                 onImportEditorSettings={handleImportEditorSettings}
                 onRemoveProject={handleRemoveProject}
+                canUpdateFromUpstream={
+                    !menuProjectUpdating &&
+                    canUpdateProjectGitStatus(menuProjectGitStatus)
+                }
+                onUpdateFromUpstream={(project) => {
+                    setProjectActionsMenu(null);
+                    void updateProjectFromUpstream(project.path);
+                }}
             />
             <ProjectSettingsDrawer
                 project={

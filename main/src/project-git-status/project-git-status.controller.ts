@@ -5,11 +5,15 @@ import {
 import type {
     ProjectGitStatus,
     ProjectGitStatusBridge,
+    ProjectGitUpdateOptions,
+    ProjectGitUpdateResult,
 } from '@shared/contracts';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { ProjectGitStatusService } from './project-git-status.service.js';
 // biome-ignore lint/style/useImportType: Required for DI constructor metadata
 import { ProjectGitStatusAutoRefreshService } from './project-git-status-auto-refresh.service.js';
+// biome-ignore lint/style/useImportType: Required for DI constructor metadata
+import { ProjectGitUpdateService } from './project-git-update.service.js';
 
 const ProjectGitStatusHandler = createIpcHandleTyped<ProjectGitStatusBridge>();
 
@@ -21,10 +25,12 @@ export class ProjectGitStatusController implements ProjectGitStatusBridge {
      *
      * @param statuses - Project Git status service.
      * @param autoRefresh - Automatic refresh coordinator.
+     * @param updates - Fast-forward update service.
      */
     constructor(
         private readonly statuses: ProjectGitStatusService,
         private readonly autoRefresh: ProjectGitStatusAutoRefreshService,
+        private readonly updates: ProjectGitUpdateService,
     ) {}
 
     /** Returns cached statuses without running Git. */
@@ -57,5 +63,29 @@ export class ProjectGitStatusController implements ProjectGitStatusBridge {
     @ProjectGitStatusHandler('setRefreshInterval')
     setRefreshInterval(minutes: number): Promise<number> {
         return this.autoRefresh.setRefreshInterval(minutes);
+    }
+
+    /**
+     * Fast-forwards one registered project to its upstream.
+     *
+     * @param projectPath - Exact registered project path.
+     * @param options - Optional stash-and-retry for blocking local changes.
+     */
+    @ProjectGitStatusHandler('updateProject')
+    updateProject(
+        projectPath: string,
+        options?: ProjectGitUpdateOptions,
+    ): Promise<ProjectGitUpdateResult> {
+        return this.updates.updateProject(projectPath, options);
+    }
+
+    /**
+     * Cancels a running update.
+     *
+     * @param projectPath - Project path being updated.
+     */
+    @ProjectGitStatusHandler('cancelUpdate')
+    async cancelUpdate(projectPath: string): Promise<boolean> {
+        return this.updates.cancelUpdate(projectPath);
     }
 }

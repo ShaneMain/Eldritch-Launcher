@@ -35,6 +35,7 @@ import { PublicGitSourceService } from './public-git-source.service.js';
         GitSubmoduleService,
         GitIdentitySettingsService,
         GitCloneService,
+        GitCloneLfsService,
         PublicGitSourceService,
     ],
 })

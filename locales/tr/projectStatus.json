@@ -32,5 +32,47 @@
             "off": "Off (on focus and manual only)",
             "minutes": "Every {{minutes}} minutes"
         }
+    },
+    "update": {
+        "action": "Update",
+        "menu": "Update from upstream",
+        "tooltip": "Fast-forward {{n}} commits from the upstream and download Git LFS files.",
+        "hint": "Use Update to fast-forward to the upstream.",
+        "cancel": "Cancel update",
+        "dismiss": "Dismiss",
+        "stage": {
+            "fetching": "Fetching…",
+            "updating": "Updating…",
+            "lfs": "Downloading LFS files…",
+            "lfsPercent": "LFS {{percent}}%"
+        },
+        "applied": "↓{{n}} commits applied",
+        "upToDate": "Already up to date",
+        "stashed": "Your local changes were kept in git stash ({{ref}}).",
+        "lfs": {
+            "failed": "Git LFS files could not be downloaded; run \"git lfs pull\" later.",
+            "unavailable": "Git LFS is not installed; large files were not downloaded."
+        },
+        "localChanges": {
+            "title": "Local changes block the update",
+            "message": "The update would overwrite local changes in these files:",
+            "more": "…and {{n}} more",
+            "detail": "Godot often regenerates these files. Stashing keeps your changes in git stash instead of deleting them; restore them with \"git stash pop\".",
+            "stash": "Stash these changes and update",
+            "cancel": "Cancel"
+        },
+        "refused": {
+            "diverged": "Local commits — update manually",
+            "detached": "HEAD is detached — check out a branch to update",
+            "no-upstream": "The branch has no upstream to update from",
+            "not-a-repo": "This project is not a Git repository",
+            "not-registered": "This project is no longer in the list"
+        },
+        "fetchFailed": {
+            "auth-required": "Sign in to GitHub to update",
+            "offline": "The remote could not be reached",
+            "error": "Git could not fetch the upstream"
+        },
+        "failed": "The update failed"
     }
 }

@@ -5,6 +5,7 @@ import {
     parseHeadBranch,
     parseLeftRightCount,
     parseMergeRef,
+    parseOverwrittenPaths,
     sanitizeGitMessage,
 } from './project-git-status.util.js';
 
@@ -109,5 +110,34 @@ describe('sanitizeGitMessage', () => {
             240,
         );
         expect(sanitizeGitMessage('\n  \n')).toBeNull();
+    });
+});
+
+describe('parseOverwrittenPaths', () => {
+    it('reads tracked and untracked blocking paths', () => {
+        const stderr = [
+            'Updating 1111111..2222222',
+            'error: Your local changes to the following files would be overwritten by merge:',
+            '\tproject.godot',
+            '\tassets/icon png.png.import',
+            'Please commit your changes or stash them before you merge.',
+            'error: The following untracked working tree files would be overwritten by merge:',
+            '\tnew.import',
+            'Please move or remove them before you merge.',
+            'Aborting',
+        ].join('\n');
+
+        expect(parseOverwrittenPaths(stderr)).toEqual({
+            tracked: ['project.godot', 'assets/icon png.png.import'],
+            untracked: ['new.import'],
+        });
+    });
+
+    it('returns null for other merge failures', () => {
+        expect(
+            parseOverwrittenPaths(
+                'fatal: Not possible to fast-forward, aborting.',
+            ),
+        ).toBeNull();
     });
 });

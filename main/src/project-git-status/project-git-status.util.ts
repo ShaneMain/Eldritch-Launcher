@@ -175,3 +175,40 @@ export function sanitizeGitMessage(stderr: string): string | null {
         ? `${redacted.slice(0, MAX_MESSAGE_LENGTH - 1)}…`
         : redacted;
 }
+
+export type OverwrittenPaths = {
+    /** Modified tracked files the merge would overwrite. */
+    tracked: string[];
+    /** Untracked files the merge would overwrite. */
+    untracked: string[];
+};
+
+const OVERWRITTEN_TRACKED_HEADER =
+    /^error: Your local changes to the following files would be overwritten by merge:$/u;
+const OVERWRITTEN_UNTRACKED_HEADER =
+    /^error: The following untracked working tree files would be overwritten by merge:$/u;
+
+/**
+ * Reads the paths a refused merge listed as "would be overwritten by merge".
+ *
+ * Expects `LC_ALL=C` output with `core.quotePath=false`.
+ *
+ * @param stderr - Standard error of `git merge`.
+ * @returns Blocking paths, or null when the merge failed for another reason.
+ */
+export function parseOverwrittenPaths(stderr: string): OverwrittenPaths | null {
+    const result: OverwrittenPaths = { tracked: [], untracked: [] };
+    let section: string[] | null = null;
+    for (const line of stderr.split(/\r?\n/u)) {
+        if (OVERWRITTEN_TRACKED_HEADER.test(line)) {
+            section = result.tracked;
+        } else if (OVERWRITTEN_UNTRACKED_HEADER.test(line)) {
+            section = result.untracked;
+        } else if (section && line.startsWith('\t') && line.length > 1) {
+            section.push(line.slice(1));
+        } else {
+            section = null;
+        }
+    }
+    return result.tracked.length + result.untracked.length > 0 ? result : null;
+}

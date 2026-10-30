@@ -1,6 +1,10 @@
-import type { ProjectGitStatus } from '@shared/contracts';
+import type {
+    ProjectGitStatus,
+    ProjectGitUpdateProgress,
+} from '@shared/contracts';
 import clsx from 'clsx';
 import {
+    ArrowDownToLine,
     Check,
     GitCommitHorizontal,
     KeyRound,
@@ -14,6 +18,12 @@ import { GitHubSignInButton } from '../../../components/github-connection/github
 import { StatusBadge } from '../../../components/ui/status-badge.component';
 import { Tooltip } from '../../../components/ui/tooltip.component';
 import { useProjectGitStatus } from '../../../hooks/project-git-status.hook';
+import {
+    cancelProjectGitUpdate,
+    canUpdateProjectGitStatus,
+    useProjectGitUpdateAction,
+    useProjectGitUpdateProgress,
+} from '../../../hooks/project-git-update.hook';
 
 type Translate = (key: string, options?: Record<string, unknown>) => string;
 
@@ -22,6 +32,11 @@ type GitStatusBadgeViewProps = {
     refreshing: boolean;
     compact: boolean;
     onRefresh: () => void;
+    /** Running update step, when an update runs. */
+    updateProgress?: ProjectGitUpdateProgress;
+    /** Starts a fast-forward update; shown only when one is possible. */
+    onUpdate?: () => void;
+    onCancelUpdate?: () => void;
 };
 
 const STATE_ICONS: Partial<Record<ProjectGitStatus['state'], ReactNode>> = {
@@ -51,25 +66,34 @@ export function GitStatusBadge({
     compact: boolean;
 }) {
     const { status, refreshing, refresh } = useProjectGitStatus(projectPath);
+    const updateProgress = useProjectGitUpdateProgress(projectPath);
+    const updateProject = useProjectGitUpdateAction();
     return (
         <GitStatusBadgeView
             status={status}
             refreshing={refreshing}
             compact={compact}
             onRefresh={() => void refresh()}
+            updateProgress={updateProgress}
+            onUpdate={() => void updateProject(projectPath)}
+            onCancelUpdate={() => cancelProjectGitUpdate(projectPath)}
         />
     );
 }
 
 /**
- * Renders one read-only Git status badge with an explanatory tooltip.
- * @param props - Status, refresh state, presentation mode and refresh action.
+ * Renders one Git status badge with an explanatory tooltip and, when the
+ * branch is only behind, an Update action.
+ * @param props - Status, refresh and update state, presentation mode and actions.
  */
 export function GitStatusBadgeView({
     status,
     refreshing,
     compact,
     onRefresh,
+    updateProgress,
+    onUpdate,
+    onCancelUpdate,
 }: GitStatusBadgeViewProps) {
     const { t } = useTranslation('projectStatus');
     if (!status) {
@@ -155,12 +179,15 @@ export function GitStatusBadgeView({
         compact && warning && 'text-warning',
     );
 
-    return (
+    const canUpdate = Boolean(onUpdate) && canUpdateProjectGitStatus(status);
+    const badge = (
         <Tooltip
             placement="top"
             tone="default"
             variant="panel"
-            tip={<GitStatusTooltip status={status} t={t} />}
+            tip={
+                <GitStatusTooltip status={status} t={t} canUpdate={canUpdate} />
+            }
         >
             {authRequired ? (
                 <GitHubSignInButton
@@ -184,6 +211,61 @@ export function GitStatusBadgeView({
             )}
         </Tooltip>
     );
+    if (!updateProgress && !canUpdate) {
+        return badge;
+    }
+    const stageLabel = updateProgress
+        ? updateProgress.stage === 'lfs' && updateProgress.percent !== null
+            ? t('update.stage.lfsPercent', { percent: updateProgress.percent })
+            : t(`update.stage.${updateProgress.stage}`)
+        : null;
+    return (
+        <span className="inline-flex items-center gap-1">
+            {badge}
+            {updateProgress ? (
+                <Tooltip placement="top" tip={t('update.cancel')}>
+                    <button
+                        type="button"
+                        data-testid="gitUpdateRunning"
+                        className="badge badge-sm badge-soft badge-info h-[22px] shrink-0 cursor-pointer gap-1 rounded-full px-[6px]"
+                        aria-label={`${stageLabel} ${t('update.cancel')}`}
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            onCancelUpdate?.();
+                        }}
+                    >
+                        <span
+                            className="loading loading-spinner loading-xs"
+                            aria-hidden="true"
+                        />
+                        <span className={compact ? 'sr-only' : undefined}>
+                            {stageLabel}
+                        </span>
+                    </button>
+                </Tooltip>
+            ) : (
+                <Tooltip
+                    placement="top"
+                    tip={t('update.tooltip', { n: status.behind })}
+                >
+                    <button
+                        type="button"
+                        data-testid="gitUpdateButton"
+                        className="badge badge-sm badge-soft badge-primary h-[22px] shrink-0 cursor-pointer gap-1 rounded-full px-[6px]"
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            onUpdate?.();
+                        }}
+                    >
+                        <ArrowDownToLine size={14} aria-hidden="true" />
+                        <span className={compact ? 'sr-only' : undefined}>
+                            {t('update.action')}
+                        </span>
+                    </button>
+                </Tooltip>
+            )}
+        </span>
+    );
 }
 
 /**
@@ -193,9 +275,11 @@ export function GitStatusBadgeView({
 function GitStatusTooltip({
     status,
     t,
+    canUpdate,
 }: {
     status: ProjectGitStatus;
     t: Translate;
+    canUpdate: boolean;
 }) {
     const lines: string[] = [];
     if (status.branch && status.upstream) {
@@ -236,6 +320,9 @@ function GitStatusTooltip({
             interpolation: { escapeValue: false },
         }),
     );
+    if (canUpdate) {
+        lines.push(t('update.hint'));
+    }
     lines.push(
         t(
             status.state === 'auth-required'
